@@ -1,7 +1,9 @@
-from os import listdir, path
-import logging
 import importlib
+import logging
+from os import listdir, path
+
 import telethon
+
 from ._config import OWNER_ID, bot
 
 
@@ -16,14 +18,14 @@ def __load_modules():
 
 def human_readable_size(size, speed=False):
     # Convert a size in bytes to a human readable string
-    variables = ['bytes', 'KB', 'MB', 'GB', 'TB']
+    variables = ["bytes", "KB", "MB", "GB", "TB"]
     if speed:
-        variables = ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps']
+        variables = ["bps", "Kbps", "Mbps", "Gbps", "Tbps"]
     for x in variables:
         if size < 1024.0:
             return "%3.1f %s" % (size, x)
         size /= 1024.0
-    return "%3.1f %s" % (size, 'TB')
+    return "%3.1f %s" % (size, "TB")
 
 
 async def getUser(e: telethon.events.NewMessage.Event):
@@ -32,8 +34,7 @@ async def getUser(e: telethon.events.NewMessage.Event):
     args = e.text.split(maxsplit=2)
     if e.is_reply:
         user = (await e.get_reply_message()).sender
-        arg = (args[1] + (args[2] if len(args) > 2 else "")
-               ) if len(args) > 1 else ""
+        arg = (args[1] + (args[2] if len(args) > 2 else "")) if len(args) > 1 else ""
     else:
         if len(args) == 1:
             await e.reply("No user specified")
@@ -52,7 +53,7 @@ def getMention(user: telethon.tl.types.User, mode: str = "md"):
     if mode == "md":
         return "[" + user.first_name + "](tg://user?id=" + str(user.id) + ")"
     elif mode == "html":
-        return "<a href=\"tg://user?id=" + str(user.id) + "\">" + user.first_name + "</a>"
+        return '<a href="tg://user?id=' + str(user.id) + '">' + user.first_name + "</a>"
 
 
 async def IsWorth(right, chat, user, admin_check=True):

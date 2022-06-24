@@ -1,5 +1,5 @@
-from modules._helpers import __load_modules
 from modules._config import TOKEN, bot
+from modules._helpers import __load_modules
 
 bot.start(bot_token=TOKEN)
 

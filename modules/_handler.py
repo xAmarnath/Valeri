@@ -1,10 +1,12 @@
 from telethon import events
+
 from ._config import bot
 from ._helpers import IsWorth
 
 
 def newMsg(**args):
     args["pattern"] = "(?i)^[!/]" + args["pattern"] + "(?: |$|@MissValeri_Bot)(.*)"
+
     def decorator(func):
         async def wrapper(event):
             try:
@@ -17,6 +19,7 @@ def newMsg(**args):
 
     return decorator
 
+
 def adminsOnly(rights=None):
     def decorator(func):
         async def wrapper(event):
@@ -25,4 +28,3 @@ def adminsOnly(rights=None):
             if not IsWorth(event.chat_id):
                 return
             return await func(event)
-       

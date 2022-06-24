@@ -1,7 +1,7 @@
-from audioop import add
+from telethon import errors, functions, types
+
 from ._handler import newMsg
-from ._helpers import getUser, getMention
-from telethon import functions, types, errors
+from ._helpers import getMention, getUser
 
 
 @newMsg(pattern="(promote|superpromote|demote)")
@@ -12,53 +12,63 @@ async def _promote_demote(e):
         return
     try:
         if action == "promote":
-            await e.client(functions.channels.EditAdminRequest(
-                e.chat_id,
-                user.id,
-                admin_rights=types.ChatAdminRights(
-                    delete_messages=True,
-                    ban_users=True,
-                    invite_users=True,
-                    pin_messages=True,
-                ),
-                rank=arg if arg else "Admin"
-            ))
-            await e.reply(getMention(user) + " has been promoted to " + (arg or "Admin") + ".")
+            await e.client(
+                functions.channels.EditAdminRequest(
+                    e.chat_id,
+                    user.id,
+                    admin_rights=types.ChatAdminRights(
+                        delete_messages=True,
+                        ban_users=True,
+                        invite_users=True,
+                        pin_messages=True,
+                    ),
+                    rank=arg if arg else "Admin",
+                )
+            )
+            await e.reply(
+                getMention(user) + " has been promoted to " + (arg or "Admin") + "."
+            )
         elif action == "superpromote":
-            await e.client(functions.channels.EditAdminRequest(
-                e.chat_id,
-                user.id,
-                admin_rights=types.ChatAdminRights(
-                    add_admins=True,
-                    delete_messages=True,
-                    ban_users=True,
-                    invite_users=True,
-                    pin_messages=True,
-                    manage_call=True,
-                    change_info=True,
-                ),
-                rank=arg if arg else "SuperAdmin"
-            ))
+            await e.client(
+                functions.channels.EditAdminRequest(
+                    e.chat_id,
+                    user.id,
+                    admin_rights=types.ChatAdminRights(
+                        add_admins=True,
+                        delete_messages=True,
+                        ban_users=True,
+                        invite_users=True,
+                        pin_messages=True,
+                        manage_call=True,
+                        change_info=True,
+                    ),
+                    rank=arg if arg else "SuperAdmin",
+                )
+            )
             await e.reply("Successfully superpromoted {}".format(getMention(user)))
         elif action == "demote":
-            await e.client(functions.channels.EditAdminRequest(
-                e.chat_id,
-                user.id,
-                admin_rights=types.ChatAdminRights(
-                    delete_messages=False,
-                    ban_users=False,
-                    invite_users=False,
-                    pin_messages=False,
-                    manage_call=False,
-                    change_info=False,
-                ),
-                rank=arg if arg else "Member"
-            ))
+            await e.client(
+                functions.channels.EditAdminRequest(
+                    e.chat_id,
+                    user.id,
+                    admin_rights=types.ChatAdminRights(
+                        delete_messages=False,
+                        ban_users=False,
+                        invite_users=False,
+                        pin_messages=False,
+                        manage_call=False,
+                        change_info=False,
+                    ),
+                    rank=arg if arg else "Member",
+                )
+            )
             await e.reply("Demoted {}!".format(getMention(user)))
     except errors.ChatAdminRequiredError:
         await e.reply("Failure!, make sure I have add admin rights to the chat")
     except errors.rpcerrorlist.UserCreatorError:
-        await e.reply("I would love to promote the chat creator, but... well, they already have all the power.")
+        await e.reply(
+            "I would love to promote the chat creator, but... well, they already have all the power."
+        )
     except errors.rpcerrorlist.BotChannelsNaError:
         await e.reply("Due to telegram restrictions, I can't demote bots.")
     except errors.UserAdminInvalidError:
