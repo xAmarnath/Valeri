@@ -72,6 +72,6 @@ async def IsWorth(right, chat, user, admin_check=True):
     if isinstance(p, telethon.tl.types.ChannelParticipantCreator):
         return True
     if isinstance(p, telethon.tl.types.ChannelParticipantAdmin):
-        if p.admin_rights.pretty_format()[right]:
+        if p.admin_rights.to_dict()[right]:
             return True
     return False
