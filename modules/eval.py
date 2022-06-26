@@ -168,16 +168,11 @@ async def _info(e):
         user, _ = await getUser(e)
     if not user:
         return await e.reply("No user found.")
-    USER_INFO = (
-        "**USER INFO**\n"
-        "`Name:` **{}**\n"
-        "`ID:` **{}**\n"
-        "`Username:` **{}**\n"
-        "`Bot:` **{}**\n"
-    ).format(
-        user.first_name,
-        user.id,
-        user.username,
-        user.bot,
-    )
+    USER_INFO = "**USER INFO**\n"
+    USER_INFO += "`FirstName:` **{}**".format(user.first_name) if user.first_name != "" else ""
+    USER_INFO += "`LastName:` **{}**".format(user.last_name) if user.last_name != "" else ""
+    USER_INFO += "`ID:` **{}**".format(user.id)
+    USER_INFO += "`Username:` **@{}**".format(user.username) if user.username != "" else ""
+    USER_INFO += "`Bot:` **{}**".format(user.bot)
+    USER_INFO += "`DC ID:` **{}**".format(user.photo.dc_id) if user.photo else ""
     await e.reply(USER_INFO)
