@@ -6,9 +6,10 @@ import traceback
 import requests
 from telethon import events
 
-from ._config import bot, OWNER_ID
+from ._config import OWNER_ID, bot
 from ._handler import newMsg
 from ._helpers import getUser
+
 
 @newMsg(pattern="eval", from_users=[OWNER_ID])
 @bot.on(events.MessageEdited(pattern="^(?i)[!?.]eval (.*?)", from_users=[OWNER_ID]))
@@ -160,6 +161,7 @@ async def _ext(e):
         await e.reply(response, image=image)
     else:
         await e.reply("No extension found.")
+
 
 @newMsg(pattern="info")
 async def _info(e):
