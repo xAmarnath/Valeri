@@ -57,7 +57,11 @@ async def _system(e):
     total_disk = psutil.disk_usage("/").total
     free_disk = psutil.disk_usage("/").free
     operating_system = platform()
-    network = psutil.net_if_addrs()["Ethernet"][0].address if psutil.net_if_addrs().get("Ethernet") else "Unknown controller"
+    network = (
+        psutil.net_if_addrs()["Ethernet"][0].address
+        if psutil.net_if_addrs().get("Ethernet")
+        else "Unknown controller"
+    )
     db_free, db_total = get_db_stats()
     result = (
         f"**System Info:**\n\n"
