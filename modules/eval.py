@@ -170,15 +170,15 @@ async def _info(e):
         return await e.reply("No user found.")
     USER_INFO = "**USER INFO**\n"
     USER_INFO += (
-        "`FirstName:` **{}**".format(user.first_name) if user.first_name != "" else ""
+        "`FirstName:` **{}**\n".format(user.first_name) if user.first_name != "" else ""
     )
     USER_INFO += (
-        "`LastName:` **{}**".format(user.last_name) if user.last_name != "" else ""
+        "`LastName:` **{}**\n".format(user.last_name) if user.last_name != "" else ""
     )
-    USER_INFO += "`ID:` **{}**".format(user.id)
+    USER_INFO += "`ID:` **{}**\n".format(user.id)
     USER_INFO += (
-        "`Username:` **@{}**".format(user.username) if user.username != "" else ""
+        "`Username:` **@{}**\n".format(user.username) if user.username != "" else ""
     )
-    USER_INFO += "`Bot:` **{}**".format(user.bot)
+    USER_INFO += "`Bot:` **{}**\n".format(user.bot)
     USER_INFO += "`DC ID:` **{}**".format(user.photo.dc_id) if user.photo else ""
     await e.reply(USER_INFO)
