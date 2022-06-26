@@ -4,3 +4,4 @@ dnspython
 python-dotenv
 speedtest-cli
 psutil
+requests 
