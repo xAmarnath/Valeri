@@ -60,7 +60,7 @@ async def _system(e):
     network = (
         psutil.net_if_addrs()["Ethernet"][0].address
         if psutil.net_if_addrs().get("Ethernet")
-        else "Unknown controller"
+        else "N/A"
     )
     db_free, db_total = get_db_stats()
     result = (
@@ -75,7 +75,5 @@ async def _system(e):
         f"**Free Disk:** `{human_readable_size(free_disk)}`\n"
         f"**Operating System:** `{operating_system}`\n"
         f"**Network:** `{network}`\n"
-        f"**Database:** `{human_readable_size(db_free)}` of `{human_readable_size(db_total)}`"
     )
-
     await msg.edit(result)
