@@ -172,13 +172,9 @@ async def _info(e):
     USER_INFO += (
         "`FirstName:` **{}**\n".format(user.first_name) if user.first_name else ""
     )
-    USER_INFO += (
-        "`LastName:` **{}**\n".format(user.last_name) if user.last_name else ""
-    )
+    USER_INFO += "`LastName:` **{}**\n".format(user.last_name) if user.last_name else ""
     USER_INFO += "`ID:` **{}**\n".format(user.id)
-    USER_INFO += (
-        "`Username:` **@{}**\n".format(user.username) if user.username else ""
-    )
+    USER_INFO += "`Username:` **@{}**\n".format(user.username) if user.username else ""
     USER_INFO += "`Bot:` **{}**\n".format(user.bot)
     USER_INFO += "`DC ID:` **{}**\n".format(user.photo.dc_id) if user.photo else ""
     USER_INFO += "`Status:` **{}**".format(
