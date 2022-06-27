@@ -1,10 +1,7 @@
 from urllib.parse import quote
 
-from ._config import TMDB_KEY as apiKey
+from ._config import TMDB_KEY as tapiKey
 from ._handler import newMsg
-
-IMDB_BASE_URL = "https://api.themoviedb.org/3"
-
 
 @newMsg(pattern="(imdb|tmdb)")
 async def _imdb_search(e):
@@ -12,10 +9,13 @@ async def _imdb_search(e):
         query = e.text.split(None, maxsplit=1)[1]
     except IndexError:
         return await e.reply("Provide the title name!")
-    url = IMDB_BASE_URL + "/search/multi"
+    url = "https://api.themoviedb.org/3/search/multi"
     params = {
-        "api_key": apiKey,
+        "api_key": tapiKey,
         "query": quote(query),
+         "language":      "en-US",
+	"page":          "1",
+	"include_adult": "false",
     }
     # baaki naale
     print(url, params)
