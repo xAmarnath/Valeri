@@ -4,7 +4,7 @@ import sys
 import traceback
 
 import requests
-from telethon import events
+from telethon import events, types
 
 from ._config import OWNER_ID, bot
 from ._handler import newMsg
