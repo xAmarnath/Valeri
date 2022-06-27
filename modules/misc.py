@@ -3,6 +3,7 @@ from urllib.parse import quote
 from ._config import TMDB_KEY as tapiKey
 from ._handler import newMsg
 
+
 @newMsg(pattern="(imdb|tmdb)")
 async def _imdb_search(e):
     try:
@@ -13,9 +14,9 @@ async def _imdb_search(e):
     params = {
         "api_key": tapiKey,
         "query": quote(query),
-         "language":      "en-US",
-	"page":          "1",
-	"include_adult": "false",
+        "language": "en-US",
+        "page": "1",
+        "include_adult": "false",
     }
     # baaki naale
     print(url, params)
