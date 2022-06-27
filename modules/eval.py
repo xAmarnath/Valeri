@@ -181,5 +181,25 @@ async def _info(e):
     )
     USER_INFO += "`Bot:` **{}**\n".format(user.bot)
     USER_INFO += "`DC ID:` **{}**".format(user.photo.dc_id) if user.photo else ""
-    USER_INFO += "`Status:` **{}**".format("recently" if isinstance(user.status, types.UserStatusRecently) else ("online" if isinstance (user.status, types.UserStatusOnline) else ("last week" if isinstance (user.status, types.UserStatusLastWeek) else ("last month" if isinstance (user.status, types.UserStatusLastMonth) else ("offline" if isinstance (user.status, types.UserStatusOffline) else "empty")))))
+    USER_INFO += "`Status:` **{}**".format(
+        "recently"
+        if isinstance(user.status, types.UserStatusRecently)
+        else (
+            "online"
+            if isinstance(user.status, types.UserStatusOnline)
+            else (
+                "last week"
+                if isinstance(user.status, types.UserStatusLastWeek)
+                else (
+                    "last month"
+                    if isinstance(user.status, types.UserStatusLastMonth)
+                    else (
+                        "offline"
+                        if isinstance(user.status, types.UserStatusOffline)
+                        else "empty"
+                    )
+                )
+            )
+        )
+    )
     await e.reply(USER_INFO)
