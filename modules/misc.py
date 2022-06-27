@@ -12,8 +12,8 @@ async def _imdb_search(e):
   return await e.reply("Provide the title name!")
  url = IMDB_BASE_URL + '/search/multi'
  params = {
- "api_key": apiKey
- "query": quote(query)
+ "api_key": apiKey,
+ "query": quote(query),
  }
  # baaki naale
  print(url, params)
