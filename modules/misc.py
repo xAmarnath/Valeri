@@ -17,6 +17,8 @@ async def _imdb_search(e):
     except IndexError:
         return await e.reply("Provide the title name!")
     caption, url, buttons = search_imdb(query)
+    if len(caption) > 4094:
+        caption = caption[:4090] + "..."
     await e.reply(caption, file=url, parse_mode="html", buttons=buttons)
 
 
@@ -118,13 +120,6 @@ def search_imdb(query: str):
                 if result.get("overview")
                 else ""
             )
-            caption += (
-                "<b>IMDB:</b> <a href='https://www.imdb.com/title/{}'>{}</a>".format(
-                    result["imdb_id"], result["imdb_id"]
-                )
-                if result.get("imdb_id")
-                else ""
-            )
             buttons = [
                 [
                     Button.inline(
@@ -218,14 +213,14 @@ def search_imdb(query: str):
                         if result.get("next_episode_to_air")
                         else ""
                     )
-                    + " - (<code>"
+                    + " -<code>"
                     + (
                         result["next_episode_to_air"]["air_date"]
                         if result.get("next_episode_to_air")
                         else "N/A"
                     )
                 )
-                + "</code>)"
+                + "</code>"
                 if result.get("next_episode_to_air")
                 else ""
             )
