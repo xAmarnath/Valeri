@@ -1,4 +1,5 @@
 from functools import wraps
+
 from telethon import events
 
 from ._config import bot
@@ -7,8 +8,7 @@ from .db.db.auth import isAUTH
 
 
 def newMsg(**args):
-    args["pattern"] = "(?i)^[!/]" + args["pattern"] + \
-        "(?: |$|@MissValeri_Bot)(.*)"
+    args["pattern"] = "(?i)^[!/]" + args["pattern"] + "(?: |$|@MissValeri_Bot)(.*)"
 
     def decorator(func):
         async def wrapper(event):

@@ -1,6 +1,7 @@
 from .._config import db
 
-DB = db.bot # Get the bot database
+DB = db.bot  # Get the bot database
+
 
 def get_db_stats():
     db_ = db.main  # Get the main database
