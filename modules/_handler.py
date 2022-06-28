@@ -3,7 +3,7 @@ from telethon import events
 
 from ._config import bot
 from ._helpers import IsWorth
-from .db.db.auth import isAUTH
+from .db.auth import isAUTH
 
 
 def newMsg(**args):

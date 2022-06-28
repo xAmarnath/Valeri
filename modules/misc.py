@@ -1,4 +1,3 @@
-from turtle import title
 from urllib.parse import quote
 
 from requests import get
