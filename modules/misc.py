@@ -28,8 +28,9 @@ async def _imdb_search(e):
     ).json()
     if response["results"]:
         result = response["results"][0]
+        print(result)
         await e.reply(
-            """
+        """
         **ID:** `{}`
         **Title:** {}
         **Release Date:** {}
