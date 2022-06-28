@@ -28,32 +28,13 @@ async def _imdb_search(e):
     ).json()
     if response["results"]:
         result = response["results"][0]
-        print(result)
-        await e.reply(
-        """
-        **ID:** `{}`
-        **Title:** {}
-        **Release Date:** {}
-        **Rating:** {}
-        **Genres:** {}
-        **Overview:** ```{}```
-        **Popularity:** {}
-        """.format(
-                result["id"],
-                result["title"] if "title" in result else result["name"],
-                result["release_date"]
-                if "release_date" in result
-                else result["first_air_date"],
-                result["vote_average"] if "vote_average" in result else "N/A",
-                str(result["genre_ids"]),
-                result["overview"],
-                result["popularity"],
-            ),
-            parse_mode="md",
-            link_preview=False,
-            file="https://image.tmdb.org/t/p/w500" + result["poster_path"]
-            if "poster_path" in result
-            else None,
-        )
+        if result["media_type"] == "movie":
+            await e.reply(
+                f"{result['title']} ({result['release_date'][:4]}) - {result['overview']}"
+            )
+        elif result["media_type"] == "tv":
+            await e.reply(
+                f"{result['name']} ({result['first_air_date'][:4]}) - {result['overview']}"
+            )
     else:
         await e.reply("No results found!")
