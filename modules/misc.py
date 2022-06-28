@@ -29,7 +29,7 @@ async def _imdb_search(e):
     if response["results"]:
         result = response["results"][0]
         if result["media_type"] == "movie":
-            await e.reply( 
+            await e.reply(
                 f"{result['title']} ({result['release_date'][:4]}) - {result['overview']}"
             )
         elif result["media_type"] == "tv":
