@@ -1,13 +1,13 @@
 from telethon import errors, functions, types
 
 from ._handler import newMsg
-from ._helpers import getMention, getUser
+from ._helpers import get_mention, get_user
 
 
 @newMsg(pattern="(promote|superpromote|demote)")
 async def _promote_demote(e):
     action = e.text.split(" ")[0][1:]
-    user, arg = await getUser(e)
+    user, arg = await get_user(e)
     if not user:
         return
     try:
@@ -26,7 +26,7 @@ async def _promote_demote(e):
                 )
             )
             await e.reply(
-                getMention(user) + " has been promoted to " + (arg or "Admin") + "."
+                get_mention(user) + " has been promoted to " + (arg or "Admin") + "."
             )
         elif action == "superpromote":
             await e.client(
@@ -45,7 +45,7 @@ async def _promote_demote(e):
                     rank=arg if arg else "SuperAdmin",
                 )
             )
-            await e.reply("Successfully superpromoted {}".format(getMention(user)))
+            await e.reply("Successfully superpromoted {}".format(get_mention(user)))
         elif action == "demote":
             await e.client(
                 functions.channels.EditAdminRequest(
@@ -62,7 +62,7 @@ async def _promote_demote(e):
                     rank=arg if arg else "Member",
                 )
             )
-            await e.reply("Demoted {}!".format(getMention(user)))
+            await e.reply("Demoted {}!".format(get_mention(user)))
     except errors.ChatAdminRequiredError:
         await e.reply("Failure!, make sure I have add admin rights to the chat")
     except errors.rpcerrorlist.UserCreatorError:

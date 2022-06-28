@@ -8,7 +8,7 @@ from telethon import events, types
 
 from ._config import OWNER_ID, bot
 from ._handler import newMsg
-from ._helpers import getUser
+from ._helpers import get_user
 
 
 @newMsg(pattern="eval", from_users=[OWNER_ID])
@@ -165,7 +165,7 @@ async def _info(e):
     if not e.is_reply and len(e.text.split()) == 1:
         user = e.sender
     else:
-        user, _ = await getUser(e)
+        user, _ = await get_user(e)
     if not user:
         return await e.reply("No user found.")
     USER_INFO = "**USER INFO**\n"

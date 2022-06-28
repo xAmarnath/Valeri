@@ -28,7 +28,7 @@ def human_readable_size(size, speed=False):
     return "%3.1f %s" % (size, "TB")
 
 
-async def getUser(e: telethon.events.NewMessage.Event):
+async def get_user(e: telethon.events.NewMessage.Event):
     user: telethon.tl.types.User
     arg = ""
     args = e.text.split(maxsplit=2)
@@ -48,7 +48,7 @@ async def getUser(e: telethon.events.NewMessage.Event):
     return user, arg
 
 
-def getMention(user: telethon.tl.types.User, mode: str = "md"):
+def get_mention(user: telethon.tl.types.User, mode: str = "md"):
     # Get a mention of a user
     if mode == "md":
         return "[" + user.first_name + "](tg://user?id=" + str(user.id) + ")"
@@ -56,7 +56,7 @@ def getMention(user: telethon.tl.types.User, mode: str = "md"):
         return '<a href="tg://user?id=' + str(user.id) + '">' + user.first_name + "</a>"
 
 
-async def IsWorth(right, chat, user, admin_check=True):
+async def is_worth(right, chat, user, admin_check=True):
     # Check if a user has a certain right in a chat
     if user == OWNER_ID:
         return True
@@ -75,3 +75,22 @@ async def IsWorth(right, chat, user, admin_check=True):
         if p.admin_rights.to_dict()[right]:
             return True
     return False
+
+def human_readable_time(seconds: int):
+    # Convert a time in seconds to a human readable string
+    variables = ["s", "m", "h", "d"]
+    for x in variables:
+        if seconds < 60:
+            return "%d %s" % (seconds, x)
+        seconds /= 60
+    return "%d %s" % (seconds, "d")
+
+def human_currency(amount: int):
+    # Convert an amount of money to a human readable string
+    variables = ["¢", "¥", "€", "£"]
+    for x in variables:
+        if amount < 100:
+            return "%d %s" % (amount, x)
+        amount /= 100
+    return "%d %s" % (amount, "£")
+  

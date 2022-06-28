@@ -6,7 +6,7 @@ import speedtest
 
 from ._config import StartTime
 from ._handler import newMsg
-from ._helpers import human_readable_size
+from ._helpers import human_readable_size, human_readable_time
 from .db.db import get_db_stats
 
 
@@ -40,7 +40,7 @@ async def _ping(e):
     msg = await e.reply("Pinging...")
     endtime = time.time()
     ping = round((endtime - starttime) * 1000, 2)
-    uptime = round(time.time() - StartTime, 2)
+    uptime = human_readable_time(time.time() - StartTime)
     result = f"**Ping:** `{ping} ms`\n" f"**Uptime:** `{uptime} s`"
     await msg.edit(result)
 
@@ -62,7 +62,6 @@ async def _system(e):
         if psutil.net_if_addrs().get("Ethernet")
         else "N/A"
     )
-    db_free, db_total = get_db_stats()
     result = (
         f"**System Info:**\n\n"
         f"**CPU:** `{cpu}%`\n"

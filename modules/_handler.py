@@ -3,19 +3,22 @@ from functools import wraps
 from telethon import events
 
 from ._config import bot
-from ._helpers import IsWorth
+from ._helpers import is_worth
 from .db.auth import is_auth
 
 
 def newMsg(**args):
+    '''
+    Decorator for handling new messages.
+    '''
     args["pattern"] = "(?i)^[!/]" + args["pattern"] + "(?: |$|@MissValeri_Bot)(.*)"
 
     def decorator(func):
         async def wrapper(event):
-            try:
+            # try:
                 await func(event)
-            except Exception as e:
-                await event.reply(str(e))
+            # except Exception as e:
+                # await event.reply(str(e))
 
         bot.add_event_handler(wrapper, events.NewMessage(**args))
         return func
@@ -24,6 +27,9 @@ def newMsg(**args):
 
 
 def adminsOnly(func, right=""):
+    '''
+    Decorator for handling messages from admins.
+    '''
     @wraps(func)
     async def sed(event):
         if event.is_private:
@@ -34,6 +40,16 @@ def adminsOnly(func, right=""):
 
 
 def authOnly(func):
+    '''
+    Decorator for handling messages from authorized users.
+    '''
+    @wraps(func)
+    async def sed(event):
+        if event.is_private:
+            return await func(event)
+        if not is_auth(event.sender_id):
+            return
+        return await func(event)
     @wraps(func)
     async def sed(event):
         if event.sender_id:
