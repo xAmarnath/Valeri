@@ -41,7 +41,7 @@ async def _ping(e):
     endtime = time.time()
     ping = round((endtime - starttime) * 1000, 2)
     uptime = human_readable_time(time.time() - StartTime)
-    result = f"**Ping:** `{ping} ms`\n" f"**Uptime:** `{uptime} s`"
+    result = f"**Ping:** `{ping} ms`\n" f"**Uptime:** `{uptime}`"
     await msg.edit(result)
 
 
