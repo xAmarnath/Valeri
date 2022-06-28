@@ -14,10 +14,10 @@ def newMsg(**args):
 
     def decorator(func):
         async def wrapper(event):
-         try:
-            await func(event)
-         except Exception as e:
-            await event.reply("Error: {}\n**{}**".format(str(e), str(type(e))))
+            try:
+                await func(event)
+            except Exception as e:
+                await event.reply("Error: {}\n**{}**".format(str(e), str(type(e))))
 
         bot.add_event_handler(wrapper, events.NewMessage(**args))
         return func
