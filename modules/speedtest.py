@@ -7,7 +7,6 @@ import speedtest
 from ._config import StartTime
 from ._handler import newMsg
 from ._helpers import human_readable_size, human_readable_time
-from .db.db import get_db_stats
 
 
 @newMsg(pattern="speedtest")
