@@ -30,7 +30,7 @@ async def _imdb_search(e):
         result = response["results"][0]
         print(result)
         await e.reply(
-        """
+            """
         **ID:** `{}`
         **Title:** {}
         **Release Date:** {}
