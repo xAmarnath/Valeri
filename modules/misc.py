@@ -40,7 +40,9 @@ async def _imdb_search(e):
         """.format(
                 result["id"],
                 result["title"] if "title" in result else result["name"],
-                result["release_date"] if "release_date" in result else result["first_air_date"],
+                result["release_date"]
+                if "release_date" in result
+                else result["first_air_date"],
                 result["vote_average"] if "vote_average" in result else "N/A",
                 str(result["genre_ids"]),
                 result["overview"],
