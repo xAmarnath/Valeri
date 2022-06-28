@@ -4,7 +4,7 @@ from telethon import events
 
 from ._config import bot
 from ._helpers import IsWorth
-from .db.auth import isAUTH
+from .db.auth import is_auth
 
 
 def newMsg(**args):
@@ -37,6 +37,6 @@ def authOnly(func):
     @wraps(func)
     async def sed(event):
         if event.sender_id:
-            if isAUTH(event.sender_id):
+            if is_auth(event.sender_id):
                 return await func(event)
         return await event.reply("You are not authorized to use this command.")
