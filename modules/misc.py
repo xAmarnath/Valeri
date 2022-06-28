@@ -49,7 +49,7 @@ def search_imdb(query: str):
         url, params=params, headers={"User-Agent": "Mozilla/5.0"}, timeout=10
     ).json()
     if response["results"]:
-        result = response["results"][0]
+        result = response["results"][0] 
         if result["media_type"] == "movie":
             url = "https://api.themoviedb.org/3/movie/{}".format(result["id"])
             result = get(url, headers={"User-Agent": "Mozilla/5.0"}, params={
