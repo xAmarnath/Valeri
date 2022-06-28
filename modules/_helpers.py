@@ -76,6 +76,7 @@ async def is_worth(right, chat, user, admin_check=True):
             return True
     return False
 
+
 def human_readable_time(seconds: int):
     # Convert a time in seconds to a human readable string
     variables = ["s", "m", "h", "d"]
@@ -85,6 +86,7 @@ def human_readable_time(seconds: int):
         seconds /= 60
     return "%d %s" % (seconds, "d")
 
+
 def human_currency(amount: int):
     # Convert an amount of money to a human readable string
     variables = ["¢", "¥", "€", "£"]
@@ -93,4 +95,3 @@ def human_currency(amount: int):
             return "%d %s" % (amount, x)
         amount /= 100
     return "%d %s" % (amount, "£")
-  
