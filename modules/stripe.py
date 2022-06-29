@@ -32,7 +32,7 @@ def get_uuid(cc, exp, cvc):
         dcode = "3ds_vbv"
     elif "Your card has been declined" in dcode:
         message = dcode
-        if message = 'N/A':
+        if message == 'N/A':
            dcode = 'generic_decline'
         else:
            dcode = message
