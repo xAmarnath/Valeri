@@ -39,15 +39,12 @@ async def _stripe(e):
             cc, round(int(time), 2)
         )
     else:
-        msg = """
-        ```Card has been declined.```
-        card: ```{}```
-        message: ```{}```
-        decline_code: ```{}```
-        gateway: ```stripe```
-        status: ```Declined```
-        time taken: ```{} seconds```
-        """.format(
-            cc, msg, code, round(int(time), 2)
-        )
+        msg = '**Stripe/Charge/1$**'
+        msg += '**Card:** `{}`'
+        msg += '**Response:** {}'
+        msg += '**DCode:** {}'
+        msg += '**TimeTaken:** ```{}```'
+        msg += '**Credits:** 100'
+        msg += '**Checked By:** [{}](tg://user?id={})'
+        msg = msg.format(arg, msg, code, round(int(time), 2), e.sender.first_name, e.sender_id)
     await message.edit(msg)
