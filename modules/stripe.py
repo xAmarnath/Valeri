@@ -15,6 +15,9 @@ def get_uuid(cc, exp, cvc):
     if 'insufficient' in dcode:
        message= dcode
        dcode = 'insufficient_funds'
+    elif 'security code' in dcode:
+       message = dcode
+       dcode = 'incorrect_cvc'
     return resp["status"], dcode, message, resp["time"]
 
 
