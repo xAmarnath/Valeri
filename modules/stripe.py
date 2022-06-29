@@ -30,6 +30,12 @@ def get_uuid(cc, exp, cvc):
         dcode = "card_not_support"
     elif "authentication" in message:
         dcode = "3ds_vbv"
+    elif "Your card has been declined" in dcode:
+        message = dcode
+        if message = 'N/A':
+           dcode = 'generic_decline'
+        else:
+           dcode = message
     return resp["status"], dcode, message, resp["time"], emoji
 
 
@@ -68,7 +74,7 @@ async def _stripe(e):
         msg += "\n**› TimeTaken:** ```{}s```"
         msg += "\n**› Credits:** 10k"
         msg += "\n**› Checked By:** [{}](tg://user?id={})"
-        buttons = Button.url("Payment Page", "https://google.com")
+        buttons = Button.url("Payment Page (Soon)", "https://google.com")
         msg = msg.format(
             arg,
             emoji,
