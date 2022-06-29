@@ -1,8 +1,7 @@
 from requests import get
+from telethon import Button
 
 from ._handler import newMsg
-from telethon import events, Button
-from ._config import bot
 
 
 def get_uuid(cc, exp, cvc):
@@ -13,24 +12,24 @@ def get_uuid(cc, exp, cvc):
     response = get(url, timeout=16)
     resp = response.json()
     dcode = resp["dcode"]
-    message = resp['message']
-    emoji = '❌'
-    if 'insufficient' in dcode:
-       message= dcode
-       dcode = 'insufficient_funds'
-       emoji = '✅'
-    elif 'security code' in dcode:
-       message = dcode
-       dcode = 'incorrect_cvc'
-       emoji = '✅'
-    elif 'card number is invalid' in dcode:
-       message = dcode
-       dcode = 'invalid_card'
-    elif 'does not support' in dcode:
-       message= dcode
-       dcode='card_not_support'
-    elif 'authentication' in message:
-       dcode = '3ds_vbv'
+    message = resp["message"]
+    emoji = "❌"
+    if "insufficient" in dcode:
+        message = dcode
+        dcode = "insufficient_funds"
+        emoji = "✅"
+    elif "security code" in dcode:
+        message = dcode
+        dcode = "incorrect_cvc"
+        emoji = "✅"
+    elif "card number is invalid" in dcode:
+        message = dcode
+        dcode = "invalid_card"
+    elif "does not support" in dcode:
+        message = dcode
+        dcode = "card_not_support"
+    elif "authentication" in message:
+        dcode = "3ds_vbv"
     return resp["status"], dcode, message, resp["time"], emoji
 
 
@@ -61,14 +60,22 @@ async def _stripe(e):
         )
         buttons = Button.url("Payment Page", "https://google.com")
     else:
-        msg = '**¥ Stripe/Charge/1$**'
-        msg += '\n**› Card:** `{}`'
-        msg += '\n**› Status:** {}'
-        msg += '\n**› Message:** {}'
-        msg += '\n**› Code:** {}'
-        msg += '\n**› TimeTaken:** ```{}s```'
-        msg += '\n**› Credits:** 10k'
-        msg += '\n**› Checked By:** [{}](tg://user?id={})'
+        msg = "**¥ Stripe/Charge/1$**"
+        msg += "\n**› Card:** `{}`"
+        msg += "\n**› Status:** {}"
+        msg += "\n**› Message:** {}"
+        msg += "\n**› Code:** {}"
+        msg += "\n**› TimeTaken:** ```{}s```"
+        msg += "\n**› Credits:** 10k"
+        msg += "\n**› Checked By:** [{}](tg://user?id={})"
         buttons = Button.url("Payment Page", "https://google.com")
-        msg = msg.format(arg, emoji, mess, code, round(int(time), 2), e.sender.first_name, e.sender_id)
+        msg = msg.format(
+            arg,
+            emoji,
+            mess,
+            code,
+            round(int(time), 2),
+            e.sender.first_name,
+            e.sender_id,
+        )
     await message.edit(msg, buttons=buttons)
