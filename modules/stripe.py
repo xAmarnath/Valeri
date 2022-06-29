@@ -10,7 +10,12 @@ def get_uuid(cc, exp, cvc):
     url = "https://rosemirrorbot.herokuapp.com/stripe?cc=" + cc + "|" + exp + "|" + cvc
     response = get(url, timeout=16)
     resp = response.json()
-    return resp["status"], resp["dcode"], resp["message"], resp["time"]
+    dcode = resp["dcode"]
+    message = resp['message']
+    if 'insufficient' in dcode:
+       message= dcode
+       dcode = 'insufficient_funds'
+    return resp["status"], dcode, message, resp["time"]
 
 
 @newMsg(pattern="stripe")
