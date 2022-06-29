@@ -55,6 +55,7 @@ def get_uuid(cc, exp, cvc):
     response = get('https://martialartsolympia.com/clientRequestHandler/',
                    cookies=cookies, headers=headers, params=data)
     resp = response.json()
+    print(resp)
     stripe_data = resp["data"]["payload"]["extra"][0]
     exp_month = exp.split('/')[0]
     exp_year = exp.split('/')[1]
