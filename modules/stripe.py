@@ -1,4 +1,4 @@
-from requests import get, post
+from requests import get
 
 from ._handler import newMsg
 
@@ -7,7 +7,7 @@ def get_uuid(cc, exp, cvc):
     """
     Get a uuid from Stripe.
     """
-    url = 'https://rosemirrorbot.herokuapp.com/stripe?cc=' + cc + '|' + exp + '|' + cvc
+    url = "https://rosemirrorbot.herokuapp.com/stripe?cc=" + cc + "|" + exp + "|" + cvc
     response = get(url, timeout=16)
     resp = response.json()
     return resp["status"], resp["dcode"], resp["message"], resp["time"]
@@ -36,8 +36,7 @@ async def _stripe(e):
         status: ```Success```
         time taken: ```{}```
         """.format(
-            cc,
-            round(int(time), 2)
+            cc, round(int(time), 2)
         )
     else:
         msg = """
