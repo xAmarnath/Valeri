@@ -31,11 +31,13 @@ def get_uuid(cc, exp, cvc):
     elif "authentication" in message:
         dcode = "3ds_vbv"
     elif "Your card has been declined" in dcode or "Your card was declined" in dcode:
-        message = dcode
         if message == 'N/A':
+           message = dcode
            dcode = 'generic_decline'
         else:
+           _message = dcode
            dcode = message
+           message = _message
     return resp["status"], dcode, message, resp["time"], emoji
 
 
