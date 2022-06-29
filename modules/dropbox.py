@@ -139,7 +139,6 @@ async def _dropbox(e):
         return await e.reply("Dropbox API key not set.")
     cmd = e.text.split(" ")[0][1:]
     if cmd == "upload" or cmd == "drop":
-        startTime = time.time()
         if not e.reply_to_msg_id:
             return await e.reply("Reply to a file to upload.")
         reply = await e.get_reply_message()
@@ -150,12 +149,13 @@ async def _dropbox(e):
             file_name = e.text.split(" ")[1]
         else:
             file_name = file.split("/")[-1]
+        startTime = time.time()
         r = upload_file(file, file_name)
         if r.get("error"):
             return await e.reply(r["error_summary"])
         url, _ = get_download_url(file_name)
-        os.remove(file)
         endTime = time.time()
+        os.remove(file)
         dropbox = (
             f"**Dropbox upload complete in {endTime - startTime:.2f} seconds.**\n"
             f"**Name**: {file_name}\n"

@@ -17,8 +17,8 @@ async def _imdb_search(e):
     except IndexError:
         return await e.reply("Provide the title name!")
     caption, url, buttons = search_imdb(query)
-    if len(caption) > 4094:
-        caption = caption[:4090] + "..."
+    if len(caption) > 1024:
+        caption = caption[:1020] + "..."
     await e.reply(caption, file=url, parse_mode="html", buttons=buttons)
 
 
