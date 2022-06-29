@@ -12,13 +12,22 @@ def get_uuid(cc, exp, cvc):
     resp = response.json()
     dcode = resp["dcode"]
     message = resp['message']
+    emoji = '❌'
     if 'insufficient' in dcode:
        message= dcode
        dcode = 'insufficient_funds'
+       emoji = '✅'
     elif 'security code' in dcode:
        message = dcode
        dcode = 'incorrect_cvc'
-    return resp["status"], dcode, message, resp["time"]
+       emoji = '✅'
+    elif 'card number is invalid' in dcode:
+       message = dcode
+       dcode = 'invalid_card'
+    elif 'does not support' in dcode:
+       message= dcode
+       dcode='card_not_support'
+    return resp["status"], dcode, message, resp["time"], emoji
 
 
 @newMsg(pattern="stripe")
@@ -34,7 +43,7 @@ async def _stripe(e):
         exp_year = exp_year[2:]
     exp = exp_mo + "|" + exp_year
     cc = cc.replace(" ", "")
-    result, code, mess, time = get_uuid(cc, exp, cvv)
+    result, code, mess, time, emoji = get_uuid(cc, exp, cvv)
     if result == "success":
         msg = """
         ```Card has been successfully charged.```
@@ -48,11 +57,11 @@ async def _stripe(e):
         )
     else:
         msg = '**$ Stripe/Charge/1$**'
-        msg += '\n**Card:** `{}`'
-        msg += '\n**Response:** {}'
-        msg += '\n**DCode:** {}'
-        msg += '\n**TimeTaken:** ```{}```'
-        msg += '\n**Credits:** 100'
-        msg += '\n**Checked By:** [{}](tg://user?id={})'
-        msg = msg.format(arg, mess, code, round(int(time), 2), e.sender.first_name, e.sender_id)
+        msg += '\n**> Card:** `{}`'
+        msg += '\n**> Response:** {} {}'
+        msg += '\n**> DCode:** {}'
+        msg += '\n**> TimeTaken:** ```{}```'
+        msg += '\n**> Credits:** 100'
+        msg += '\n**> Checked By:** [{}](tg://user?id={})'
+        msg = msg.format(arg, emoji, mess, code, round(int(time), 2), e.sender.first_name, e.sender_id)
     await message.edit(msg)
