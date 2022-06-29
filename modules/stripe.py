@@ -26,7 +26,7 @@ async def _stripe(e):
         exp_year = exp_year[2:]
     exp = exp_mo + "|" + exp_year
     cc = cc.replace(" ", "")
-    result, code, msg, time = get_uuid(cc, exp, cvv)
+    result, code, mess, time = get_uuid(cc, exp, cvv)
     if result == "success":
         msg = """
         ```Card has been successfully charged.```
@@ -39,12 +39,12 @@ async def _stripe(e):
             cc, round(int(time), 2)
         )
     else:
-        msg = '**Stripe/Charge/1$**'
-        msg += '**Card:** `{}`'
-        msg += '**Response:** {}'
-        msg += '**DCode:** {}'
-        msg += '**TimeTaken:** ```{}```'
-        msg += '**Credits:** 100'
-        msg += '**Checked By:** [{}](tg://user?id={})'
-        msg = msg.format(arg, msg, code, round(int(time), 2), e.sender.first_name, e.sender_id)
+        msg = '**$ Stripe/Charge/1$**'
+        msg += '\n**Card:** `{}`'
+        msg += '\n**Response:** {}'
+        msg += '\n**DCode:** {}'
+        msg += '\n**TimeTaken:** ```{}```'
+        msg += '\n**Credits:** 100'
+        msg += '\n**Checked By:** [{}](tg://user?id={})'
+        msg = msg.format(arg, mess, code, round(int(time), 2), e.sender.first_name, e.sender_id)
     await message.edit(msg)
