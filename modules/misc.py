@@ -30,20 +30,7 @@ def search_imdb(query: str):
         str: The caption of the result.
         str: The URL of the poster.
     """
-    suggestions = get(
-        "https://v2.sg.media-imdb.com/suggestion/titles/"
-        + query[0].lower()
-        + "/"
-        + quote(query)
-        + ".json"
-    )
-    if suggestions.status_code != 200:
-        return "Error: " + str(suggestions.status_code), None, None
-    suggestions = suggestions.json()
-    try:
-        query = suggestions["d"][0]["l"]
-    except (KeyError, IndexError):
-        pass
+    
     url = "https://api.themoviedb.org/3/search/multi"
     params = {
         "api_key": tapiKey,
