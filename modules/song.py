@@ -1,8 +1,7 @@
 import io
 
 from requests import get
-from telethon.types import DocumentAttributeAudio
-
+from telethon import types 
 from ._handler import newMsg
 
 HOST = "https://api.roseloverx.tk/youtube/download"
@@ -18,4 +17,4 @@ async def _song(e):
     r = get(HOST, params=params)
     with io.BytesIO(r.content) as file:
         file.name = r.headers.get("file-name") or "song.mp3"
-        await e.respond(file=file, attributes=[DocumentAttributeAudio(60, performer='RoseLover')])
+        await e.respond(file=file, attributes=[types.DocumentAttributeAudio(60, performer='RoseLover')])
