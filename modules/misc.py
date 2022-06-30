@@ -1,5 +1,3 @@
-from urllib.parse import quote
-
 from requests import get
 from telethon import Button
 
@@ -30,7 +28,7 @@ def search_imdb(query: str):
         str: The caption of the result.
         str: The URL of the poster.
     """
-    
+
     url = "https://api.themoviedb.org/3/search/multi"
     params = {
         "api_key": tapiKey,
