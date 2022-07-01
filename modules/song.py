@@ -19,7 +19,7 @@ async def _song(message):
     song = search_song(query=query)
     if song is None:
         return await message.reply("song not found.")
-    params = {"id": song['id'], "download": "true"}
+    params = {"id": song["id"], "download": "true"}
     response = get(HOST + "/youtube/download", params=params)
     thumb = types.InputWebDocument(url=song['thumbnail'], size=0, mime_type="image/jpeg", attributes=[])
     with io.BytesIO(response.content) as file:
@@ -37,21 +37,21 @@ async def _song(message):
 
 
 def search_song(query):
-    '''
+    """
     Search for a song on youtube and return the first result.
-    '''
+    """
     params = {"q": query}
     request = get(HOST + "/youtube/search", params=params)
-    request = request.json() if request.status_code == 200 else {'data': []}
-    if len(request['data']) == 0:
+    request = request.json() if request.status_code == 200 else {"data": []}
+    if len(request["data"]) == 0:
         return None
     return request["data"][0]
 
 
 def convert_duration(duration):
-    '''
+    """
     Converts a duration in the format of HH:MM:SS to seconds.
-    '''
+    """
     duration = duration.split(":")
     if len(duration) == 3:
         return int(duration[0]) * 60 * 60 + int(duration[1]) * 60 + int(duration[2])
