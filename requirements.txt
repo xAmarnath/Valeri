@@ -6,3 +6,4 @@ speedtest-cli
 psutil
 requests 
 cryptg
+seedrcc

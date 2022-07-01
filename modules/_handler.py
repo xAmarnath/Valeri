@@ -11,14 +11,12 @@ def newMsg(**args):
     """
     Decorator for handling new messages.
     """
-    args["pattern"] = "(?i)^[!/]" + args["pattern"] + "(?: |$|@MissValeri_Bot)(.*)"
+    args["pattern"] = "(?i)^[!/]" + args["pattern"] + \
+        "(?: |$|@MissValeri_Bot)(.*)"
 
     def decorator(func):
         async def wrapper(event):
-            try:
-                await func(event)
-            except Exception as e:
-                await event.reply("Error: {}\n**{}**".format(str(e), str(type(e))))
+            await func(event)
 
         bot.add_event_handler(wrapper, events.NewMessage(**args))
         return func
@@ -41,12 +39,40 @@ def adminsOnly(func, right=""):
 
 
 def auth_only(func):
-    """
-    Decorator for handling messages from authorized users.
-    """
-
+    '''
+    Decorator for handling messages from authenticated users.
+    '''
     @wraps(func)
     async def sed(event):
         if any([is_auth(event.sender_id), event.sender_id == OWNER_ID]):
-            return await func(event)
-        return await event.reply("You are not authorized to use this command.")
+            await func(event)
+        else:
+            await event.reply("You are not authorized to use this command")
+
+    return sed
+
+def newCall(**args):
+    """
+    Decorator for handling new calls.
+    """
+    def decorator(func):
+        async def wrapper(event):
+            await func(event)
+
+        bot.add_event_handler(wrapper, events.CallbackQuery(**args))
+        return func
+
+    return decorator
+
+def newIn(**args):
+    """
+    Decorator for handling new inline queries.
+    """
+    def decorator(func):
+        async def wrapper(event):
+            await func(event)
+
+        bot.add_event_handler(wrapper, events.InlineQuery(**args))
+        return func
+
+    return decorator
