@@ -21,17 +21,21 @@ async def _song(message):
         return await message.reply("song not found.")
     params = {"id": song["id"], "download": "true"}
     response = get(HOST + "/youtube/download", params=params)
-    thumb = types.InputWebDocument(url=song['thumbnail'], size=0, mime_type="image/jpeg", attributes=[])
+    thumb = types.InputWebDocument(
+        url=song["thumbnail"], size=0, mime_type="image/jpeg", attributes=[]
+    )
     with io.BytesIO(response.content) as file:
         file.name = response.headers.get("file-name") or "song.mp3"
         async with message.client.action(message.chat_id, "audio"):
             await message.respond(
                 file=file,
-                attributes=[types.DocumentAttributeAudio(
-                    duration=convert_duration(song["duration"]),
-                    title=song["title"],
-                    performer=song["channel"],
-                )],
+                attributes=[
+                    types.DocumentAttributeAudio(
+                        duration=convert_duration(song["duration"]),
+                        title=song["title"],
+                        performer=song["channel"],
+                    )
+                ],
                 thumb=thumb,
             )
 

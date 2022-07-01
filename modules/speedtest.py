@@ -5,7 +5,7 @@ import psutil
 import speedtest
 
 from ._config import StartTime
-from ._handler import newMsg, auth_only
+from ._handler import auth_only, newMsg
 from ._helpers import human_readable_size, human_readable_time
 
 

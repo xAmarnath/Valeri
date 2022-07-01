@@ -2,17 +2,16 @@ from functools import wraps
 
 from telethon import events
 
-from ._config import bot, OWNER_ID
-from .db.auth import is_auth
+from ._config import OWNER_ID, bot
 from ._helpers import is_worth
+from .db.auth import is_auth
 
 
 def newMsg(**args):
     """
     Decorator for handling new messages.
     """
-    args["pattern"] = "(?i)^[!/]" + args["pattern"] + \
-        "(?: |$|@MissValeri_Bot)(.*)"
+    args["pattern"] = "(?i)^[!/]" + args["pattern"] + "(?: |$|@MissValeri_Bot)(.*)"
 
     def decorator(func):
         async def wrapper(event):
