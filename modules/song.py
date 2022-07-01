@@ -38,7 +38,8 @@ async def _song(message):
                     thumb=thumb,
                 )
 
-@newMsg(pattern='video')
+
+@newMsg(pattern="video")
 async def _video_dl_youtube(message):
     try:
         query = message.text.split(None, maxsplit=1)[1]
@@ -60,11 +61,13 @@ async def _video_dl_youtube(message):
                         types.DocumentAttributeVideo(
                             duration=convert_duration(song["duration"]),
                             w=1280,
-                            h=720, supports_streaming=True
+                            h=720,
+                            supports_streaming=True,
                         )
                     ],
                     thumb=thumb,
                 )
+
 
 def search_song(query):
     """
