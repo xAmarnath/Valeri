@@ -11,8 +11,7 @@ def newMsg(**args):
     """
     Decorator for handling new messages.
     """
-    args["pattern"] = "(?i)^[!/]" + args["pattern"] + \
-        "(?: |$|@MissValeri_Bot)(.*)"
+    args["pattern"] = "(?i)^[!/]" + args["pattern"] + "(?: |$|@MissValeri_Bot)(.*)"
 
     def decorator(func):
         async def wrapper(event):
@@ -39,9 +38,10 @@ def adminsOnly(func, right=""):
 
 
 def auth_only(func):
-    '''
+    """
     Decorator for handling messages from authenticated users.
-    '''
+    """
+
     @wraps(func)
     async def sed(event):
         if any([is_auth(event.sender_id), event.sender_id == OWNER_ID]):
@@ -51,10 +51,12 @@ def auth_only(func):
 
     return sed
 
+
 def newCall(**args):
     """
     Decorator for handling new calls.
     """
+
     def decorator(func):
         async def wrapper(event):
             await func(event)
@@ -64,10 +66,12 @@ def newCall(**args):
 
     return decorator
 
+
 def newIn(**args):
     """
     Decorator for handling new inline queries.
     """
+
     def decorator(func):
         async def wrapper(event):
             await func(event)

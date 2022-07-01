@@ -1,8 +1,9 @@
+from os import remove, rename
+
 from ._handler import newMsg
-from os import rename, remove
 
 
-@newMsg(pattern='(stoi|itos)')
+@newMsg(pattern="(stoi|itos)")
 async def _stoi(message):
     if not message.reply_to:
         return await message.reply("Reply to a media to convert it to sticker.")
@@ -12,12 +13,12 @@ async def _stoi(message):
     if not any([r.photo, r.sticker]):
         return await message.reply("Reply to a media to convert it to sticker.")
     media = await r.download_media()
-    if 'stoi' in message.text:
-        rename(media, media + '.png')
-        media += '.png'
+    if "stoi" in message.text:
+        rename(media, media + ".png")
+        media += ".png"
     else:
-        rename(media, media + '.webp')
-        media += '.webp'
+        rename(media, media + ".webp")
+        media += ".webp"
     await message.respond(file=media)
     remove(media)
-    remove(media.replace('.'+media.split('.')[-1], ''))
+    remove(media.replace("." + media.split(".")[-1], ""))

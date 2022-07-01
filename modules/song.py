@@ -22,21 +22,21 @@ async def _song(message):
     params = {"id": song["id"], "download": "true"}
     response = get(HOST + "/youtube/download", params=params)
     with io.BytesIO(response.content) as file:
-      with io.BytesIO(get(song["thumbnail"]).content) as thumb:
-        thumb.name = "thumbnail.jpg"
-        file.name = response.headers.get("file-name") or "song.mp3"
-        async with message.client.action(message.chat_id, "audio"):
-            await message.respond(
-                file=file,
-                attributes=[
-                    types.DocumentAttributeAudio(
-                        duration=convert_duration(song["duration"]),
-                        title=song["title"],
-                        performer=song["channel"],
-                    )
-                ],
-                thumb=thumb,
-            )
+        with io.BytesIO(get(song["thumbnail"]).content) as thumb:
+            thumb.name = "thumbnail.jpg"
+            file.name = response.headers.get("file-name") or "song.mp3"
+            async with message.client.action(message.chat_id, "audio"):
+                await message.respond(
+                    file=file,
+                    attributes=[
+                        types.DocumentAttributeAudio(
+                            duration=convert_duration(song["duration"]),
+                            title=song["title"],
+                            performer=song["channel"],
+                        )
+                    ],
+                    thumb=thumb,
+                )
 
 
 def search_song(query):
