@@ -20,7 +20,7 @@ async def _torrent(message: events.InlineQuery.Event):
             text="Torrent search query missing." + "\n" + "Usage: `torrent <query>`",
         )
         return await message.answer([result])
-    request = get("https://tpb23.ukpass.co/apibay/q.php?q="+quote(query))
+    request = get("https://tpb23.ukpass.co/apibay/q.php?q=" + quote(query))
     request = request.json()
     results = []
     for result in request:
