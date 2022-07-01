@@ -51,7 +51,7 @@ async def _video_dl_youtube(message):
     params = {"id": vid["id"], "download": "true", "video": "true"}
     response = get(HOST + "/youtube/download", params=params)
     with io.BytesIO(response.content) as file:
-        with io.BytesIO(get(song["thumbnail"]).content) as thumb:
+        with io.BytesIO(get(vid["thumbnail"]).content) as thumb:
             thumb.name = "thumbnail.jpg"
             file.name = response.headers.get("file-name") or "video.mp4"
             async with message.client.action(message.chat_id, "video"):
@@ -59,7 +59,7 @@ async def _video_dl_youtube(message):
                     file=file,
                     attributes=[
                         types.DocumentAttributeVideo(
-                            duration=convert_duration(song["duration"]),
+                            duration=convert_duration(vid["duration"]),
                             w=1280,
                             h=720,
                             supports_streaming=True,
