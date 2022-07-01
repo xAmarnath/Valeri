@@ -5,11 +5,12 @@ import psutil
 import speedtest
 
 from ._config import StartTime
-from ._handler import newMsg
+from ._handler import newMsg, auth_only
 from ._helpers import human_readable_size, human_readable_time
 
 
 @newMsg(pattern="speedtest")
+@auth_only
 async def _speedtest(e):
     msg = await e.reply("Testing internet speed...")
     st = speedtest.Speedtest()

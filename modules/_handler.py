@@ -2,15 +2,17 @@ from functools import wraps
 
 from telethon import events
 
-from ._config import bot
+from ._config import bot, OWNER_ID
 from .db.auth import is_auth
+from ._helpers import is_worth
 
 
 def newMsg(**args):
     """
     Decorator for handling new messages.
     """
-    args["pattern"] = "(?i)^[!/]" + args["pattern"] + "(?: |$|@MissValeri_Bot)(.*)"
+    args["pattern"] = "(?i)^[!/]" + args["pattern"] + \
+        "(?: |$|@MissValeri_Bot)(.*)"
 
     def decorator(func):
         async def wrapper(event):
@@ -34,27 +36,18 @@ def adminsOnly(func, right=""):
     async def sed(event):
         if event.is_private:
             return await func(event)
-        if not IsWorth(right, event.chat_id, event.sender_id):
+        if not is_worth(right, event.chat_id, event.sender_id):
             return
         return await func(event)
 
 
-def authOnly(func):
+def auth_only(func):
     """
     Decorator for handling messages from authorized users.
     """
 
     @wraps(func)
     async def sed(event):
-        if event.is_private:
+        if any([is_auth(event.sender_id), event.sender_id == OWNER_ID]):
             return await func(event)
-        if not is_auth(event.sender_id):
-            return
-        return await func(event)
-
-    @wraps(func)
-    async def sed(event):
-        if event.sender_id:
-            if is_auth(event.sender_id):
-                return await func(event)
         return await event.reply("You are not authorized to use this command.")
