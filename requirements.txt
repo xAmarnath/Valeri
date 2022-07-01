@@ -1,4 +1,4 @@
-git+https://github.com/New-dev0/Telethon.git
+newthon
 pymongo
 dnspython
 python-dotenv
