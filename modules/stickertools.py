@@ -54,6 +54,7 @@ async def _animate(msg):
     await msg.respond(file="{}-anim.mp4".format(msg.id))
     await mg.delete()
 
+
 @newMsg(pattern="color")
 async def _animate(msg):
     if not msg.reply_to:
@@ -66,6 +67,7 @@ async def _animate(msg):
     color_f = color_image(f)
     await msg.respond(file=color_f)
     await mg.delete()
+
 
 @newMsg(pattern="(stoi|itos)")
 async def _stoi(message):
