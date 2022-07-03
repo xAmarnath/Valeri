@@ -23,9 +23,9 @@ def color_image(path):
             headers={"api-key": "quickstart-QUdJIGlzIGNvbWluZy4uLi4K"},
         )
         with open("color-" + path, "wb") as file:
-            data = get(r.json())
+            data = r.json()
             try:
-                url = data["output_url"].content
+                url = data["output_url"]
             except KeyError:
                 return "", str(data)
             file.write(get(url).content)
