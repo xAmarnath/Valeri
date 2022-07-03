@@ -54,6 +54,18 @@ async def _animate(msg):
     await msg.respond(file="{}-anim.mp4".format(msg.id))
     await mg.delete()
 
+@newMsg(pattern="color")
+async def _animate(msg):
+    if not msg.reply_to:
+        return await msg.reply("Reply to sticker/photo to animate it")
+    r = await msg.get_reply_message()
+    mg = await msg.reply("`Processing..`")
+    if not any([r.photo, r.sticker]):
+        return await msg.reply("nil")
+    f = await r.download_media()
+    color_f = color_image(f)
+    await msg.respond(file=color_f)
+    await mg.delete()
 
 @newMsg(pattern="(stoi|itos)")
 async def _stoi(message):
