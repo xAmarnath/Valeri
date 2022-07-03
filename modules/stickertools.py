@@ -13,9 +13,9 @@ async def run_cmd(cmd):
  return str(o), str(e)
 
 def color_image(path):
-    with open(path, 'rb') as file
+    with open(path, 'rb') as file:
      r = post('https://api.deepai.org/api/colorizer', files={"image": file}, headers={'api-key': 'quickstart-QUdJIGlzIGNvbWluZy4uLi4K'})
-    with open('color-' + path, 'wb') as file:
+     with open('color-' + path, 'wb') as file:
       file.write(get(r.json()['output_url']))
     return 'color-' + path
 
