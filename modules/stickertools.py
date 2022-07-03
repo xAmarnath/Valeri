@@ -23,7 +23,7 @@ def color_image(path):
             headers={"api-key": "quickstart-QUdJIGlzIGNvbWluZy4uLi4K"},
         )
         with open("color-" + path, "wb") as file:
-            file.write(get(r.json()["output_url"]))
+            file.write(get(r.json()["output_url"]).content)
     return "color-" + path
 
 
@@ -40,18 +40,18 @@ FFMPEG_COMMAND = 'ffmpeg -loop 1 -framerate 30 -t 0.16 -i {}  -loop 1 -framerate
 @newMsg(pattern="animate")
 async def _animate(msg):
     if not msg.reply_to:
-        return await e.reply("Reply to sticker/photo to animate it")
+        return await msg.reply("Reply to sticker/photo to animate it")
     r = await msg.get_reply_message()
     mg = await msg.reply("`Processing..`")
     if not any([r.photo, r.sticker]):
-        return await e.reply("nil")
+        return await msg.reply("nil")
     f = await r.download_media()
     color_f = color_image(f)
     similarize_image(f)
     await run_cmd(
         FFMPEG_COMMAND.format(f, color_f, f, color_f, "{}-anim.mp4".format(msg.id))
     )
-    await e.respond(file="{}-anim.mp4".format(msg.id))
+    await msg.respond(file="{}-anim.mp4".format(msg.id))
     await mg.delete()
 
 
