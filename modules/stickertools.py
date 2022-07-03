@@ -25,11 +25,11 @@ def color_image(path):
         with open("color-" + path, "wb") as file:
             data = get(r.json())
             try:
-              url = data['output_url'].content
+                url = data["output_url"].content
             except KeyError:
-              return '', str(data)
+                return "", str(data)
             file.write(get(url).content)
-    return "color-" + path, ''
+    return "color-" + path, ""
 
 
 def similarize_image(image):
@@ -52,7 +52,7 @@ async def _animate(msg):
         return await msg.reply("nil")
     f = await r.download_media()
     color_f, err = color_image(f)
-    if err != '':
+    if err != "":
         return await mg.edit(str(err))
     similarize_image(f)
     await run_cmd(
@@ -72,7 +72,7 @@ async def _animate(msg):
         return await msg.reply("nil")
     f = await r.download_media()
     color_f, err = color_image(f)
-    if err != '':
+    if err != "":
         return await mg.edit(str(err))
     await msg.respond(file=color_f)
     await mg.delete()
