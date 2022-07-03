@@ -23,8 +23,13 @@ def color_image(path):
             headers={"api-key": "quickstart-QUdJIGlzIGNvbWluZy4uLi4K"},
         )
         with open("color-" + path, "wb") as file:
-            file.write(get(r.json()["output_url"]).content)
-    return "color-" + path
+            data = get(r.json())
+            try:
+              url = data['output_url'].content
+            except KeyError:
+              return '', str(data)
+            file.write(get(url).content)
+    return "color-" + path, ''
 
 
 def similarize_image(image):
@@ -46,7 +51,9 @@ async def _animate(msg):
     if not any([r.photo, r.sticker]):
         return await msg.reply("nil")
     f = await r.download_media()
-    color_f = color_image(f)
+    color_f, err = color_image(f)
+    if err != '':
+        return await mg.edit(str(err))
     similarize_image(f)
     await run_cmd(
         FFMPEG_COMMAND.format(f, color_f, f, color_f, "{}-anim.mp4".format(msg.id))
@@ -64,7 +71,9 @@ async def _animate(msg):
     if not any([r.photo, r.sticker]):
         return await msg.reply("nil")
     f = await r.download_media()
-    color_f = color_image(f)
+    color_f, err = color_image(f)
+    if err != '':
+        return await mg.edit(str(err))
     await msg.respond(file=color_f)
     await mg.delete()
 
