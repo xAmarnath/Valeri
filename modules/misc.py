@@ -197,7 +197,7 @@ async def fake(message):
     )
 
 
-@newMsg("(w|wiki)")
+@newMsg(pattern="(w|wiki)")
 async def wiki_(message):
     query = get_text_content(message=message)
     if query is None:
