@@ -37,6 +37,18 @@ def adminsOnly(func, right=""):
             return
         return await func(event)
 
+def master_only(func):
+    '''
+    Decorator for handling messages from the master.
+    '''
+    @wraps(func)
+    async def sed(event):
+        if event.sender_id == OWNER_ID:
+            await func(event)
+        else:
+            await event.reply("You are not authorized to use this command")
+
+    return sed
 
 def auth_only(func):
     '''

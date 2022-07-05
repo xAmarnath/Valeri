@@ -46,6 +46,7 @@ async def _ping(e):
 
 
 @newMsg(pattern="system")
+@auth_only
 async def _system(e):
     msg = await e.reply("Getting system info...")
     cpu = psutil.cpu_percent()

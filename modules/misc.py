@@ -1,9 +1,13 @@
-from requests import get
+import json
+import time
+from ._handler import newMsg
+from ._config import TMDB_KEY as tapiKey
+from ._helpers import get_text_content, get_user, gen_random_string
+from ._functions import search_imdb
+from requests import get, post
 from telethon import Button
 
-from ._config import TMDB_KEY as tapiKey
-from ._handler import newMsg
-from ._helpers import human_currency
+TELEGRAPH_API_KEY = ""
 
 
 @newMsg(pattern="(imdb|tmdb)")
@@ -20,210 +24,337 @@ async def _imdb_search(e):
     await e.reply(caption, file=url, parse_mode="html", buttons=buttons)
 
 
-def search_imdb(query: str):
-    """
-    Search IMDB for the given query.
-
-    Returns:
-        str: The caption of the result.
-        str: The URL of the poster.
-    """
-
-    url = "https://api.themoviedb.org/3/search/multi"
-    params = {
-        "api_key": tapiKey,
-        "query": query,
-        "language": "en-US",
-        "page": "1",
-        "include_adult": "false",
-        "append_to_response": "credits",
+@newMsg(pattern="math")
+async def math(message):
+    exp = get_text_content(message)
+    if exp is None:
+        return await message.reply("No expression provided!")
+    url = "https://evaluate-expression.p.rapidapi.com"
+    headers = {
+        "x-rapidapi-host": "evaluate-expression.p.rapidapi.com",
+        "x-rapidapi-key": "cf9e67ea99mshecc7e1ddb8e93d1p1b9e04jsn3f1bb9103c3f",
     }
-    response = get(
-        url, params=params, headers={"User-Agent": "Mozilla/5.0"}, timeout=10
-    ).json()
-    if response["results"]:
-        result = response["results"][0]
-        if result["media_type"] == "movie":
-            url = "https://api.themoviedb.org/3/movie/{}".format(result["id"])
-            result = get(
-                url,
-                headers={"User-Agent": "Mozilla/5.0"},
-                params={"api_key": tapiKey, "append_to_response": "credits"},
-            ).json()
-            poster_url = "https://image.tmdb.org/t/p/w500{}".format(
-                result["poster_path"]
-            )
-            caption = "<b>{}</b>\n".format(result["title"])
-            caption += (
-                "<b>Year:</b> <code>{}</code>\n".format(result["release_date"][:4])
-                if result.get("release_date")
-                else ""
-            )
-            caption += (
-                "<b>Runtime:</b> <code>{} min</code>\n".format(result["runtime"])
-                if result.get("runtime")
-                else ""
-            )
-            caption += (
-                "<b>Genres:</b> {}\n".format(
-                    ", ".join(g["name"] for g in result["genres"])
-                )
-                if result.get("genres")
-                else ""
-            )
-            caption += (
-                "<b>Rating:</b> <code>{}/10</code>\n".format(result["vote_average"])
-                if result.get("vote_average")
-                else ""
-            )
-            caption += (
-                "<b>Tagline:</b> {}\n".format(result["tagline"])
-                if result.get("tagline")
-                else ""
-            )
-            caption += (
-                "<b>Revenue:</b> {}\n".format(human_currency(result["revenue"]))
-                if result.get("revenue")
-                else ""
-            )
-            caption += (
-                "<b>Production Companies:</b> {}\n".format(
-                    ", ".join(c["name"] for c in result["production_companies"])
-                )
-                if result.get("production_companies")
-                else ""
-            )
-            caption += (
-                "<b>Cast:</b> {}\n".format(
-                    ", ".join(c["name"] for c in result["credits"]["cast"][:5])
-                )
-                if result.get("credits")
-                else ""
-            )
-            caption += (
-                "\n<b>Overview:</b> <code>{}</code>\n".format(result["overview"])
-                if result.get("overview")
-                else ""
-            )
-            buttons = [
-                [
-                    Button.inline(
-                        "🎬 Watch Trailer", data="imdb_trailer {}".format(result["id"])
-                    ),
-                ],
-                [
-                    Button.url(
-                        "📖 More Info",
-                        url="https://www.imdb.com/title/{}".format(result["imdb_id"]),
-                    ),
-                ],
+    params = {"expression": exp}
+    response = get(url, headers=headers, params=params)
+    if response.status_code != 200:
+        return await message.reply("Error: {}".format(response.status_code))
+    result = response.text
+    result = "not found" if result == "" else result
+    await message.reply(result)
+
+
+@newMsg(patttern="ip")
+async def ip_lookup(message):
+    ip = get_text_content(message)
+    if ip is None:
+        return await message.reply("No IP provided!")
+    url = "https://ipinfo.io/" + ip + "/json"
+    params = {"token": "a25e6bc6a305c7"}
+    response = get(url, params=params)
+    if response.status_code != 200:
+        return await message.reply("Error: {}".format(response.status_code))
+    result = response.json()
+    IP = "IP: " + result.get("ip", "-")
+    IP += "\nCity: " + result.get("city", "-")
+    IP += "\nRegion: " + result.get("region", "-")
+    IP += "\nCountry: " + result.get("country", "-")
+    IP += "\nLocation: " + result.get("loc", "-")
+    IP += "\nOrg: " + result.get("org", "-")
+    IP += "\nPostal: " + result.get("postal", "-")
+    await message.reply(IP)
+
+
+@newMsg(pattern="(weather|w)")
+async def weather(message):
+    await message.reply("Weather is not yet implemented.")
+
+
+@newMsg(pattern="ud")
+async def urban_dictionary(message):
+    word = get_text_content(message)
+    if word is None:
+        return await message.reply("No word provided!")
+    url = "https://api.urbandictionary.com/v0/define"
+    params = {"term": word}
+    response = get(url, params=params)
+    if response.status_code != 200:
+        return await message.reply("Error: {}".format(response.status_code))
+    result = response.json()
+    if len(result["list"]) == 0:
+        return await message.reply("No results found!")
+    result = result.get("list", [])[0]
+    definition = result.get("definition", "-")
+    example = result.get("example", "-")
+    upvote = result.get("thumbs_up", "-")
+    downvote = result.get("thumbs_down", "-")
+    author = result.get("author", "-")
+    word = result.get("word", "-")
+    UDICT = "<b>Word:</b> " + word + "\n"
+    UDICT += "<b>Definition:</b> " + definition + "\n"
+    UDICT += "<b>Example:</b> " + example + "\n"
+    UDICT += "<b>Author:</b> " + author + "\n"
+    await message.reply(
+        UDICT,
+        buttons=[
+            [
+                Button.inline("👍 {}".format(upvote)),
+                Button.inline("👎 {}".format(downvote)),
             ]
-        elif result["media_type"] == "tv":
-            url = "https://api.themoviedb.org/3/tv/{}".format(result["id"])
-            result = get(
-                url,
-                headers={"User-Agent": "Mozilla/5.0"},
-                params={"api_key": tapiKey, "append_to_response": "credits"},
-            ).json()
-            poster_url = "https://image.tmdb.org/t/p/w500{}".format(
-                result["poster_path"]
+        ],
+    )
+
+
+@newMsg(pattern="pinterest")
+async def pinterest(message):
+    query = get_text_content(message)
+    if query is None:
+        return await message.reply("No query provided!")
+    url = "https://in.pinterest.com/resource/BaseSearchResource/get/"
+    params = {
+        "source_url": "/search/pins/?q=Avengers&rs=typed&term_meta[]=Avengers%7Ctyped",
+        "data": '{"options":{"article":null,"applied_filters":null,"appliedProductFilters":"---","auto_correction_disabled":false,"corpus":null,"customized_rerank_type":null,"filters":null,"query":"'
+        + query
+        + '","query_pin_sigs":null,"redux_normalize_feed":true,"rs":"typed","scope":"pins","source_id":null,"no_fetch_context_on_resource":false},"context":{}}',
+        "_": "1657012830705",
+    }
+    headers = {
+        "authority": "in.pinterest.com",
+        "accept": "application/json, text/javascript, */*, q=0.01",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+        "x-app-version": "e6a3b50",
+        "x-pinterest-source-url": "/search/pins/?q=Avengers&rs=typed&term_meta[]=Avengers%7Ctyped",
+    }
+    response = get(url, params=params, headers=headers)
+    result = response.json()
+    if result.get("resource_response", {}).get("status", "") != "success":
+        return await message.reply("No results found!")
+    urls = []
+    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
+    for pin in pins:
+        if pin.get("images", {}).get("orig", {}).get("url", "") != "":
+            urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
+        if len(url) == 4:
+            break
+    if len(urls) == 0:
+        return await message.reply("No results found!")
+    await message.reply("Found {} results:".format(len(urls)))
+    for url in urls:
+        try:
+            await message.reply(file=url)
+        except:
+            pass
+
+
+@newMsg(pattern="(fake|faker)")
+async def fake(message):
+    country = get_text_content(message)
+    if country is None:
+        country = "us"
+    url = "https://randomuser.me/api"
+    params = {
+        "results": 1,
+        "nat": country,
+    }
+    response = get(url, params=params)
+    if response.status_code != 200:
+        return await message.reply("Error: {}".format(response.status_code))
+    result = response.json()
+    result = result.get("results", [])[0]
+    name = (
+        result.get("name", {}).get("first", "")
+        + " "
+        + result.get("name", {}).get("last", "")
+    )
+    email = result.get("email", "")
+    phone = result.get("phone", "")
+    dob = result.get("dob", {}).get("date", "")
+    gender = result.get("gender", "")
+    address = (
+        result.get("location", {}).get("street", "")
+        + " "
+        + result.get("location", {}).get("city", "")
+        + " "
+        + result.get("location", {}).get("state", "")
+        + " "
+        + result.get("location", {}).get("postcode", "")
+    )
+    await message.reply(
+        "<b>Fake Generator</b>\n\n<b>Name:</b> "
+        + name
+        + "\n<b>Email:</b> "
+        + email
+        + "\n<b>Phone:</b> "
+        + phone
+        + "\n<b>DOB:</b> "
+        + dob
+        + "\n<b>Address:</b> "
+        + address
+        + "\n<b>Gender:</b> "
+        + gender,
+        pasre_mode="html",
+    )
+
+
+@newMsg("(w|wiki)")
+async def wiki_(message):
+    query = get_text_content(message=message)
+    if query is None:
+        return await message.reply("No query provided")
+    url = "https://en.wikipedia.org/w/api.php"
+    params = {
+        "format": "json",
+        "action": "query",
+        "prop": "extracts|pageimages",
+        "exintro": "",
+        "explaintext": "",
+        "generator": "search",
+        "gsrsearch": "intitle:" + query,
+    }
+    response = get(url, params=params)
+    if response.status_code != 200:
+        return await message.reply("Error: {}".format(response.status_code))
+    result = response.json()
+    result = result.get("query", {}).get("pages", [])
+    if len(result) == 0:
+        return await message.reply("No results found!")
+    result = result[0]
+    title = result.get("title", "")
+    extract = result.get("extract", "")
+    image = result.get("thumbnail", {}).get("source", "")
+    if len(extract) > 900:
+        extract = extract[:900] + "..."
+    await message.reply(
+        "<b>Wikipedia</b>\n\n<b>Title:</b> " + title + "\n<b>Extract:</b> " + extract,
+        parse_mode="html",
+        file=image if image else None,
+        buttons=[
+            [
+                Button.url(
+                    "Read More",
+                    "https://en.wikipedia.org/wiki/" + title.replace(" ", "_"),
+                ),
+            ],
+        ],
+    )
+
+
+@newMsg(pattern="id")
+async def id_(message):
+    user, _ = await get_user(message)
+    if user is None:
+        return await message.reply(
+            "Your ID is: ```" + str(message.from_user.id) + "```"
+        )
+    if message.reply_to:
+        r = await message.get_reply_message()
+        if r.forward_from:
+            return await message.reply(
+                "The ID of "
+                + r.forward_from.first_name
+                + " is: ```"
+                + str(r.forward_from.id)
+                + "```"
             )
-            caption = "<b>{}</b>\n".format(result["name"])
-            caption += (
-                "<b>Year:</b> <code>{}</code>\n".format(
-                    (
-                        result["first_air_date"][:4]
-                        if result.get("first_air_date")
-                        else ""
-                    )
-                    + " - "
-                    + (
-                        result["last_air_date"][:4]
-                        if result.get("last_air_date")
-                        else ""
-                    )
-                )
-                if result.get("first_air_date")
-                else ""
-            )
-            caption += (
-                "<b>Runtime:</b> <code>{} min</code>\n".format(
-                    result["episode_run_time"][0]
-                )
-                if result.get("episode_run_time")
-                else ""
-            )
-            caption += (
-                "<b>Genres:</b> {}\n".format(
-                    ", ".join(g["name"] for g in result["genres"])
-                )
-                if result.get("genres")
-                else ""
-            )
-            caption += (
-                "<b>Rating:</b> <code>{}/10</code>\n".format(result["vote_average"])
-                if result.get("vote_average")
-                else ""
-            )
-            caption += (
-                "<b>Tagline:</b> {}\n".format(result["tagline"])
-                if result.get("tagline")
-                else ""
-            )
-            caption += (
-                "<b>Production Companies:</b> {}\n".format(
-                    ", ".join(c["name"] for c in result["production_companies"])
-                )
-                if result.get("production_companies")
-                else ""
-            )
-            caption += (
-                "<b>Cast:</b> {}\n".format(
-                    ", ".join(c["name"] for c in result["credits"]["cast"][:5])
-                )
-                if result.get("credits")
-                else ""
-            )
-            caption += (
-                "<b>Networks:</b> {}\n".format(
-                    ", ".join(c["name"] for c in result["networks"])
-                )
-                if result.get("networks")
-                else ""
-            )
-            caption += (
-                "<b>Next Episode:</b> {}\n".format(
-                    (
-                        result["next_episode_to_air"]["name"]
-                        if result.get("next_episode_to_air")
-                        else ""
-                    )
-                    + " -<code>"
-                    + (
-                        result["next_episode_to_air"]["air_date"]
-                        if result.get("next_episode_to_air")
-                        else "N/A"
-                    )
-                )
-                + "</code>"
-                if result.get("next_episode_to_air")
-                else ""
-            )
-            caption += (
-                "\n<b>Status:</b> <code>{}</code>\n".format(result["status"])
-                if result.get("status")
-                else ""
-            )
-            caption += (
-                "\n<b>Overview:</b> <code>{}</code>\n".format(result["overview"])
-                if result.get("overview")
-                else ""
-            )
-            buttons = [
-                Button.inline(
-                    "🔍 Search on TMDb", "tmdb_search {}".format(result["name"])
-                )
-            ]
+        return await message.reply(
+            "The ID of "
+            + r.from_user.first_name
+            + " is: ```"
+            + str(r.from_user.id)
+            + "```"
+        )
+    return await message.reply(
+        "The ID of " + user.first_name + " is: ```" + str(user.id) + "```"
+    )
+
+
+@newMsg(pattern="(telegraph|tg)")
+async def telegraph_(message):
+    media, file = False, ""
+    if message.reply_to:
+        r = await message.get_reply_message()
+        if r.media:
+            media = True
+            file = await r.download_media()
+            caption = r.caption if r.caption else ""
     else:
-        caption, poster_url, buttons = "No results found.", None, None
-    return caption, poster_url, buttons
+        caption = get_text_content(message)
+    if caption is None and file == "":
+        return await message.reply("No caption or media provided!")
+
+    if media:
+        url = telegraph_file_upload(file)
+    else:
+        url = "https://telegra.ph/createPage"
+        params = {
+            "content": caption,
+            "access_token": get_tgf_key(),
+            "title": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "author_name": "valeri",
+            "author_url": "https://t.me/missvaleri_bot",
+            "return_content": "false",
+        }
+        response = get(url, params=params)
+        if response.status_code != 200:
+            return await message.reply("Error: {}".format(response.status_code))
+        result = response.json()
+        url = result.get("url", "")
+    await message.reply(
+        "Uploaded to <b><a href='{}'>{}</a></b>".format(url, "Telegr.aph"),
+        parse_mode="html",
+        buttons=[
+            [
+                Button.url(
+                    "View",
+                    url,
+                ),
+            ],
+        ],
+    )
+
+
+def get_tgf_key():
+    global TELEGRAPH_API_KEY
+    if TELEGRAPH_API_KEY != "":
+        return TELEGRAPH_API_KEY
+    else:
+        url = "https://api.telegra.ph/createAccount?short_name={}&author_name=Anonymous".format(
+            gen_random_string(10)
+        )
+        response = get(url)
+        if response.status_code != 200:
+            return None
+        result = response.json()
+        token = result.get("result", {}).get("access_token", "")
+        TELEGRAPH_API_KEY = token
+        return token
+
+
+def telegraph_file_upload(path_to_file):
+    file_types = {
+        "gif": "image/gif",
+        "jpeg": "image/jpeg",
+        "jpg": "image/jpg",
+        "png": "image/png",
+        "mp4": "video/mp4",
+    }
+    file_ext = path_to_file.split(".")[-1]
+
+    if file_ext in file_types:
+        file_type = file_types[file_ext]
+    else:
+        return f"error, {file_ext}-file can not be proccessed"
+
+    with open(path_to_file, "rb") as f:
+        url = "https://telegra.ph/upload"
+        response = post(
+            url,
+            files={"file": ("file", f, file_type)},
+            timeout=1,
+            params={"access_token": get_tgf_key()},
+        )
+
+    telegraph_url = json.loads(response.content)
+    telegraph_url = telegraph_url[0]["src"]
+    telegraph_url = f"https://telegra.ph{telegraph_url}"
+
+    return telegraph_url

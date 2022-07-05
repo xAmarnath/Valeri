@@ -1,8 +1,11 @@
 import importlib
 import logging
 from os import listdir, path
+import os
+import random, string
 
 import telethon
+from telethon import errors
 
 from ._config import OWNER_ID, bot
 
@@ -77,8 +80,32 @@ async def is_worth(right, chat, user, admin_check=True):
     return False
 
 
+async def has_admin_rights(chat_id, user_id, RIGHT):
+    """Check if a user has admin rights in a chat"""
+    if user_id == OWNER_ID:
+        return True, ""
+    try:
+        p = await bot(
+            telethon.functions.channels.GetParticipantRequest(chat_id, user_id)
+        )
+    except errors.rpcerrorlist.UserNotParticipantError:
+        return False, "User not in chat!"
+    p: telethon.tl.types.ChannelParticipant = p.participant
+    if isinstance(p, telethon.tl.types.ChannelParticipantCreator):
+        return True, ""
+    if isinstance(p, telethon.tl.types.ChannelParticipantAdmin):
+        if p.admin_rights.to_dict()[RIGHT]:
+            return True, ""
+        else:
+            return (
+                False,
+                "You are missing admin rights to use this command, {}.".format(RIGHT),
+            )
+    return False, "You do not have admin rights in this chat"
+
+
 def human_readable_time(seconds: int):
-    # Convert a time in seconds to a human readable string
+    """Convert a time in seconds to a human readable string"""
     variables = ["s", "m", "h", "d"]
     for x in variables:
         if seconds < 60:
@@ -95,3 +122,44 @@ def human_currency(amount: int):
             return "%d %s" % (amount, x)
         amount /= 100
     return "%d %s" % (amount, "£")
+
+
+def parse_time(time: str):
+    ''' Convert a time string to an integer '''
+    if any([time.endswith("s"), time.endswith("second"), time.endswith("seconds")]):
+        return int(time[:-1].strip()), "s"
+    elif any([time.endswith("m"), time.endswith("minute"), time.endswith("minutes")]):
+        return int(time[:-1].strip()) * 60, "m"
+    elif any([time.endswith("h"), time.endswith("hour"), time.endswith("hours")]):
+        return int(time[:-1].strip()) * 60 * 60, "h"
+    elif any([time.endswith("d"), time.endswith("day"), time.endswith("days")]):
+        return int(time[:-1].strip()) * 60 * 60 * 24, "d"
+    elif any([time.endswith("w"), time.endswith("week"), time.endswith("weeks")]):
+        return int(time[:-1].strip()) * 60 * 60 * 24 * 7, "week"
+    elif any([time.endswith("m"), time.endswith("month"), time.endswith("months")]):
+        return int(time[:-1].strip()) * 60 * 60 * 24 * 30, "m"
+    else:
+        return 0, "Invalid time format"
+
+async def get_text_content(message):
+    """Returns the text content of a message."""
+    if message.reply_to_msg_id:
+        reply = await message.get_reply_message()
+        if reply.media:
+            if reply.document:
+                doc = await reply.download_media()
+                with open(doc, "rb") as f:
+                    os.remove(doc)
+                    return f.read()
+            else:
+                return None
+        else:
+            return reply.text
+    else:
+        try:
+            return message.text.split(" ", 1)[1]
+        except:
+            return None
+
+def gen_random_string(length):
+    return "".join(random.choice(string.ascii_letters) for i in range(length))

@@ -1,7 +1,8 @@
 from os import listdir, path
 
-from ._handler import auth_only, newMsg
-from ._helpers import human_readable_size
+from ._handler import auth_only, newMsg, master_only
+from ._helpers import human_readable_size, get_mention, get_user
+from .db.auth import is_auth, add_auth, remove_auth, get_auth
 
 
 @newMsg(pattern="ls")
@@ -46,3 +47,35 @@ async def _ls(e):
             )
     caption += "\n`{} folders, {} files`".format(folder_count, file_count)
     await e.reply(caption, parse_mode="html")
+
+
+@newMsg(pattern="auth")
+@master_only
+async def _auth(e):
+    user, arg = await get_user(e)
+    if user is None:
+        AUTH_LIST = "Auth list:\n"
+        sno = 0
+        for user in get_auth():
+            sno += 1
+            AUTH_LIST += "<b>{}.</b> {}\n".format(sno, user)
+        await e.reply(AUTH_LIST, parse_mode="HTML")
+        return
+    if is_auth(user.id):
+        await e.reply("<b>{}</b> is already authorized.".format(get_mention(user)))
+        return
+    add_auth(user.id)
+    await e.reply("<b>{}</b> is now authorized.".format(get_mention(user)))
+
+
+@newMsg(pattern="(unauth|rmauth)")
+@master_only
+async def _unauth(e):
+    user, arg = await get_user(e)
+    if user is None:
+        return await e.reply("Specify a user to unauthorize.")
+    if not is_auth(user.id):
+        await e.reply("<b>{}</b> is not authorized.".format(get_mention(user)))
+        return
+    remove_auth(user.id)
+    await e.reply("<b>{}</b> is now unauthorized.".format(get_mention(user)))

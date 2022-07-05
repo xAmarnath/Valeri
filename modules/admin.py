@@ -1,12 +1,15 @@
 from telethon import errors, functions, types
 
 from ._handler import newMsg
-from ._helpers import get_mention, get_user
+from ._helpers import get_mention, get_user, has_admin_rights, parse_time
 
 
 @newMsg(pattern="(promote|superpromote|demote)")
-async def _promote_demote(e):
+async def promote_demote(e):
     action = e.text.split(" ")[0][1:]
+    r, arg = has_admin_rights(e.chat_id, e.from_id, "promote_members")
+    if not r:
+        return await e.reply(arg)
     user, arg = await get_user(e)
     if not user:
         return
@@ -62,7 +65,7 @@ async def _promote_demote(e):
                     rank=arg if arg else "Member",
                 )
             )
-            await e.reply("Demoted {}!".format(get_mention(user)))
+            await e.reply(f"Demoted {get_mention(user)}!")
     except errors.ChatAdminRequiredError:
         await e.reply("Failure!, make sure I have add admin rights to the chat")
     except errors.rpcerrorlist.UserCreatorError:
@@ -81,3 +84,132 @@ async def _promote_demote(e):
         await e.reply("This user is already in the chat!")
     except Exception as ex:
         await e.reply(str(ex) + str(type(ex)))
+
+
+@newMsg(pattern="(ban|kick|unban|tban|sban|mute|tmute|smute|skick|unmute|kickme)")
+async def restrict_user(msg):
+    action = msg.text.split(" ")[0][1:]
+    r, arg = has_admin_rights(msg.chat_id, msg.from_id, "ban_users")
+    if not r:
+        return await msg.reply(arg)
+    user, arg = await get_user(msg)
+    if not user:
+        return
+    if action in ["ban", "sban", "tban"]:
+        if arg == "" and action == "tban":
+            await msg.reply("Please specify a time!")
+            return
+        _time = parse_time(arg) if action == "tban" else None
+        ban_rights = (
+            types.ChatBannedRights(
+                until_date=_time,
+                view_messages=True,
+            )
+            if action in ["ban", "tban"]
+            else types.ChatBannedRights(
+                view_messages=True,
+                until_date=None,
+            )
+        )
+        try:
+            await msg.client(
+                functions.channels.EditBannedRequest(
+                    msg.chat_id,
+                    user.id,
+                    banned_rights=ban_rights,
+                )
+            )
+            if action != "sban":
+                await msg.reply(
+                    "Another one bites the dust! banned {}".format(get_mention(user))
+                    if action in ["ban", "tban"]
+                    else "Unbanned!, {} is now free to chat".format(get_mention(user))
+                )
+        except errors.rpcerrorlist.UserAdminInvalidError:
+            await msg.reply(
+                "I can't do this to this user!, make sure I have ban rights to the chat"
+            )
+        except errors.rpcerrorlist.UserIdInvalidError:
+            await msg.reply("I can't find this user!")
+        except errors.rpcerrorlist.UserNotMutualContactError:
+            await msg.reply("This user is not in your contact list!")
+        except errors.rpcerrorlist.UserAlreadyParticipantError:
+            await msg.reply("This user is already in the chat!")
+        except errors.rpcerrorlist.UserCreatorError:
+            await msg.reply(
+                "I would love to ban the chat creator, but... not in the mood to do so."
+            )
+        except Exception as ex:
+            await msg.reply(str(ex) + str(type(ex)))
+    elif action in ["mute", "tmute", "smute"]:
+        if arg == "" and action == "tban":
+            await msg.reply("Please specify a time!")
+            return
+        _time = parse_time(arg) if action == "tmute" else None
+        mute_rights = (
+            types.ChatBannedRights(
+                until_date=_time,
+                send_messages=True,
+            )
+            if action in ["mute", "smute"]
+            else types.ChatBannedRights(
+                send_messages=True,
+            )
+        )
+        try:
+            await msg.client(
+                functions.channels.EditBannedRequest(
+                    msg.chat_id,
+                    user.id,
+                    banned_rights=mute_rights,
+                )
+            )
+            if action != "smute":
+                await msg.reply(
+                    "Another one bites the dust! banned {}".format(get_mention(user))
+                    if action in ["mute", "tmute"]
+                    else "Unbanned!, {} is now free to chat".format(get_mention(user))
+                )
+        except errors.rpcerrorlist.UserAdminInvalidError:
+            await msg.reply(
+                "I can't do this to this user!, make sure I have ban rights to the chat"
+            )
+        except errors.rpcerrorlist.UserIdInvalidError:
+            await msg.reply("I can't find this user!")
+        except errors.rpcerrorlist.UserNotMutualContactError:
+            await msg.reply("This user is not in your contact list!")
+        except errors.rpcerrorlist.UserAlreadyParticipantError:
+            await msg.reply("This user is already in the chat!")
+        except errors.rpcerrorlist.UserCreatorError:
+            await msg.reply(
+                "I would love to mute the chat creator, but... its impossible."
+            )
+        except Exception as ex:
+            await msg.reply(str(ex) + str(type(ex)))
+    elif action in ["kick", "skick"]:
+        try:
+            await msg.client.kick_participant(msg.chat_id, user.id)
+            if action != "skick":
+                await msg.reply("I have kicked {}!".format(get_mention(user)))
+        except errors.rpcerrorlist.UserAdminInvalidError:
+            await msg.reply(
+                "I can't do this to this user!, make sure I have ban rights to the chat"
+            )
+        except errors.rpcerrorlist.UserIdInvalidError:
+            await msg.reply("I can't find this user!")
+        except errors.rpcerrorlist.UserNotMutualContactError:
+            await msg.reply("This user is not in your contact list!")
+        except errors.rpcerrorlist.UserAlreadyParticipantError:
+            await msg.reply("This user is already in the chat!")
+        except errors.rpcerrorlist.UserCreatorError:
+            await msg.reply(
+                "I would love to kick the chat creator, but... not in the mood to do so."
+            )
+        except Exception as ex:
+            await msg.reply(str(ex) + str(type(ex)))
+    elif action == "kickme":
+        try:
+            await msg.client.kick_participant(msg.chat_id, msg.from_id)
+            await msg.reply("I have kicked you!")
+        except Exception as ex:
+            await msg.reply(str(ex) + str(type(ex)))
