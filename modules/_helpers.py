@@ -18,6 +18,7 @@ def __load_modules():
             continue
         importlib.import_module("modules." + module[:-3])
         logging.info("Loaded module: %s", module[:-3])
+    logging.info("Bot Started.")
 
 
 def human_readable_size(size, speed=False):
