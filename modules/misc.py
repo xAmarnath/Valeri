@@ -57,7 +57,7 @@ async def ip_lookup(message):
     if response.status_code != 200:
         return await message.reply("Error: {}".format(response.status_code))
     result = response.json()
-    IP = "IP: " + result.get("ip", "-")
+    IP = "IP: `" + result.get("ip", "-") + '`'
     IP += "\nCity: " + result.get("city", "-")
     IP += "\nRegion: " + result.get("region", "-")
     IP += "\nCountry: " + result.get("country", "-")
@@ -103,7 +103,7 @@ async def urban_dictionary(message):
                 Button.inline("👍 {}".format(upvote)),
                 Button.inline("👎 {}".format(downvote)),
             ]
-        ],
+        ], parse_mode='html',
     )
 
 
@@ -237,7 +237,7 @@ async def wiki_(message):
                     "https://en.wikipedia.org/wiki/" + title.replace(" ", "_"),
                 ),
             ],
-        ],
+        ], parse_mode='html',
     )
 
 
