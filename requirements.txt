@@ -8,3 +8,4 @@ requests
 cryptg
 seedrcc
 pillow 
+mega.py
