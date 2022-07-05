@@ -291,7 +291,7 @@ async def telegraph_(message):
     if media:
         url = telegraph_file_upload(file)
     else:
-        url = "https://telegra.ph/createPage"
+        url = "https://api.telegra.ph/createPage"
         params = {
             "content": caption,
             "access_token": get_tgf_key(),
@@ -304,7 +304,7 @@ async def telegraph_(message):
         if response.status_code != 200:
             return await message.reply("Error: {}".format(response.status_code))
         result = response.json()
-        url = result.get("url", "")
+        url = result.get("result", {}).get("url", "")
     await message.reply(
         "Uploaded to <b><a href='{}'>{}</a></b>".format(url, "Telegr.aph"),
         parse_mode="html",
