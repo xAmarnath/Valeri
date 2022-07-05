@@ -8,7 +8,7 @@ from telethon import Button
 from ._config import TMDB_KEY as tapiKey
 from ._functions import search_imdb
 from ._handler import newMsg
-from ._helpers import gen_random_string, get_text_content, get_user
+from ._helpers import gen_random_string, get_text_content, get_user, human_readable_size as size
 
 TELEGRAPH_API_KEY = ""
 
@@ -383,7 +383,15 @@ async def _ul_mega(e):
     file = mega.upload(media)
     url = mega.get_upload_link(file)
     await msg.edit(
-        "**Mega.NZ File**\n\n `{}` \n\n<b>Time:</b> `{}s`\n</b>🎉 @MissValeri_Bot</b>".format(
+        "**Mega.NZ File**\n\n `{}` \n\n**Time:** `{}s`\n**🎉 @MissValeri_Bot**".format(
             url, round(time.time() - startTime, 2)
         )
     )
+
+@newMsg(pattern="megausage")
+async def _mage_usage(e):
+ usage = mega.get_storage_space()
+ quota = mega.get_quota()
+ _usage = "**Mega.NZ Usage**\n\n**Used:** `{}`\n**Free:** `{}`\n**Total:** `{}`\n**Disk Quota:** `{}`\n\n**🎉 @MissValeri_Bot**".format(size(usage['used']), size(int(usage['total'])-int(usage['used'])), size(usage['total']), size(quota))
+ await e.reply(_usage)
+ 
