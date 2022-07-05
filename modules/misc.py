@@ -28,7 +28,7 @@ async def _imdb_search(e):
 
 @newMsg(pattern="math")
 async def math(message):
-    exp = get_text_content(message)
+    exp = await get_text_content(message)
     if exp is None:
         return await message.reply("No expression provided!")
     url = "https://evaluate-expression.p.rapidapi.com"
@@ -47,7 +47,7 @@ async def math(message):
 
 @newMsg(pattern="ip")
 async def ip_lookup(message):
-    ip = get_text_content(message)
+    ip = await get_text_content(message)
     if ip is None:
         return await message.reply("No IP provided!")
     url = "https://ipinfo.io/" + ip + "/json"
@@ -73,7 +73,7 @@ async def weather(message):
 
 @newMsg(pattern="ud")
 async def urban_dictionary(message):
-    word = get_text_content(message)
+    word = await get_text_content(message)
     if word is None:
         return await message.reply("No word provided!")
     url = "https://api.urbandictionary.com/v0/define"
@@ -108,7 +108,7 @@ async def urban_dictionary(message):
 
 @newMsg(pattern="pinterest")
 async def pinterest(message):
-    query = get_text_content(message)
+    query = await get_text_content(message)
     if query is None:
         return await message.reply("No query provided!")
     url = "https://in.pinterest.com/resource/BaseSearchResource/get/"
@@ -149,7 +149,7 @@ async def pinterest(message):
 
 @newMsg(pattern="(fake|faker)")
 async def fake(message):
-    country = get_text_content(message)
+    country = await get_text_content(message)
     if country is None:
         country = "us"
     url = "https://randomuser.me/api"
@@ -199,7 +199,7 @@ async def fake(message):
 
 @newMsg(pattern="(w|wiki)")
 async def wiki_(message):
-    query = get_text_content(message=message)
+    query = await get_text_content(message=message)
     if query is None:
         return await message.reply("No query provided")
     url = "https://en.wikipedia.org/w/api.php"
@@ -242,17 +242,20 @@ async def wiki_(message):
 
 @newMsg(pattern="id")
 async def id_(message):
-    user, _ = await get_user(message)
+    if not e.reply and not len(e.text.split(None)) > 1:
+      user = e.sender
+    else:
+      user, _ = await get_user(message)
     if user is None:
         return await message.reply(
             "Your ID is: ```" + str(message.from_user.id) + "```"
         )
     if message.reply_to:
         r = await message.get_reply_message()
-        if r.forward_from:
+        if r.fwd:
             return await message.reply(
                 "The ID of "
-                + r.forward_from.first_name
+                + 'Forwarded user'
                 + " is: ```"
                 + str(r.forward_from.id)
                 + "```"
@@ -279,7 +282,7 @@ async def telegraph_(message):
             file = await r.download_media()
             caption = r.caption if r.caption else ""
     else:
-        caption = get_text_content(message)
+        caption = await get_text_content(message)
     if caption is None and file == "":
         return await message.reply("No caption or media provided!")
 
