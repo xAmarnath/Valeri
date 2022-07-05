@@ -7,3 +7,4 @@ psutil
 requests 
 cryptg
 seedrcc
+pillow 

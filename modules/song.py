@@ -22,21 +22,51 @@ async def _song(message):
     params = {"id": song["id"], "download": "true"}
     response = get(HOST + "/youtube/download", params=params)
     with io.BytesIO(response.content) as file:
-      with io.BytesIO(get(song["thumbnail"]).content) as thumb:
-        thumb.name = "thumbnail.jpg"
-        file.name = response.headers.get("file-name") or "song.mp3"
-        async with message.client.action(message.chat_id, "audio"):
-            await message.respond(
-                file=file,
-                attributes=[
-                    types.DocumentAttributeAudio(
-                        duration=convert_duration(song["duration"]),
-                        title=song["title"],
-                        performer=song["channel"],
-                    )
-                ],
-                thumb=thumb,
-            )
+        with io.BytesIO(get(song["thumbnail"]).content) as thumb:
+            thumb.name = "thumbnail.jpg"
+            file.name = response.headers.get("file-name") or "song.mp3"
+            async with message.client.action(message.chat_id, "audio"):
+                await message.respond(
+                    file=file,
+                    attributes=[
+                        types.DocumentAttributeAudio(
+                            duration=convert_duration(song["duration"]),
+                            title=song["title"],
+                            performer=song["channel"],
+                        )
+                    ],
+                    thumb=thumb,
+                )
+
+
+@newMsg(pattern="video")
+async def _video_dl_youtube(message):
+    try:
+        query = message.text.split(None, maxsplit=1)[1]
+    except IndexError:
+        return await message.reply("video query missing.")
+    vid = search_song(query=query)
+    if vid is None:
+        return await message.reply("video result not found.")
+    params = {"id": vid["id"], "download": "true", "video": "true"}
+    response = get(HOST + "/youtube/download", params=params)
+    with io.BytesIO(response.content) as file:
+        with io.BytesIO(get(vid["thumbnail"]).content) as thumb:
+            thumb.name = "thumbnail.jpg"
+            file.name = response.headers.get("file-name") or "video.mp4"
+            async with message.client.action(message.chat_id, "video"):
+                await message.respond(
+                    file=file,
+                    attributes=[
+                        types.DocumentAttributeVideo(
+                            duration=convert_duration(vid["duration"]),
+                            w=1280,
+                            h=720,
+                            supports_streaming=True,
+                        )
+                    ],
+                    thumb=thumb,
+                )
 
 
 def search_song(query):
