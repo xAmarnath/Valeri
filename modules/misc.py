@@ -379,6 +379,7 @@ async def _ul_mega(e):
     msg = await e.reply("Downloading...")
     media = await r.download_media()
     msg = await msg.edit("Uploading...")
+    startTime = time.time()
     file = mega.upload(media)
     url = mega.get_upload_link(file)
-    await msg.edit("**Mega.NZ File**\n\n `{}` \n\n@MissValeri_Bot".format(url))
+    await msg.edit("**Mega.NZ File**\n\n `{}` \n\n<b>Time:</b> `{}s`\n</b>🎉 @MissValeri_Bot</b>".format(url, round(time.time()-startTime, 2)))
