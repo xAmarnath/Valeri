@@ -1,10 +1,9 @@
 import json
 import time
 
+from mega import Mega
 from requests import get, post
 from telethon import Button
-from mega import Mega
-from os import getenv
 
 from ._config import TMDB_KEY as tapiKey
 from ._functions import search_imdb
@@ -365,6 +364,7 @@ def telegraph_file_upload(path_to_file):
     telegraph_url = f"https://telegra.ph{telegraph_url}"
 
     return telegraph_url
+
 
 mega = Mega()
 mega = mega.login("prolikem3@outlook.com", "Mohit@123")
