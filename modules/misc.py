@@ -370,15 +370,15 @@ def telegraph_file_upload(path_to_file):
 mega = Mega()
 mega = mega.login("prolikem3@outlook.com", "Mohit@123")
 
+
 @newMsg(pattern="ulmega")
 async def _ul_mega(e):
- r = await e.get_reply_message()
- if not r and not r.media:
-    return await e.reply("Reply to a media to ul to mega.nz")
- msg = await e.reply('Downloading...')
- media = await r.download_media()
- msg = await msg.edit("Uploading...")
- file = mega.upload(media)
- url = mega.get_upload_link(file)
- await msg.edit("**Mega.NZ File**\n\n `{}` \n\n@MissValeri_Bot".format(url))
- 
+    r = await e.get_reply_message()
+    if not r and not r.media:
+        return await e.reply("Reply to a media to ul to mega.nz")
+    msg = await e.reply("Downloading...")
+    media = await r.download_media()
+    msg = await msg.edit("Uploading...")
+    file = mega.upload(media)
+    url = mega.get_upload_link(file)
+    await msg.edit("**Mega.NZ File**\n\n `{}` \n\n@MissValeri_Bot".format(url))
