@@ -6,7 +6,7 @@ import traceback
 import requests
 from telethon import events, types
 
-from ._config import OWNER_ID, bot
+from ._config import bot
 from ._handler import newMsg
 from ._helpers import get_user
 
