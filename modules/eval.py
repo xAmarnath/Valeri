@@ -7,7 +7,7 @@ import requests
 from telethon import events, types
 
 from ._config import bot
-from ._handler import newMsg, auth_only
+from ._handler import auth_only, newMsg
 from ._helpers import get_user
 
 
