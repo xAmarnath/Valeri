@@ -16,7 +16,7 @@ def add_auth(user_id):
     """
     if user_id not in ADMINS:
         ADMINS.append(user_id)
-        DB.main.update_one({"_id": "auth"}, {"$push": {"admins": user_id}})
+        DB.main.update_one({"_id": "auth"}, {"$push": {"admins": user_id}}, upsert=True)
         return True
     return False
 
@@ -27,7 +27,7 @@ def remove_auth(user_id):
     """
     if user_id in ADMINS:
         ADMINS.remove(user_id)
-        DB.main.update_one({"_id": "auth"}, {"$pull": {"admins": user_id}})
+        DB.main.update_one({"_id": "auth"}, {"$pull": {"admins": user_id}}, upsert=True)
         return True
     return False
 
