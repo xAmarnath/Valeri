@@ -1,8 +1,9 @@
 import importlib
 import logging
-from os import listdir, path
 import os
-import random, string
+import random
+import string
+from os import listdir, path
 
 import telethon
 from telethon import errors
@@ -125,7 +126,7 @@ def human_currency(amount: int):
 
 
 def parse_time(time: str):
-    ''' Convert a time string to an integer '''
+    """Convert a time string to an integer"""
     if any([time.endswith("s"), time.endswith("second"), time.endswith("seconds")]):
         return int(time[:-1].strip()), "s"
     elif any([time.endswith("m"), time.endswith("minute"), time.endswith("minutes")]):
@@ -140,6 +141,7 @@ def parse_time(time: str):
         return int(time[:-1].strip()) * 60 * 60 * 24 * 30, "m"
     else:
         return 0, "Invalid time format"
+
 
 async def get_text_content(message):
     """Returns the text content of a message."""
@@ -160,6 +162,7 @@ async def get_text_content(message):
             return message.text.split(" ", 1)[1]
         except:
             return None
+
 
 def gen_random_string(length):
     return "".join(random.choice(string.ascii_letters) for i in range(length))

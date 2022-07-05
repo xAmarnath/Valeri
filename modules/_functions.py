@@ -1,7 +1,9 @@
 from requests import get
+from telethon import Button
+
 from ._config import TMDB_KEY as tapiKey
 from ._helpers import human_currency
-from telethon import Button
+
 
 def search_imdb(query: str):
     """

@@ -1,8 +1,8 @@
 from os import listdir, path
 
-from ._handler import auth_only, newMsg, master_only
-from ._helpers import human_readable_size, get_mention, get_user
-from .db.auth import is_auth, add_auth, remove_auth, get_auth
+from ._handler import auth_only, master_only, newMsg
+from ._helpers import get_mention, get_user, human_readable_size
+from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
 
 @newMsg(pattern="ls")

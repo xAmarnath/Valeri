@@ -1,11 +1,13 @@
 import json
 import time
-from ._handler import newMsg
-from ._config import TMDB_KEY as tapiKey
-from ._helpers import get_text_content, get_user, gen_random_string
-from ._functions import search_imdb
+
 from requests import get, post
 from telethon import Button
+
+from ._config import TMDB_KEY as tapiKey
+from ._functions import search_imdb
+from ._handler import newMsg
+from ._helpers import gen_random_string, get_text_content, get_user
 
 TELEGRAPH_API_KEY = ""
 
