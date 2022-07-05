@@ -239,7 +239,6 @@ async def wiki_(message):
                 ),
             ],
         ],
-        parse_mode="html",
     )
 
 
