@@ -243,9 +243,9 @@ async def wiki_(message):
 @newMsg(pattern="id")
 async def id_(message):
     if not e.reply and not len(e.text.split(None)) > 1:
-      user = e.sender
+        user = e.sender
     else:
-      user, _ = await get_user(message)
+        user, _ = await get_user(message)
     if user is None:
         return await message.reply(
             "Your ID is: ```" + str(message.from_user.id) + "```"
@@ -255,7 +255,7 @@ async def id_(message):
         if r.fwd:
             return await message.reply(
                 "The ID of "
-                + 'Forwarded user'
+                + "Forwarded user"
                 + " is: ```"
                 + str(r.forward_from.id)
                 + "```"
