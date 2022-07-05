@@ -25,12 +25,12 @@ def human_readable_size(size, speed=False):
     # Convert a size in bytes to a human readable string
     variables = ["bytes", "KB", "MB", "GB", "TB", "EB", "ZB"]
     if speed:
-        variables = ["bps", "Kbps", "Mbps", "Gbps", "Tbps"]
+        variables = ["bps", "Kbps", "Mbps", "Gbps", "Tbps", "Ebps", "Zbps"]
     for x in variables:
         if size < 1024.0:
             return "%3.1f %s" % (size, x)
         size /= 1024.0
-    return "%3.1f %s" % (size, "TB")
+    return "%3.1f %s" % (size, "ZB")
 
 
 async def get_user(e: telethon.events.NewMessage.Event):
