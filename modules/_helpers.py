@@ -23,7 +23,7 @@ def __load_modules():
 
 def human_readable_size(size, speed=False):
     # Convert a size in bytes to a human readable string
-    variables = ["bytes", "KB", "MB", "GB", "TB"]
+    variables = ["bytes", "KB", "MB", "GB", "TB", "EB", "ZB"]
     if speed:
         variables = ["bps", "Kbps", "Mbps", "Gbps", "Tbps"]
     for x in variables:
