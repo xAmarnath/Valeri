@@ -45,7 +45,7 @@ async def math(message):
     await message.reply(result)
 
 
-@newMsg(patttern="ip")
+@newMsg(pattern="ip")
 async def ip_lookup(message):
     ip = get_text_content(message)
     if ip is None:
