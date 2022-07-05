@@ -11,8 +11,9 @@ from ._handler import newMsg
 from ._helpers import get_user
 
 
-@newMsg(pattern="eval", from_users=[OWNER_ID])
-@bot.on(events.MessageEdited(pattern="^(?i)[!?.]eval (.*?)", from_users=[OWNER_ID]))
+@newMsg(pattern="eval")
+@bot.on(events.MessageEdited(pattern="^(?i)[!?.]eval (.*?)"))
+@auth_only
 async def _eval(e):
     try:
         c = e.text.split(" ", 1)[1]
@@ -61,7 +62,8 @@ async def aexec(code, event):
     return await locals()["__aexec"](event, event.client)
 
 
-@newMsg(pattern="(bash|exec)", from_users=[OWNER_ID])
+@newMsg(pattern="(bash|exec)")
+@auth_only
 async def _exec(e):
     try:
         cmd = e.text.split(maxsplit=1)[1]
