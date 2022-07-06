@@ -106,7 +106,7 @@ async def weather(message):
     if city is None:
         return await message.reply("No city provided!")
     response = get_weather(city)
-    await message.reply(response)
+    await message.reply(response, parse_mode="html")
 
 
 @newMsg(pattern="ud")
