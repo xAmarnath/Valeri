@@ -37,4 +37,3 @@ try:
     db.list_databases()
 except errors.ConnectionFailure:
     print("Could not connect to MongoDB")
-

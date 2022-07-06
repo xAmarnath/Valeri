@@ -3,11 +3,13 @@ from os import remove, rename
 
 from PIL import Image
 from requests import get, post
-
-from ._handler import newMsg
-from ._config import bot
 from telethon.tl.functions import stickers
+
+from ._config import bot
+from ._handler import newMsg
+
 print(stickers.SuggestShortNameRequest)
+
 
 async def run_cmd(cmd):
     proc = await asyncio.create_subprocess_shell(
@@ -100,9 +102,11 @@ async def _stoi(message):
     remove(media)
     remove(media.replace("." + media.split(".")[-1], ""))
 
+
 async def get_shortname(title: str):
     r = await bot(stickers.SuggestShortNameRequest(title))
     return r.short_name
+
 
 @newMsg(pattern="kang")
 async def _kang(message):

@@ -214,41 +214,41 @@ def search_imdb(query: str):
         caption, poster_url, buttons = "No results found.", None, None
     return caption, poster_url, buttons
 
+
 def get_weather(city: str):
-    '''Get weather from openweathermap.org'''
-    url = 'https://www.timeanddate.com/scripts/completion.php'
-    params = {
-        "xd": 21,
-        "query": city,
-        "mode": "ci"
-    }
+    """Get weather from openweathermap.org"""
+    url = "https://www.timeanddate.com/scripts/completion.php"
+    params = {"xd": 21, "query": city, "mode": "ci"}
     response = get(url, params=params)
-    if response.text == '':
-        return 'City not found'
+    if response.text == "":
+        return "City not found"
     print(response.text)
-    url = 'https://www.timeanddate.com' + response.text.split('/ext')[0]
+    url = "https://www.timeanddate.com" + response.text.split("/ext")[0]
     response = get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    weather = soup.find('div', {"id": "qlook"})
-    data = weather.find_all('p')
+    soup = BeautifulSoup(response.text, "html.parser")
+    weather = soup.find("div", {"id": "qlook"})
+    data = weather.find_all("p")
     stat = data[0].text
-    info = str(data[1]).split('<br/>')
-    details = [x.text for x in soup.find(
-        class_='bk-focus__info').find_all('td')]
-    result = ('<b>Weather in <code>{}</code></b>\n\n'.format(city) +
-              '<b>Temperature:</b> <code>{}</code>\n'.format(weather.find('div', {"class": "h2"}).text) +
-              '<b>Status:</b> {}\n'.format(stat) +
-              '<b>Feels like:</b> <code>{}</code>\n'.format(info[0].split(': ')[1]) +
-              '<b>Forecast:</b> <code>{}</code>\n'.format(
-        info[1].split(': ')[1].split('<')[0]) +
-        '<b>Wind:</b> <code>{}</code>\n'.format(
-        info[2].split(': ')[1].split('<')[0]) +
-        '<b>Location:</b> {}\n'.format(details[0]) +
-        '<b>Current Time:</b> <code>{}</code>\n'.format(details[1]) +
-        '<b>Latest Update:</b> <code>{}</code>\n'.format(details[2]) +
-        '<b>Visibility:</b> {}\n'.format(details[3]) +
-        '<b>Humidity:</b> <code>{}</code>\n'.format(details[4]) +
-        '<b>Pressure:</b> <code>{}</code>\n'.format(details[5]) +
-        '<b>Dew Point:</b> <code>{}</code>\n'.format(details[6]) +
-        '\n<b> @MissValeri_Bot</b>')
+    info = str(data[1]).split("<br/>")
+    details = [x.text for x in soup.find(class_="bk-focus__info").find_all("td")]
+    result = (
+        "<b>Weather in <code>{}</code></b>\n\n".format(city)
+        + "<b>Temperature:</b> <code>{}</code>\n".format(
+            weather.find("div", {"class": "h2"}).text
+        )
+        + "<b>Status:</b> {}\n".format(stat)
+        + "<b>Feels like:</b> <code>{}</code>\n".format(info[0].split(": ")[1])
+        + "<b>Forecast:</b> <code>{}</code>\n".format(
+            info[1].split(": ")[1].split("<")[0]
+        )
+        + "<b>Wind:</b> <code>{}</code>\n".format(info[2].split(": ")[1].split("<")[0])
+        + "<b>Location:</b> {}\n".format(details[0])
+        + "<b>Current Time:</b> <code>{}</code>\n".format(details[1])
+        + "<b>Latest Update:</b> <code>{}</code>\n".format(details[2])
+        + "<b>Visibility:</b> {}\n".format(details[3])
+        + "<b>Humidity:</b> <code>{}</code>\n".format(details[4])
+        + "<b>Pressure:</b> <code>{}</code>\n".format(details[5])
+        + "<b>Dew Point:</b> <code>{}</code>\n".format(details[6])
+        + "\n<b> @MissValeri_Bot</b>"
+    )
     return result

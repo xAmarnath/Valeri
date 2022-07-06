@@ -1,7 +1,9 @@
 import time
+
+from mega import Mega
+
 from ._handler import auth_only, newMsg
 from ._helpers import human_readable_size as size
-from mega import Mega
 
 mega = Mega()
 mega = mega.login("prolikem3@outlook.com", "Mohit@123")

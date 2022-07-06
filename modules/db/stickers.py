@@ -9,7 +9,7 @@ def new_pack(user_id, name, pack_id, animated, video):
         "pack_id": pack_id,
         "animated": animated,
         "video": video,
-        'count': 1,
+        "count": 1,
     }
     stickers.update_one(
         {"user_id": user_id},
@@ -34,5 +34,3 @@ def get_pack(user_id, animated=False, video=False):
         elif video and pack["video"]:
             return pack
     return pack[-1]
-
-

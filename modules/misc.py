@@ -1,10 +1,11 @@
 import json
 import time
+
 from requests import get, post
 from telethon import Button
 
 from ._config import TMDB_KEY as tapiKey
-from ._functions import search_imdb, get_weather
+from ._functions import get_weather, search_imdb
 from ._handler import newMsg
 from ._helpers import gen_random_string, get_text_content, get_user
 
@@ -53,27 +54,49 @@ async def ip_lookup(message):
     params = {"ip": ip}
     resp = get(url, params=params)
     resp = resp.json()
-    if resp.get('data', {}).get("status", 200) != 200:
-        return await message.reply("Error: {}".format(resp.get('data', {}).get("message", "Unknown error")))
-    data = resp.get('data', {})
-    ip_info = ('<b>IP: <code>{}</code></b>'.format(data.get('ip', '-')) +
-               "\nHostname: <code>{}</code></b>".format(data.get('hostname', '-')) +
-               "\n<b>City: <code>{}</code></b>".format(data.get('city', '-')) +
-               "\n<b>Region: <code>{}</code></b>".format(data.get('region', '-')) +
-               "\n<b>Location: <code>{}</code></b>".format(data.get('loc', '-')) +
-               "\n<b>Org: <code>{}</code></b>".format(data.get('org', '-')) +
-               "\n<b>Postal: <code>{}</code></b>".format(data.get('postal', '-')) +
-               "\n<b>Timezone: <code>{}</code></b>".format(data.get('timezone', '-')) +
-               "\n<b>Company: <code>{}</code></b>".format(data.get('company', {}).get('name', '-')) +
-               "\n<b>Address: <code>{}</code></b>".format(data.get('abuse', {}).get('address', '-')) +
-               "\n<b>Email: <code>{}</code></b>".format(data.get('abuse', {}).get('email', '-')) +
-               "\n<b>Phone: <code>{}</code></b>".format(data.get('abuse', {}).get('phone', '-')) +
-               "\n\n<b>VPN: <code>{}</code></b>".format(data.get('privacy', {}).get('vpn', '-')) +
-               "\n<b>Proxy: <code>{}</code></b>".format(data.get('privacy', {}).get('proxy', '-')) +
-               "\n<b>Tor: <code>{}</code></b>".format(data.get('privacy', {}).get('tor', '-')) +
-               "\n<b>Hosting: <code>{}</code></b>".format(data.get('privacy', {}).get('hosting', '-')) +
-               "\n<b>Domains: <code>{}</code></b>".format(' ,'.join(x for x in data.get('domains', {}).get('domains', '[]'))) +
-               "\n\n <b>@MissValeri_Bot</b>")
+    if resp.get("data", {}).get("status", 200) != 200:
+        return await message.reply(
+            "Error: {}".format(resp.get("data", {}).get("message", "Unknown error"))
+        )
+    data = resp.get("data", {})
+    ip_info = (
+        "<b>IP: <code>{}</code></b>".format(data.get("ip", "-"))
+        + "\nHostname: <code>{}</code></b>".format(data.get("hostname", "-"))
+        + "\n<b>City: <code>{}</code></b>".format(data.get("city", "-"))
+        + "\n<b>Region: <code>{}</code></b>".format(data.get("region", "-"))
+        + "\n<b>Location: <code>{}</code></b>".format(data.get("loc", "-"))
+        + "\n<b>Org: <code>{}</code></b>".format(data.get("org", "-"))
+        + "\n<b>Postal: <code>{}</code></b>".format(data.get("postal", "-"))
+        + "\n<b>Timezone: <code>{}</code></b>".format(data.get("timezone", "-"))
+        + "\n<b>Company: <code>{}</code></b>".format(
+            data.get("company", {}).get("name", "-")
+        )
+        + "\n<b>Address: <code>{}</code></b>".format(
+            data.get("abuse", {}).get("address", "-")
+        )
+        + "\n<b>Email: <code>{}</code></b>".format(
+            data.get("abuse", {}).get("email", "-")
+        )
+        + "\n<b>Phone: <code>{}</code></b>".format(
+            data.get("abuse", {}).get("phone", "-")
+        )
+        + "\n\n<b>VPN: <code>{}</code></b>".format(
+            data.get("privacy", {}).get("vpn", "-")
+        )
+        + "\n<b>Proxy: <code>{}</code></b>".format(
+            data.get("privacy", {}).get("proxy", "-")
+        )
+        + "\n<b>Tor: <code>{}</code></b>".format(
+            data.get("privacy", {}).get("tor", "-")
+        )
+        + "\n<b>Hosting: <code>{}</code></b>".format(
+            data.get("privacy", {}).get("hosting", "-")
+        )
+        + "\n<b>Domains: <code>{}</code></b>".format(
+            " ,".join(x for x in data.get("domains", {}).get("domains", "[]"))
+        )
+        + "\n\n <b>@MissValeri_Bot</b>"
+    )
     await message.reply(ip_info, parse_mode="html")
 
 
@@ -147,8 +170,7 @@ async def pinterest(message):
     if result.get("resource_response", {}).get("status", "") != "success":
         return await message.reply("No results found!")
     urls = []
-    pins = result.get("resource_response", {}).get(
-        "data", {}).get("results", [])
+    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
@@ -376,5 +398,3 @@ def telegraph_file_upload(path_to_file):
     telegraph_url = f"https://telegra.ph{telegraph_url}"
 
     return telegraph_url
-
-
