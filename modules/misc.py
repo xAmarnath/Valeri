@@ -5,7 +5,7 @@ from requests import get, post
 from telethon import Button
 
 from ._config import TMDB_KEY as tapiKey
-from ._functions import get_weather, search_imdb, translate 
+from ._functions import get_weather, search_imdb, translate
 from ._handler import newMsg
 from ._helpers import gen_random_string, get_text_content, get_user
 
@@ -289,22 +289,26 @@ async def id_(message):
         "The ID of " + user.first_name + " is: ```" + str(user.id) + "```"
     )
 
+
 @newMsg(pattern="(tl|tr|translate)")
 async def _tl(msg):
- text = await get_text_content(message=msg)
- if text is None:
-     return await msg.reply("No text provided to translate")
- if msg.reply_to and len(msg.text.split(None)) > 1:
-     to_lang = msg.text.split(None)[1]
- else:
-     langs = text.split(None)
-     if len(langs[0]) == 2:
-        to_lang = langs[0]
-        text = text.replace(to_lang, '')
-     else:
-        to_lang = 'en'
- tl = translate (text, to_lang)
- await e.reply('<b>Translate to {}</b>\n\n<code>{}</code>'.format(to_lang, tl), parse_mode="html")
+    text = await get_text_content(message=msg)
+    if text is None:
+        return await msg.reply("No text provided to translate")
+    if msg.reply_to and len(msg.text.split(None)) > 1:
+        to_lang = msg.text.split(None)[1]
+    else:
+        langs = text.split(None)
+        if len(langs[0]) == 2:
+            to_lang = langs[0]
+            text = text.replace(to_lang, "")
+        else:
+            to_lang = "en"
+    tl = translate(text, to_lang)
+    await e.reply(
+        "<b>Translate to {}</b>\n\n<code>{}</code>".format(to_lang, tl),
+        parse_mode="html",
+    )
 
 
 @newMsg(pattern="(telegraph|tg)")
