@@ -246,9 +246,9 @@ def get_weather(city: str):
         + "<b>Current Time:</b> <code>{}</code>\n".format(details[1])
         + "<b>Latest Update:</b> <code>{}</code>\n".format(details[2])
         + "<b>Visibility:</b> {}\n".format(details[3])
-        + "<b>Humidity:</b> <code>{}</code>\n".format(details[4])
-        + "<b>Pressure:</b> <code>{}</code>\n".format(details[5])
+        + "<b>Pressure:</b> <code>{}</code>\n".format(details[4])
+        + "<b>Humidity:</b> <code>{}</code>\n".format(details[5])
         + "<b>Dew Point:</b> <code>{}</code>\n".format(details[6])
-        + "\n<b> @MissValeri_Bot</b>"
+        + "\n<b>🎉 @MissValeri_Bot</b>"
     )
     return result
