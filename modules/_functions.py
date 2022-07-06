@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
-from requests import get
+from requests import get, post
 from telethon import Button
+from urllib.quote import parse
 
 from ._config import TMDB_KEY as tapiKey
 from ._helpers import human_currency
@@ -252,3 +253,13 @@ def get_weather(city: str):
         + "\n<b>🎉 @MissValeri_Bot</b>"
     )
     return result
+
+def translate(text, to_lang="en"):
+    url = 'www.google.com/async/translate?vet=12ahUKEwiM3pvpx8z1AhV_SmwGHRb5C5MQqDh6BAgDECY..i&ei=EL_vYYyWFP-UseMPlvKvmAk&client=opera&yv=3'
+    data = f'async=translate,sl:auto,tl:{to_lang},st:{quote(text)},id:1643102010421,qc:true,ac:true,_id:tw-async-translate,_pms:s,_fmt:pc'
+    headers = {'content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        'user-agent': "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 OPR/83.0.4254.19",
+        }
+    request= post(url, data=data, headers=headers)
+    soup = BeautifulSoup(request.text, 'html.parser')
+    return soup.find("span", {"id": "tw-answ-target-text"})
