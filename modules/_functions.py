@@ -265,4 +265,5 @@ def translate(text, to_lang="en"):
     }
     request = post(url, data=data, headers=headers)
     soup = BeautifulSoup(request.text, "html.parser")
-    return soup.find("span", {"id": "tw-answ-target-text"})
+    result = soup.find("span", {"id": "tw-answ-target-text"})
+    return result.text if result else "vision.google.api returned err."
