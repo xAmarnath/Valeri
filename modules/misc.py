@@ -305,6 +305,8 @@ async def _tl(msg):
         else:
             to_lang = "en"
     tl = translate(text, to_lang)
+    if tl == '':
+       return await msg.reply("No such language code exist!")
     await msg.reply(
         "<b>🎉 Translated to {}</b>\n\n<code>{}</code>".format(to_lang, tl),
         parse_mode="html",
