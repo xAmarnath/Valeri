@@ -5,7 +5,7 @@ from requests import get, post
 from telethon import Button
 
 from ._config import TMDB_KEY as tapiKey
-from ._functions import get_weather, search_imdb
+from ._functions import get_weather, search_imdb, translate 
 from ._handler import newMsg
 from ._helpers import gen_random_string, get_text_content, get_user
 
@@ -277,7 +277,7 @@ async def wiki_(message):
 
 @newMsg(pattern="id")
 async def id_(message):
-    if not message.reply and not len(message.text.split(None)) > 1:
+    if not message.reply or not len(message.text.split(None)) > 1:
         user = message.sender
     else:
         user, _ = await get_user(message)
@@ -285,26 +285,26 @@ async def id_(message):
         return await message.reply(
             "Your ID is: ```" + str(message.from_user.id) + "```"
         )
-    if message.reply_to:
-        r = await message.get_reply_message()
-        if r.fwd:
-            return await message.reply(
-                "The ID of "
-                + "Forwarded user"
-                + " is: ```"
-                + str(r.forward_from.id)
-                + "```"
-            )
-        return await message.reply(
-            "The ID of "
-            + r.from_user.first_name
-            + " is: ```"
-            + str(r.from_user.id)
-            + "```"
-        )
     return await message.reply(
         "The ID of " + user.first_name + " is: ```" + str(user.id) + "```"
     )
+
+@newMsg(pattern="(tl|tr|translate)")
+async def _tl(msg):
+ text = await get_text_content(message=msg)
+ if text is None:
+     return await msg.reply("No text provided to translate")
+ if msg.reply_to and len(msg.text.split(None)) > 1:
+     to_lang = msg.text.split(None)[1]
+ else:
+     langs = text.split(None)
+     if len(langs[0]) == 2:
+        to_lang = langs[0]
+        text = text.replace(to_lang, '')
+     else:
+        to_lang = 'en'
+ tl = translate (text, to_lang)
+ await e.reply('<b>Translate to {}</b>\n\n<code>{}</code>'.format(to_lang, tl), parse_mode="html")
 
 
 @newMsg(pattern="(telegraph|tg)")
