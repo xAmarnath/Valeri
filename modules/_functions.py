@@ -1,7 +1,8 @@
+from urllib.parser import quote
+
 from bs4 import BeautifulSoup
 from requests import get, post
 from telethon import Button
-from urllib.parser import quote
 
 from ._config import TMDB_KEY as tapiKey
 from ._helpers import human_currency
