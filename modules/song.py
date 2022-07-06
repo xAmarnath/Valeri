@@ -2,7 +2,6 @@
 
 import io
 
-from PIL import Image
 from requests import get
 from telethon import types
 
