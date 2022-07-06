@@ -1,15 +1,12 @@
 import json
 import time
-
-from mega import Mega
 from requests import get, post
 from telethon import Button
 
 from ._config import TMDB_KEY as tapiKey
-from ._functions import search_imdb
+from ._functions import search_imdb, get_weather
 from ._handler import newMsg
 from ._helpers import gen_random_string, get_text_content, get_user
-from ._helpers import human_readable_size as size
 
 TELEGRAPH_API_KEY = ""
 
@@ -52,25 +49,41 @@ async def ip_lookup(message):
     ip = await get_text_content(message)
     if ip is None:
         return await message.reply("No IP provided!")
-    url = "https://ipinfo.io/" + ip + "/json"
-    params = {"token": "a25e6bc6a305c7"}
-    response = get(url, params=params)
-    if response.status_code != 200:
-        return await message.reply("Error: {}".format(response.status_code))
-    result = response.json()
-    IP = "IP: `" + result.get("ip", "-") + "`"
-    IP += "\nCity: " + result.get("city", "-")
-    IP += "\nRegion: " + result.get("region", "-")
-    IP += "\nCountry: " + result.get("country", "-")
-    IP += "\nLocation: " + result.get("loc", "-")
-    IP += "\nOrg: " + result.get("org", "-")
-    IP += "\nPostal: " + result.get("postal", "-")
-    await message.reply(IP)
+    url = "https://api.roseloverx.tk/ip"
+    params = {"ip": ip}
+    resp = get(url, params=params)
+    resp = resp.json()
+    if resp.get('data', {}).get("status", 200) != 200:
+        return await message.reply("Error: {}".format(resp.get('data', {}).get("message", "Unknown error")))
+    data = resp.get('data', {})
+    ip_info = ('<b>IP: <code>{}</code></b>'.format(data.get('ip', '-')) +
+               "\nHostname: <code>{}</code></b>".format(data.get('hostname', '-')) +
+               "\n<b>City: <code>{}</code></b>".format(data.get('city', '-')) +
+               "\n<b>Region: <code>{}</code></b>".format(data.get('region', '-')) +
+               "\n<b>Location: <code>{}</code></b>".format(data.get('loc', '-')) +
+               "\n<b>Org: <code>{}</code></b>".format(data.get('org', '-')) +
+               "\n<b>Postal: <code>{}</code></b>".format(data.get('postal', '-')) +
+               "\n<b>Timezone: <code>{}</code></b>".format(data.get('timezone', '-')) +
+               "\n<b>Company: <code>{}</code></b>".format(data.get('company', {}).get('name', '-')) +
+               "\n<b>Address: <code>{}</code></b>".format(data.get('abuse', {}).get('address', '-')) +
+               "\n<b>Email: <code>{}</code></b>".format(data.get('abuse', {}).get('email', '-')) +
+               "\n<b>Phone: <code>{}</code></b>".format(data.get('abuse', {}).get('phone', '-')) +
+               "\n\n<b>VPN: <code>{}</code></b>".format(data.get('privacy', {}).get('vpn', '-')) +
+               "\n<b>Proxy: <code>{}</code></b>".format(data.get('privacy', {}).get('proxy', '-')) +
+               "\n<b>Tor: <code>{}</code></b>".format(data.get('privacy', {}).get('tor', '-')) +
+               "\n<b>Hosting: <code>{}</code></b>".format(data.get('privacy', {}).get('hosting', '-')) +
+               "\n<b>Domains: <code>{}</code></b>".format(' ,'.join(x for x in data.get('domains', {}).get('domains', '[]'))) +
+               "\n\n <b>@MissValeri_Bot</b>")
+    await message.reply(ip_info, parse_mode="html")
 
 
 @newMsg(pattern="(weather|w)")
 async def weather(message):
-    await message.reply("Weather is not yet implemented.")
+    city = await get_text_content(message)
+    if city is None:
+        return await message.reply("No city provided!")
+    response = get_weather(city)
+    await message.reply(response)
 
 
 @newMsg(pattern="ud")
@@ -134,7 +147,8 @@ async def pinterest(message):
     if result.get("resource_response", {}).get("status", "") != "success":
         return await message.reply("No results found!")
     urls = []
-    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
+    pins = result.get("resource_response", {}).get(
+        "data", {}).get("results", [])
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
@@ -241,8 +255,8 @@ async def wiki_(message):
 
 @newMsg(pattern="id")
 async def id_(message):
-    if not e.reply and not len(e.text.split(None)) > 1:
-        user = e.sender
+    if not message.reply and not len(message.text.split(None)) > 1:
+        user = message.sender
     else:
         user, _ = await get_user(message)
     if user is None:
@@ -364,36 +378,3 @@ def telegraph_file_upload(path_to_file):
     return telegraph_url
 
 
-mega = Mega()
-mega = mega.login("prolikem3@outlook.com", "Mohit@123")
-
-
-@newMsg(pattern="ulmega")
-async def _ul_mega(e):
-    r = await e.get_reply_message()
-    if not r and not r.media:
-        return await e.reply("Reply to a media to ul to mega.nz")
-    msg = await e.reply("Downloading...")
-    media = await r.download_media()
-    msg = await msg.edit("Uploading...")
-    startTime = time.time()
-    file = mega.upload(media)
-    url = mega.get_upload_link(file)
-    await msg.edit(
-        "**Mega.NZ File**\n\n `{}` \n\n**Time:** `{}s`\n**🎉 @MissValeri_Bot**".format(
-            url, round(time.time() - startTime, 2)
-        )
-    )
-
-
-@newMsg(pattern="megausage")
-async def _mage_usage(e):
-    usage = mega.get_storage_space()
-    quota = mega.get_quota()
-    _usage = "**Mega.NZ Usage**\n\n**Used:** `{}`\n**Free:** `{}`\n**Total:** `{}`\n**Disk Quota:** `{}`\n\n**🎉 @MissValeri_Bot**".format(
-        size(usage["used"]),
-        size(int(usage["total"]) - int(usage["used"])),
-        size(usage["total"]),
-        size(quota),
-    )
-    await e.reply(_usage)

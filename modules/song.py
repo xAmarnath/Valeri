@@ -4,6 +4,7 @@ import io
 
 from requests import get
 from telethon import types
+from PIL import Image
 
 from ._handler import newMsg
 
@@ -24,6 +25,8 @@ async def _song(message):
     with io.BytesIO(response.content) as file:
         with io.BytesIO(get(song["thumbnail"]).content) as thumb:
             thumb.name = "thumbnail.jpg"
+            image = Image.open(thumb)
+            thumb = image.resize((320, 320))        # Resize the thumbnail
             file.name = response.headers.get("file-name") or "song.mp3"
             async with message.client.action(message.chat_id, "audio"):
                 await message.respond(

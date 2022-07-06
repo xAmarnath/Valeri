@@ -33,7 +33,8 @@ async def _ls(e):
             elif file.endswith(".mp3") or file.endswith(".wav"):
                 emoji = "🎵"
             elif (
-                file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png")
+                file.endswith(".jpg") or file.endswith(
+                    ".jpeg") or file.endswith(".png")
             ):
                 emoji = "🖼"
             elif file.endswith(".gif"):
@@ -69,7 +70,9 @@ async def _auth(e):
         sno = 0
         for user in get_auth():
             sno += 1
-            AUTH_LIST += "<b>{}.</b> <code>{}</code>\n".format(sno, user)
+            AUTH_LIST += "<b>{}.</b> <a href='tg://user?id={}'>{}</a>\n".format(
+                sno, user, user
+            )
         await e.reply(AUTH_LIST, parse_mode="HTML")
         return
     user, arg = await get_user(e)

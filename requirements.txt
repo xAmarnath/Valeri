@@ -9,3 +9,4 @@ cryptg
 seedrcc
 pillow 
 mega.py
+bs4
