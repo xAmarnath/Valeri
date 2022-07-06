@@ -1,7 +1,7 @@
 from os import listdir, path
 
 from ._handler import auth_only, master_only, newMsg
-from ._helpers import get_mention, get_user, human_readable_size, get_text_content
+from ._helpers import get_mention, get_text_content, get_user, human_readable_size
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
 
@@ -48,16 +48,17 @@ async def _ls(e):
     caption += "\n<b>{} folders, {} files</b>".format(folder_count, file_count)
     await e.reply(caption, parse_mode="html")
 
+
 @newMsg(pattern="ul")
 @auth_only
 async def _ul(e):
- l = await get_text_content(e)
- if not l:
-    return await _ls(e)
- try:
-    await e.respond(file=l)
- except Exception as err:
-    await e.reply(str(type(err))+str(err))
+    l = await get_text_content(e)
+    if not l:
+        return await _ls(e)
+    try:
+        await e.respond(file=l)
+    except Exception as err:
+        await e.reply(str(type(err)) + str(err))
 
 
 @newMsg(pattern="auth")
