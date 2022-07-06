@@ -52,20 +52,20 @@ async def _ls(e):
 @newMsg(pattern="auth")
 @master_only
 async def _auth(e):
-    user, arg = await get_user(e)
-    if user is None:
+    if not e.reply_to and not len(e.text.split(None)) > 1:
         AUTH_LIST = "Auth list:\n"
         sno = 0
         for user in get_auth():
             sno += 1
-            AUTH_LIST += "<b>{}.</b> {}\n".format(sno, user)
+            AUTH_LIST += "<b>{}.</b> <code>{}</code>\n".format(sno, user)
         await e.reply(AUTH_LIST, parse_mode="HTML")
         return
+    user, arg = await get_user(e)
     if is_auth(user.id):
-        await e.reply("<b>{}</b> is already authorized.".format(get_mention(user)))
+        await e.reply("<b>{}</b> is already authorized.".format(get_mention(user)), parse_mode="html")
         return
     add_auth(user.id)
-    await e.reply("<b>{}</b> is now authorized.".format(get_mention(user)))
+    await e.reply("<b>{}</b> is now authorized.".format(get_mention(user)), parse_mode="html")
 
 
 @newMsg(pattern="(unauth|rmauth)")
@@ -75,7 +75,7 @@ async def _unauth(e):
     if user is None:
         return await e.reply("Specify a user to unauthorize.")
     if not is_auth(user.id):
-        await e.reply("<b>{}</b> is not authorized.".format(get_mention(user)))
+        await e.reply("<b>{}</b> is not authorized.".format(get_mention(user)), parse_mode="html")
         return
     remove_auth(user.id)
-    await e.reply("<b>{}</b> is now unauthorized.".format(get_mention(user)))
+    await e.reply("<b>{}</b> is now unauthorized.".format(get_mention(user)), parse_mode="html")
