@@ -305,8 +305,8 @@ async def _tl(msg):
         else:
             to_lang = "en"
     tl = translate(text, to_lang)
-    await e.reply(
-        "<b>Translate to {}</b>\n\n<code>{}</code>".format(to_lang, tl),
+    await msg.reply(
+        "<b>🎉 Translated to {}</b>\n\n<code>{}</code>".format(to_lang, tl),
         parse_mode="html",
     )
 
