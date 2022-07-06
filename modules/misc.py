@@ -138,16 +138,12 @@ async def pinterest(message):
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
-        if len(url) == 4:
+        if len(urls) == 4:
             break
     if len(urls) == 0:
         return await message.reply("No results found!")
-    await message.reply("Found {} results:".format(len(urls)))
-    for url in urls:
-        try:
-            await message.reply(file=url)
-        except:
-            pass
+    await message.reply("Found `{}` results for **{}**:".format(len(urls), query))
+    await message.reply(file=urls)
 
 
 @newMsg(pattern="(fake|faker)")
