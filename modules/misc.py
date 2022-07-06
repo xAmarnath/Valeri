@@ -142,7 +142,7 @@ async def pinterest(message):
             break
     if len(urls) == 0:
         return await message.reply("No results found!")
-    await message.reply("Found `{}` results for **{}**:".format(len(urls), query))
+    await message.reply("Found `{}` results for **{}**:".format(len(pins), query))
     await message.reply(file=urls)
 
 
