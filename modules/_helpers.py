@@ -4,7 +4,6 @@ import random
 import string
 from os import listdir, path
 
-
 import telethon
 from PIL import Image
 from telethon import errors
@@ -40,8 +39,7 @@ async def get_user(e: telethon.events.NewMessage.Event):
     args = e.text.split(maxsplit=2)
     if e.is_reply:
         user = (await e.get_reply_message()).sender
-        arg = (args[1] + (args[2] if len(args) > 2 else "")
-               ) if len(args) > 1 else ""
+        arg = (args[1] + (args[2] if len(args) > 2 else "")) if len(args) > 1 else ""
     else:
         if len(args) == 1:
             await e.reply("No user specified")
@@ -103,8 +101,7 @@ async def has_admin_rights(chat_id, user_id, RIGHT):
         else:
             return (
                 False,
-                "You are missing admin rights to use this command, {}.".format(
-                    RIGHT),
+                "You are missing admin rights to use this command, {}.".format(RIGHT),
             )
     return False, "You do not have admin rights in this chat"
 
@@ -120,7 +117,7 @@ def human_readable_time(seconds: int):
 
 
 def human_currency(amount: int):
-    '''Convert an amount of money to a human readable string'''
+    """Convert an amount of money to a human readable string"""
     variables = ["¢", "¥", "€", "£"]
     for x in variables:
         if amount < 100:

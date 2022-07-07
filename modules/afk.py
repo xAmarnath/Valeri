@@ -1,11 +1,13 @@
 import random
 import re
 import sre_constants
+
 from telethon import events, types
+
 from ._config import bot
-from .db import afk as db
-from ._helpers import human_readable_time
 from ._handler import newMsg
+from ._helpers import human_readable_time
+from .db import afk as db
 
 options = [
     "**{}** is here, was afk for {}",
@@ -34,15 +36,13 @@ async def afk(e):
         e.text
         and not len(e.text) in [0, 1]
         and (
-            (e.text[1:].split()[0]).lower(
-            ) == "afk" or e.text.lower().startswith("brb")
+            (e.text[1:].split()[0]).lower() == "afk" or e.text.lower().startswith("brb")
         )
     ):
         name = e.sender.first_name
         name = name + " " + e.sender.last_name if e.sender.last_name else name
         reason = (
-            e.text.split(maxsplit=1)[1] if len(
-                e.text.split(maxsplit=1)) == 2 else ""
+            e.text.split(maxsplit=1)[1] if len(e.text.split(maxsplit=1)) == 2 else ""
         )
         await e.reply("{} is now afk.".format(name))
         return db.set_afk(e.sender_id, name, reason, True)
@@ -50,23 +50,24 @@ async def afk(e):
         c = db.get_afk(e.sender_id)
         name = e.sender.first_name
         name = name + " " + e.sender.last_name if e.sender.last_name else name
-        await e.reply(random.choice(options).format(name, human_readable_time(c['time'])))
+        await e.reply(
+            random.choice(options).format(name, human_readable_time(c["time"]))
+        )
         db.set_afk(e.sender_id, "", "", False)
     else:
         c = await get_entities(e)
         if c and db.is_afk(c):
             c = db.get_afk(c)
-            reason = "\n**Reason:** " + \
-                c['reason'] if c['reason'] != "" else ""
+            reason = "\n**Reason:** " + c["reason"] if c["reason"] != "" else ""
             await e.reply(
                 "**{}** has been afk since **{}**.{}".format(
-                    c['name'], human_readable_time(c['time']), reason
+                    c["name"], human_readable_time(c["time"]), reason
                 )
             )
 
 
 async def get_entities(e):
-    '''Gets the entities in the message.'''
+    """Gets the entities in the message."""
     if e.reply_to_msg_id:
         r = await e.get_reply_message()
         try:
@@ -131,7 +132,7 @@ def seperate_sed(sed_string):
                 and counter + 1 < len(sed_string)
                 and sed_string[counter + 1] == delim
             ):
-                sed_string = sed_string[:counter] + sed_string[counter + 1:]
+                sed_string = sed_string[:counter] + sed_string[counter + 1 :]
 
             elif sed_string[counter] == delim:
                 replace_with = sed_string[start:counter]

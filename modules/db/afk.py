@@ -1,5 +1,6 @@
-from .db import DB
 from time import time
+
+from .db import DB
 
 afk = DB.afk
 
@@ -12,8 +13,11 @@ def is_afk(user_id: int):
 
 def set_afk(user_id: int, name: str, reason: str = "", mode: bool = True):
     if mode:
-        afk.update_one({"user_id": user_id}, {
-            "$set": {"reason": reason, "time": time(), "name": name}}, upsert=True)
+        afk.update_one(
+            {"user_id": user_id},
+            {"$set": {"reason": reason, "time": time(), "name": name}},
+            upsert=True,
+        )
         return AFK.append(user_id) if not is_afk(user_id) else None
     else:
         afk.delete_one({"user_id": user_id})
