@@ -399,21 +399,29 @@ async def paste_(message):
     try:
         if arg == "r":
             resp = post(
-                url='https://www.toptal.com/developers/hastebin/documents', data=content, timeout=5)
-            url = 'https://www.toptal.com/developers/hastebin/' + \
-                resp.json()['key']
-            paste_name = 'Hastebin'
-        elif arg == 's':
-            req = post(url='https://spaceb.in/api/v1/documents/',
-                       data={'content': content, "extension": "txt"}, timeout=5)
-            url = "https://spaceb.in/" + req.json()['payload']['id']
-            paste_name = 'Spacebin'
-        elif arg == 'n':
-            req = post(url='https://nekobin.com/api/documents',
-                       json={'content': content}, timeout=5)
+                url="https://www.toptal.com/developers/hastebin/documents",
+                data=content,
+                timeout=5,
+            )
+            url = "https://www.toptal.com/developers/hastebin/" + resp.json()["key"]
+            paste_name = "Hastebin"
+        elif arg == "s":
+            req = post(
+                url="https://spaceb.in/api/v1/documents/",
+                data={"content": content, "extension": "txt"},
+                timeout=5,
+            )
+            url = "https://spaceb.in/" + req.json()["payload"]["id"]
+            paste_name = "Spacebin"
+        elif arg == "n":
+            req = post(
+                url="https://nekobin.com/api/documents",
+                json={"content": content},
+                timeout=5,
+            )
             print(req.text)
-            url = "https://nekobin.com/" + req.json()['result']['key']
-            paste_name = 'Nekobin'
+            url = "https://nekobin.com/" + req.json()["result"]["key"]
+            paste_name = "Nekobin"
     except TimeoutError:
         return await message.reply("Paste failed, server timeout")
     await message.reply(
