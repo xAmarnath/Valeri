@@ -1,10 +1,12 @@
 import importlib
 import logging
-from os import listdir, path
 import os
-import random, string
+import random
+import string
+from os import listdir, path
 
 import telethon
+from PIL import Image
 from telethon import errors
 
 from ._config import OWNER_ID, bot
@@ -17,18 +19,19 @@ def __load_modules():
             continue
         importlib.import_module("modules." + module[:-3])
         logging.info("Loaded module: %s", module[:-3])
+    logging.info("Bot Started.")
 
 
 def human_readable_size(size, speed=False):
     # Convert a size in bytes to a human readable string
-    variables = ["bytes", "KB", "MB", "GB", "TB"]
+    variables = ["bytes", "KB", "MB", "GB", "TB", "EB"]
     if speed:
-        variables = ["bps", "Kbps", "Mbps", "Gbps", "Tbps"]
+        variables = ["bps", "Kbps", "Mbps", "Gbps", "Tbps", "Ebps"]
     for x in variables:
         if size < 1024.0:
             return "%3.1f %s" % (size, x)
         size /= 1024.0
-    return "%3.1f %s" % (size, "TB")
+    return "%3.1f %s" % (size, "EB")
 
 
 async def get_user(e: telethon.events.NewMessage.Event):
@@ -125,7 +128,7 @@ def human_currency(amount: int):
 
 
 def parse_time(time: str):
-    ''' Convert a time string to an integer '''
+    """Convert a time string to an integer"""
     if any([time.endswith("s"), time.endswith("second"), time.endswith("seconds")]):
         return int(time[:-1].strip()), "s"
     elif any([time.endswith("m"), time.endswith("minute"), time.endswith("minutes")]):
@@ -140,6 +143,7 @@ def parse_time(time: str):
         return int(time[:-1].strip()) * 60 * 60 * 24 * 30, "m"
     else:
         return 0, "Invalid time format"
+
 
 async def get_text_content(message):
     """Returns the text content of a message."""
@@ -161,5 +165,13 @@ async def get_text_content(message):
         except:
             return None
 
+
 def gen_random_string(length):
     return "".join(random.choice(string.ascii_letters) for i in range(length))
+
+
+def resize_to_thumbnail(image):
+    """Resize an image to a thumbnail"""
+    im = Image.open(image)
+    im = im.resize((100, 100))
+    im.save(image)

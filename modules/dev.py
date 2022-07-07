@@ -1,8 +1,8 @@
 from os import listdir, path
 
-from ._handler import auth_only, newMsg, master_only
-from ._helpers import human_readable_size, get_mention, get_user
-from .db.auth import is_auth, add_auth, remove_auth, get_auth
+from ._handler import auth_only, master_only, newMsg
+from ._helpers import get_mention, get_text_content, get_user, human_readable_size
+from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
 
 @newMsg(pattern="ls")
@@ -16,7 +16,7 @@ async def _ls(e):
     if len(contents) == 0:
         await e.reply("`No files found.`")
         return
-    caption = "`Files in {}:`\n".format(directory)
+    caption = "<b>Files in <code>{}</code>:</b>\n".format(directory)
     folder_count = 0
     file_count = 0
     for file in contents:
@@ -45,27 +45,46 @@ async def _ls(e):
             caption += "{} <code>{}</code> (<code>{}</code>)\n".format(
                 emoji, file, human_readable_size(size)
             )
-    caption += "\n`{} folders, {} files`".format(folder_count, file_count)
+    caption += "\n<b>{} folders, {} files</b>".format(folder_count, file_count)
     await e.reply(caption, parse_mode="html")
+
+
+@newMsg(pattern="ul")
+@auth_only
+async def _ul(e):
+    l = await get_text_content(e)
+    if not l:
+        return await _ls(e)
+    try:
+        await e.respond(file=l)
+    except Exception as err:
+        await e.reply(str(type(err)) + str(err))
 
 
 @newMsg(pattern="auth")
 @master_only
 async def _auth(e):
-    user, arg = await get_user(e)
-    if user is None:
+    if not e.reply_to and not len(e.text.split(None)) > 1:
         AUTH_LIST = "Auth list:\n"
         sno = 0
         for user in get_auth():
             sno += 1
-            AUTH_LIST += "<b>{}.</b> {}\n".format(sno, user)
+            AUTH_LIST += "<b>{}.</b> <a href='tg://user?id={}'>{}</a>\n".format(
+                sno, user, user
+            )
         await e.reply(AUTH_LIST, parse_mode="HTML")
         return
+    user, arg = await get_user(e)
     if is_auth(user.id):
-        await e.reply("<b>{}</b> is already authorized.".format(get_mention(user)))
+        await e.reply(
+            "<b>{}</b> is already authorized.".format(get_mention(user)),
+            parse_mode="html",
+        )
         return
     add_auth(user.id)
-    await e.reply("<b>{}</b> is now authorized.".format(get_mention(user)))
+    await e.reply(
+        "<b>{}</b> is now authorized.".format(get_mention(user)), parse_mode="html"
+    )
 
 
 @newMsg(pattern="(unauth|rmauth)")
@@ -75,7 +94,11 @@ async def _unauth(e):
     if user is None:
         return await e.reply("Specify a user to unauthorize.")
     if not is_auth(user.id):
-        await e.reply("<b>{}</b> is not authorized.".format(get_mention(user)))
+        await e.reply(
+            "<b>{}</b> is not authorized.".format(get_mention(user)), parse_mode="html"
+        )
         return
     remove_auth(user.id)
-    await e.reply("<b>{}</b> is now unauthorized.".format(get_mention(user)))
+    await e.reply(
+        "<b>{}</b> is now unauthorized.".format(get_mention(user)), parse_mode="html"
+    )

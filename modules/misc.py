@@ -7,6 +7,11 @@ from requests import get, post
 from telethon import Button
 from random import randint, choice
 
+from ._config import TMDB_KEY as tapiKey
+from ._functions import get_weather, search_imdb, translate
+from ._handler import newMsg
+from ._helpers import gen_random_string, get_text_content, get_user
+
 TELEGRAPH_API_KEY = ""
 
 
@@ -26,7 +31,7 @@ async def _imdb_search(e):
 
 @newMsg(pattern="math")
 async def math(message):
-    exp = get_text_content(message)
+    exp = await get_text_content(message)
     if exp is None:
         return await message.reply("No expression provided!")
     url = "https://evaluate-expression.p.rapidapi.com"
@@ -43,35 +48,73 @@ async def math(message):
     await message.reply(result)
 
 
-@newMsg(patttern="ip")
+@newMsg(pattern="ip")
 async def ip_lookup(message):
-    ip = get_text_content(message)
+    ip = await get_text_content(message)
     if ip is None:
         return await message.reply("No IP provided!")
-    url = "https://ipinfo.io/" + ip + "/json"
-    params = {"token": "a25e6bc6a305c7"}
-    response = get(url, params=params)
-    if response.status_code != 200:
-        return await message.reply("Error: {}".format(response.status_code))
-    result = response.json()
-    IP = "IP: " + result.get("ip", "-")
-    IP += "\nCity: " + result.get("city", "-")
-    IP += "\nRegion: " + result.get("region", "-")
-    IP += "\nCountry: " + result.get("country", "-")
-    IP += "\nLocation: " + result.get("loc", "-")
-    IP += "\nOrg: " + result.get("org", "-")
-    IP += "\nPostal: " + result.get("postal", "-")
-    await message.reply(IP)
+    url = "https://api.roseloverx.tk/ip"
+    params = {"ip": ip}
+    resp = get(url, params=params)
+    resp = resp.json()
+    if resp.get("data", {}).get("status", 200) != 200:
+        return await message.reply(
+            "Error: {}".format(resp.get("data", {}).get("message", "Unknown error"))
+        )
+    data = resp.get("data", {})
+    ip_info = (
+        "<b>IP: <code>{}</code></b>".format(data.get("ip", "-"))
+        + "\nHostname: <code>{}</code></b>".format(data.get("hostname", "-"))
+        + "\n<b>City: <code>{}</code></b>".format(data.get("city", "-"))
+        + "\n<b>Region: <code>{}</code></b>".format(data.get("region", "-"))
+        + "\n<b>Location: <code>{}</code></b>".format(data.get("loc", "-"))
+        + "\n<b>Org: <code>{}</code></b>".format(data.get("org", "-"))
+        + "\n<b>Postal: <code>{}</code></b>".format(data.get("postal", "-"))
+        + "\n<b>Timezone: <code>{}</code></b>".format(data.get("timezone", "-"))
+        + "\n<b>Company: <code>{}</code></b>".format(
+            data.get("company", {}).get("name", "-")
+        )
+        + "\n<b>Address: <code>{}</code></b>".format(
+            data.get("abuse", {}).get("address", "-")
+        )
+        + "\n<b>Email: <code>{}</code></b>".format(
+            data.get("abuse", {}).get("email", "-")
+        )
+        + "\n<b>Phone: <code>{}</code></b>".format(
+            data.get("abuse", {}).get("phone", "-")
+        )
+        + "\n\n<b>VPN: <code>{}</code></b>".format(
+            data.get("privacy", {}).get("vpn", "-")
+        )
+        + "\n<b>Proxy: <code>{}</code></b>".format(
+            data.get("privacy", {}).get("proxy", "-")
+        )
+        + "\n<b>Tor: <code>{}</code></b>".format(
+            data.get("privacy", {}).get("tor", "-")
+        )
+        + "\n<b>Hosting: <code>{}</code></b>".format(
+            data.get("privacy", {}).get("hosting", "-")
+        )
+        + "\n<b>Domains: <code>{}</code></b>".format(
+            " ,".join(x for x in data.get("domains", {}).get("domains", "[]"))
+        )
+        + "\n\n <b>@MissValeri_Bot</b>"
+    )
+    await message.reply(ip_info, parse_mode="html")
 
 
 @newMsg(pattern="(weather|w)")
 async def weather(message):
-    await message.reply("Weather is not yet implemented.")
+    city = await get_text_content(message)
+    if city is None:
+        return await message.reply("No city provided!")
+    response = get_weather(city)
+    await message.reply(response, parse_mode="html")
 
 
 @newMsg(pattern="ud")
 async def urban_dictionary(message):
-    word = get_text_content(message)
+    word = await get_text_content(message)
     if word is None:
         return await message.reply("No word provided!")
     url = "https://api.urbandictionary.com/v0/define"
@@ -101,12 +144,13 @@ async def urban_dictionary(message):
                 Button.inline("👎 {}".format(downvote)),
             ]
         ],
+        parse_mode="html",
     )
 
 
 @newMsg(pattern="pinterest")
 async def pinterest(message):
-    query = get_text_content(message)
+    query = await get_text_content(message)
     if query is None:
         return await message.reply("No query provided!")
     url = "https://in.pinterest.com/resource/BaseSearchResource/get/"
@@ -133,21 +177,17 @@ async def pinterest(message):
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
-        if len(url) == 4:
+        if len(urls) == 4:
             break
     if len(urls) == 0:
         return await message.reply("No results found!")
-    await message.reply("Found {} results:".format(len(urls)))
-    for url in urls:
-        try:
-            await message.reply(file=url)
-        except:
-            pass
+    await message.reply("Found `{}` results for **{}**:".format(len(pins), query))
+    await message.reply(file=urls)
 
 
 @newMsg(pattern="(fake|faker)")
 async def fake(message):
-    country = get_text_content(message)
+    country = await get_text_content(message)
     if country is None:
         country = "us"
     url = "https://randomuser.me/api"
@@ -195,9 +235,9 @@ async def fake(message):
     )
 
 
-@newMsg("(w|wiki)")
+@newMsg(pattern="(w|wiki)")
 async def wiki_(message):
-    query = get_text_content(message=message)
+    query = await get_text_content(message=message)
     if query is None:
         return await message.reply("No query provided")
     url = "https://en.wikipedia.org/w/api.php"
@@ -265,30 +305,39 @@ async def _carbon(message):
 
 @newMsg(pattern="id")
 async def id_(message):
-    user, _ = await get_user(message)
+    if not message.reply or not len(message.text.split(None)) > 1:
+        user = message.sender
+    else:
+        user, _ = await get_user(message)
     if user is None:
         return await message.reply(
             "Your ID is: ```" + str(message.from_user.id) + "```"
         )
-    if message.reply_to:
-        r = await message.get_reply_message()
-        if r.forward_from:
-            return await message.reply(
-                "The ID of "
-                + r.forward_from.first_name
-                + " is: ```"
-                + str(r.forward_from.id)
-                + "```"
-            )
-        return await message.reply(
-            "The ID of "
-            + r.from_user.first_name
-            + " is: ```"
-            + str(r.from_user.id)
-            + "```"
-        )
     return await message.reply(
         "The ID of " + user.first_name + " is: ```" + str(user.id) + "```"
+    )
+
+
+@newMsg(pattern="(tl|tr|translate)")
+async def _tl(msg):
+    text = await get_text_content(message=msg)
+    if text is None:
+        return await msg.reply("No text provided to translate")
+    if msg.reply_to and len(msg.text.split(None)) > 1:
+        to_lang = msg.text.split(None)[1]
+    else:
+        langs = text.split(None)
+        if len(langs[0]) == 2:
+            to_lang = langs[0]
+            text = text.replace(to_lang, "")
+        else:
+            to_lang = "en"
+    tl = translate(text, to_lang)
+    if tl == "":
+        return await msg.reply("No such language code exist!")
+    await msg.reply(
+        "<b>🎉 Translated to {}</b>\n\n<code>{}</code>".format(to_lang, tl),
+        parse_mode="html",
     )
 
 
@@ -302,14 +351,14 @@ async def telegraph_(message):
             file = await r.download_media()
             caption = r.caption if r.caption else ""
     else:
-        caption = get_text_content(message)
+        caption = await get_text_content(message)
     if caption is None and file == "":
         return await message.reply("No caption or media provided!")
 
     if media:
         url = telegraph_file_upload(file)
     else:
-        url = "https://telegra.ph/createPage"
+        url = "https://api.telegra.ph/createPage"
         params = {
             "content": caption,
             "access_token": get_tgf_key(),
@@ -322,7 +371,7 @@ async def telegraph_(message):
         if response.status_code != 200:
             return await message.reply("Error: {}".format(response.status_code))
         result = response.json()
-        url = result.get("url", "")
+        url = result.get("result", {}).get("url", "")
     await message.reply(
         "Uploaded to <b><a href='{}'>{}</a></b>".format(url, "Telegr.aph"),
         parse_mode="html",
