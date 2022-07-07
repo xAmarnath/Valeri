@@ -1,15 +1,15 @@
 import importlib
-import logging
 import os
 import random
 import string
 from os import listdir, path
 
+
 import telethon
 from PIL import Image
 from telethon import errors
 
-from ._config import OWNER_ID, bot
+from ._config import OWNER_ID, bot, log
 
 
 def __load_modules():
@@ -18,8 +18,8 @@ def __load_modules():
         if module.startswith("_") or not module.endswith(".py"):
             continue
         importlib.import_module("modules." + module[:-3])
-        logging.info("Loaded module: %s", module[:-3])
-    logging.info("Bot Started.")
+        log.info("Loaded module: %s", module[:-3])
+    log.info("Bot Started.")
 
 
 def human_readable_size(size, speed=False):
@@ -40,7 +40,8 @@ async def get_user(e: telethon.events.NewMessage.Event):
     args = e.text.split(maxsplit=2)
     if e.is_reply:
         user = (await e.get_reply_message()).sender
-        arg = (args[1] + (args[2] if len(args) > 2 else "")) if len(args) > 1 else ""
+        arg = (args[1] + (args[2] if len(args) > 2 else "")
+               ) if len(args) > 1 else ""
     else:
         if len(args) == 1:
             await e.reply("No user specified")
@@ -102,7 +103,8 @@ async def has_admin_rights(chat_id, user_id, RIGHT):
         else:
             return (
                 False,
-                "You are missing admin rights to use this command, {}.".format(RIGHT),
+                "You are missing admin rights to use this command, {}.".format(
+                    RIGHT),
             )
     return False, "You do not have admin rights in this chat"
 
@@ -118,7 +120,7 @@ def human_readable_time(seconds: int):
 
 
 def human_currency(amount: int):
-    # Convert an amount of money to a human readable string
+    '''Convert an amount of money to a human readable string'''
     variables = ["¢", "¥", "€", "£"]
     for x in variables:
         if amount < 100:
@@ -167,6 +169,7 @@ async def get_text_content(message):
 
 
 def gen_random_string(length):
+    """Generate a random string of a given length"""
     return "".join(random.choice(string.ascii_letters) for i in range(length))
 
 
@@ -175,3 +178,18 @@ def resize_to_thumbnail(image):
     im = Image.open(image)
     im = im.resize((100, 100))
     im.save(image)
+
+
+def pack_file_to_db(file):
+    """Pack a file to a database"""
+    return [file.id, file.access_hash, file.file_reference, get_file_type(file)]
+
+
+def get_file_type(file):
+    """Get the type of a file"""
+    if isinstance(file, telethon.types.MessageMediaDocument):
+        return "document"
+    elif isinstance(file, telethon.types.MessageMediaPhoto):
+        return "photo"
+    elif isinstance(file, telethon.types.MessageMediaGeo):
+        return "geo"
