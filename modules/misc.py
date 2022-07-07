@@ -251,9 +251,7 @@ async def _raddr(msg):
     if query is None:
         return await msg.reply("No query was given!")
     url = "https://www.google.com/search"
-    params = {
-        "q": "foodplace near" + query
-    }
+    params = {"q": "foodplace near" + query}
     response = get(url, params=params)
     soup = BeautifulSoup(response.text, "html.parser")
     results = []
