@@ -1,11 +1,11 @@
-import json
-import time
+import io
 from ._handler import newMsg
 from ._config import TMDB_KEY as tapiKey
 from ._helpers import get_text_content, get_user, gen_random_string
 from ._functions import search_imdb
 from requests import get, post
 from telethon import Button
+from random import randint, choice
 
 TELEGRAPH_API_KEY = ""
 
@@ -236,6 +236,31 @@ async def wiki_(message):
             ],
         ],
     )
+
+@newMsg(pattern="carbon")
+async def _carbon(message):
+    text = await get_text_content(message)
+    if text is None:
+        return await message.reply("No text provided")
+    url = "https://carbonnowsh.herokuapp.com"
+    params = {
+        "code": text,
+        "backgroundColor": "rgba({},{},{},100)".format(
+            randint(0, 255), randint(0, 255), randint(0, 255)
+        ),
+        "fontColor": "rgba({},{},{},100)".format(
+            randint(0, 255), randint(0, 255), randint(0, 255)
+        ),
+        "exportSize": "3x",
+        "fontFamily": choice(["Fira Code", "Hack", "JetBrains Mono"]),
+        "theme": choice(["seti", "nord", "night owl", "panda", "vscode", "dracula", "yeti", "twilight"]),
+    }
+    response = get(url, params=params, headers={"User-Agent": "Mozilla/5.0"})
+    if response.status_code != 200:
+        return await message.reply("CarbonNowsh is down!")
+    with io.BytesIO(response.content) as file:
+        file.name = "carbon.png"
+        await message.reply(file=file)
 
 
 @newMsg(pattern="id")
