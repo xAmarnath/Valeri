@@ -4,7 +4,7 @@ from random import choice, randint
 from urllib.parse import quote
 
 from bs4 import BeautifulSoup
-from requests import get, post, Request, request
+from requests import get, post
 from telethon import Button
 
 from ._config import TMDB_KEY as tapiKey
@@ -59,8 +59,7 @@ async def ip_lookup(message):
     resp = resp.json()
     if resp.get("data", {}).get("status", 200) != 200:
         return await message.reply(
-            "Error: {}".format(resp.get("data", {}).get(
-                "message", "Unknown error"))
+            "Error: {}".format(resp.get("data", {}).get("message", "Unknown error"))
         )
     data = resp.get("data", {})
     ip_info = (
@@ -174,8 +173,7 @@ async def pinterest(message):
     if result.get("resource_response", {}).get("status", "") != "success":
         return await message.reply("No results found!")
     urls = []
-    pins = result.get("resource_response", {}).get(
-        "data", {}).get("results", [])
+    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
@@ -262,8 +260,7 @@ async def _raddr(msg):
         for i in result.find_all("a"):
             if not i.text == "":
                 name = i.find(class_="BNeawe deIvCb AP7Wnd").text
-                address = BeautifulSoup(str(i).split(
-                    "<br/>")[1], "html.parser").text
+                address = BeautifulSoup(str(i).split("<br/>")[1], "html.parser").text
             results.append("<b>{}</b>\n{}".format(name, address))
     if len(results) == 0:
         return await msg.reply("No results found!")
@@ -275,8 +272,7 @@ async def _raddr(msg):
             [
                 Button.url(
                     "🔎 View on Google",
-                    "https://www.google.com/search?q=food+places+near" +
-                    quote(query),
+                    "https://www.google.com/search?q=food+places+near" + quote(query),
                 )
             ]
         ],
@@ -394,56 +390,90 @@ async def paste_(message):
                 os.remove(file)
             else:
                 return await message.reply("No text provided")
-    arg, content = paste_mode(message.text.split(None, 1)[1].split(
-        None) if len(message.text.split(None)) > 1 else [], content)
+    arg, content = paste_mode(
+        message.text.split(None, 1)[1].split(None)
+        if len(message.text.split(None)) > 1
+        else [],
+        content,
+    )
     try:
-        if arg == 'r':
-            resp = post(url='https://rentry.co/', data={
-                'csrfmiddlewaretoken': 'ebeeca5o1hOo8dvG5PzOuWuPiduYEe0tjQ65Tj9Tt8Lxr1klxSPtYZE1EMxBvk3V', 'text': 'hh', 'edit_code': '', 'url': '', }, headers={
-                'referer': 'https://rentry.co/', }, cookies={'csrftoken': 'HKb5Ii0FssREv2iMsa2XxslwwB4vyyOPMp3Wpr4aUjONOQ7rUdiC1vvISa78pERh'}, timeout=5)
-            url = resp.url
-            paste_name = 'Rentry'
-        elif arg == 'h':
+        if arg == "r":
             resp = post(
-                url='https://www.toptal.com/developers/hastebin/documents', data=content, timeout=5)
-            url = 'https://www.toptal.com/developers/hastebin/' + \
-                resp.json()['key']
-            paste_name = 'Hastebin'
-        elif arg == 's':
-            req = post(url='https://spaceb.in/api/v1/documents/',
-                       data={'content': content, "extension": "txt"}, timeout=5)
-            url = "https://spaceb.in/" + req.json()['payload']['id']
-            paste_name = 'Spacebin'
-        elif arg == 'n':
-            req = post(url='https://nekobin.com/api/documents',
-                       json={'content': content}, timeout=5)
-            url = "https://nekobin.com/" + req.json()['result']['key']
-            paste_name = 'Nekobin'
+                url="https://rentry.co/",
+                data={
+                    "csrfmiddlewaretoken": "ebeeca5o1hOo8dvG5PzOuWuPiduYEe0tjQ65Tj9Tt8Lxr1klxSPtYZE1EMxBvk3V",
+                    "text": "hh",
+                    "edit_code": "",
+                    "url": "",
+                },
+                headers={
+                    "referer": "https://rentry.co/",
+                },
+                cookies={
+                    "csrftoken": "HKb5Ii0FssREv2iMsa2XxslwwB4vyyOPMp3Wpr4aUjONOQ7rUdiC1vvISa78pERh"
+                },
+                timeout=5,
+            )
+            url = resp.url
+            paste_name = "Rentry"
+        elif arg == "h":
+            resp = post(
+                url="https://www.toptal.com/developers/hastebin/documents",
+                data=content,
+                timeout=5,
+            )
+            url = "https://www.toptal.com/developers/hastebin/" + resp.json()["key"]
+            paste_name = "Hastebin"
+        elif arg == "s":
+            req = post(
+                url="https://spaceb.in/api/v1/documents/",
+                data={"content": content, "extension": "txt"},
+                timeout=5,
+            )
+            url = "https://spaceb.in/" + req.json()["payload"]["id"]
+            paste_name = "Spacebin"
+        elif arg == "n":
+            req = post(
+                url="https://nekobin.com/api/documents",
+                json={"content": content},
+                timeout=5,
+            )
+            url = "https://nekobin.com/" + req.json()["result"]["key"]
+            paste_name = "Nekobin"
     except TimeoutError:
         return await message.reply("Paste failed, server timeout")
     await message.reply(
-        "<b>Pasted to</b> " + paste_name + " <b>at</b> <code>" + url + "</code>", parse_mode="html", buttons=[
+        "<b>Pasted to</b> " + paste_name + " <b>at</b> <code>" + url + "</code>",
+        parse_mode="html",
+        buttons=[
             [
                 Button.url(
-                    "Open", url,
+                    "Open",
+                    url,
                 ),
             ],
-        ], link_preview=False,
+        ],
+        link_preview=False,
     )
 
 
 def paste_mode(args, content: str):
-    '''Returns the paste mode and the content'''
+    """Returns the paste mode and the content"""
     for arg in args:
-        for p in [['-n', '--nekobin'], ['-s', '--spacebin'], ['-h', '--hastebin'], ['-r', '--rentry']]:
+        for p in [
+            ["-n", "--nekobin"],
+            ["-s", "--spacebin"],
+            ["-h", "--hastebin"],
+            ["-r", "--rentry"],
+        ]:
             if arg == p[0]:
-                return p[0].split("-")[1], content.replace(p[0], '', 1)
+                return p[0].split("-")[1], content.replace(p[0], "", 1)
             elif arg == p[1]:
-                return p[0].split("-")[1], content.replace(p[1], '', 1)
-    return 'n'
+                return p[0].split("-")[1], content.replace(p[1], "", 1)
+    return "n"
 
 
-@ newMsg(pattern="(tl|tr|translate)")
+@newMsg(pattern="(tl|tr|translate)")
 async def _tl(msg):
     text = await get_text_content(message=msg)
     if text is None:
@@ -466,7 +496,7 @@ async def _tl(msg):
     )
 
 
-@ newMsg(pattern="(telegraph|tg)")
+@newMsg(pattern="(telegraph|tg)")
 async def telegraph_(message):
     media, file = False, ""
     if message.reply_to:
