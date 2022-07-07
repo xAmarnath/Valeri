@@ -257,7 +257,7 @@ async def _raddr(msg):
     response = get(url, params=params)
     soup = BeautifulSoup(response.text, "html.parser")
     results = []
-    for result in soup.find_all(class_="X7NTVe"):):
+    for result in soup.find_all(class_="X7NTVe"):
         for i in result.find_all("a"):
             if not i.text == "":
                 name = i.find(class_="BNeawe deIvCb AP7Wnd").text
