@@ -245,12 +245,12 @@ async def _raddr(msg):
         return await msg.reply("No query was given!")
     url = "https://www.google.com/search"
     params = {
-        "q": "food places near" + query
+        "q": "foodplace near" + query
     }
     response = get(url, params=params)
     soup = BeautifulSoup(response.text, "html.parser")
     results = []
-    for result in soup.find_all(class_="X7NTVe"):
+    for result in soup.find_all(class_="X7NTVe"):):
         for i in result.find_all("a"):
             if not i.text == "":
                 name = i.find(class_="BNeawe deIvCb AP7Wnd").text
