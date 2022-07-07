@@ -417,6 +417,7 @@ async def paste_(message):
         elif arg == 'n':
             req = post(url='https://nekobin.com/api/documents',
                        json={'content': content}, timeout=5)
+            print(req.text)
             url = "https://nekobin.com/" + req.json()['result']['key']
             paste_name = 'Nekobin'
     except TimeoutError:
