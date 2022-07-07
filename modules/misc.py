@@ -399,7 +399,7 @@ async def paste_(message):
         content,
     )
     try:
-        if arg == "r":
+        if arg == "h":
             resp = post(
                 url="https://www.toptal.com/developers/hastebin/documents",
                 data=content,
@@ -450,7 +450,6 @@ def paste_mode(args, content: str):
             ["-n", "--nekobin"],
             ["-s", "--spacebin"],
             ["-h", "--hastebin"],
-            ["-r", "--rentry"],
         ]:
             if arg == p[0]:
                 return p[0].split("-")[1], content.replace(p[0], "", 1)
