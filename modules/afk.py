@@ -1,6 +1,7 @@
 import random
 import re
 import sre_constants
+import time
 
 from telethon import events, types
 
@@ -51,7 +52,7 @@ async def afk(e):
         name = e.sender.first_name
         name = name + " " + e.sender.last_name if e.sender.last_name else name
         await e.reply(
-            random.choice(options).format(name, human_readable_time(c["time"]))
+            random.choice(options).format(name, human_readable_time(time.time()-c["time"]))
         )
         db.set_afk(e.sender_id, "", "", False)
     else:
@@ -61,7 +62,7 @@ async def afk(e):
             reason = "\n**Reason:** " + c["reason"] if c["reason"] != "" else ""
             await e.reply(
                 "**{}** has been afk since **{}**.{}".format(
-                    c["name"], human_readable_time(c["time"]), reason
+                    c["name"], human_readable_time(time.time()-c["time"]), reason
                 )
             )
 
