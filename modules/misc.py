@@ -1,11 +1,10 @@
 import io
 from random import choice, randint
+from urllib.parse import quote
 
+from bs4 import BeautifulSoup
 from requests import get, post
 from telethon import Button
-from random import randint, choice
-from urllib.parse import quote
-from bs4 import BeautifulSoup
 
 from ._config import TMDB_KEY as tapiKey
 from ._functions import get_weather, search_imdb, translate
@@ -59,8 +58,7 @@ async def ip_lookup(message):
     resp = resp.json()
     if resp.get("data", {}).get("status", 200) != 200:
         return await message.reply(
-            "Error: {}".format(resp.get("data", {}).get(
-                "message", "Unknown error"))
+            "Error: {}".format(resp.get("data", {}).get("message", "Unknown error"))
         )
     data = resp.get("data", {})
     ip_info = (
@@ -174,8 +172,7 @@ async def pinterest(message):
     if result.get("resource_response", {}).get("status", "") != "success":
         return await message.reply("No results found!")
     urls = []
-    pins = result.get("resource_response", {}).get(
-        "data", {}).get("results", [])
+    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
@@ -183,8 +180,18 @@ async def pinterest(message):
             break
     if len(urls) == 0:
         return await message.reply("No results found!")
-    await message.reply("Found `{}` results for **{}**:".format(len(pins), query),
-                        buttons=[[Button.url("🔎 View on Pinterest", "https://in.pinterest.com/search/pins/?q=" + quote(query))]], parse_mode="html")
+    await message.reply(
+        "Found `{}` results for **{}**:".format(len(pins), query),
+        buttons=[
+            [
+                Button.url(
+                    "🔎 View on Pinterest",
+                    "https://in.pinterest.com/search/pins/?q=" + quote(query),
+                )
+            ]
+        ],
+        parse_mode="html",
+    )
     await message.reply(file=urls)
 
 
@@ -244,9 +251,7 @@ async def _raddr(msg):
     if query is None:
         return await msg.reply("No query was given!")
     url = "https://www.google.com/search"
-    params = {
-        "q": "food places near" + query
-    }
+    params = {"q": "food places near" + query}
     response = get(url, params=params)
     soup = BeautifulSoup(response.text, "html.parser")
     results = []
@@ -254,13 +259,24 @@ async def _raddr(msg):
         for i in result.find_all("a"):
             if not i.text == "":
                 name = i.find(class_="BNeawe deIvCb AP7Wnd").text
-                address = BeautifulSoup(str(i).split(
-                    "<br/>")[1], 'html.parser').text
+                address = BeautifulSoup(str(i).split("<br/>")[1], "html.parser").text
             results.append("<b>{}</b>\n{}".format(name, address))
     if len(results) == 0:
         return await msg.reply("No results found!")
-    await msg.reply("Found <code>{}</code> results for <b>{}</b>:\n\n{}".format(len(results), query, "\n\n".join(results)),
-                    buttons=[[Button.url("🔎 View on Google", "https://www.google.com/search?q=food+places+near" + quote(query))]], parse_mode="html")
+    await msg.reply(
+        "Found <code>{}</code> results for <b>{}</b>:\n\n{}".format(
+            len(results), query, "\n\n".join(results)
+        ),
+        buttons=[
+            [
+                Button.url(
+                    "🔎 View on Google",
+                    "https://www.google.com/search?q=food+places+near" + quote(query),
+                )
+            ]
+        ],
+        parse_mode="html",
+    )
 
 
 @newMsg(pattern="(w|wiki)")
