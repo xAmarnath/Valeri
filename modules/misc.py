@@ -59,7 +59,8 @@ async def ip_lookup(message):
     resp = resp.json()
     if resp.get("data", {}).get("status", 200) != 200:
         return await message.reply(
-            "Error: {}".format(resp.get("data", {}).get("message", "Unknown error"))
+            "Error: {}".format(resp.get("data", {}).get(
+                "message", "Unknown error"))
         )
     data = resp.get("data", {})
     ip_info = (
@@ -173,7 +174,8 @@ async def pinterest(message):
     if result.get("resource_response", {}).get("status", "") != "success":
         return await message.reply("No results found!")
     urls = []
-    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
+    pins = result.get("resource_response", {}).get(
+        "data", {}).get("results", [])
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
@@ -260,7 +262,8 @@ async def _raddr(msg):
         for i in result.find_all("a"):
             if not i.text == "":
                 name = i.find(class_="BNeawe deIvCb AP7Wnd").text
-                address = BeautifulSoup(str(i).split("<br/>")[1], "html.parser").text
+                address = BeautifulSoup(str(i).split(
+                    "<br/>")[1], "html.parser").text
             results.append("<b>{}</b>\n{}".format(name, address))
     if len(results) == 0:
         return await msg.reply("No results found!")
@@ -272,7 +275,8 @@ async def _raddr(msg):
             [
                 Button.url(
                     "🔎 View on Google",
-                    "https://www.google.com/search?q=food+places+near" + quote(query),
+                    "https://www.google.com/search?q=food+places+near" +
+                    quote(query),
                 )
             ]
         ],
@@ -389,7 +393,7 @@ async def paste_(message):
                     content = f.read()
                 os.remove(file)
             else:
-                return await message.reply("No text provided")
+                return await message.reply("No text provided, supported flags: **-n** [nekobin], **-h** [hastebin], **-r** [rentry], **-s** [spacebin]")
     arg, content = paste_mode(
         message.text.split(None, 1)[1].split(None)
         if len(message.text.split(None)) > 1
@@ -409,20 +413,20 @@ async def paste_(message):
             url = "https://spaceb.in/" + req.json()['payload']['id']
             paste_name = 'Spacebin'
         elif arg == 'n':
-            req = post(url='https://nekobin.com/api/documents',
+            req = post(url='https://warm-anchorage-15807.herokuapp.com/api/documents',
                        json={'content': content}, timeout=5)
-            print(req.text)
-            url = "https://nekobin.com/" + req.json()['result']['key']
+            url = "https://warm-anchorage-15807.herokuapp.com/" + \
+                req.json()['result']['key']
             paste_name = 'Nekobin'
     except TimeoutError:
         return await message.reply("Paste failed, server timeout")
     await message.reply(
-        "<b>Pasted to</b> " + paste_name + " <b>at</b> <code>" + url + "</code>",
+        "<b>Pasted to <a href='" + url + "'>" + paste_name + "</a></b>",
         parse_mode="html",
         buttons=[
             [
                 Button.url(
-                    "Open",
+                    paste_name,
                     url,
                 ),
             ],

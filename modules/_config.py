@@ -1,5 +1,6 @@
+from asyncio.log import logger
 import time
-from logging import INFO, StreamHandler, basicConfig
+from logging import INFO, StreamHandler, basicConfig, getLogger
 from os import getenv
 
 from dotenv import load_dotenv
@@ -18,7 +19,7 @@ help_dict = {}
 # Load .env file
 load_dotenv()
 
-
+log = getLogger('valeri')
 # Environment variables
 TOKEN = getenv("TOKEN")
 API_KEY = getenv("API_KEY")
@@ -36,4 +37,4 @@ db = MongoClient(MONGO_DB, connect=True)
 try:
     db.list_databases()
 except errors.ConnectionFailure:
-    print("Could not connect to MongoDB")
+    log.info("MongoDB connection failed")
