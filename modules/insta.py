@@ -16,12 +16,14 @@ cookies = {
 
 def get_ig_download_url(url: str):
     """Get the download url for the media."""
-    url = url + "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
+    url = url + \
+        "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
     try:
         req = get(url, cookies=cookies).json()
         if req.get("items", [])[0].get("media_type") == 1:
-            print("hi")
             item = req.get("items", [])[0]
+            if item.get("carousel_media_count") > 1:
+                print("Carousel")
             w, h = item.get("original_width"), item.get("original_height")
             images = item.get("image_versions2", {}).get("candidates", [])
             for image in images:
@@ -31,7 +33,9 @@ def get_ig_download_url(url: str):
                         item.get("like_count", 0),
                         item.get("comment_count", 0),
                         item.get("user", {}).get("username", ""),
-                        item.get("caption", {}).get("text", "") if item.get("caption") else "",
+                        item.get("caption", {}).get(
+                            "text", "") if item.get("caption") else "",
+                        item.get("media_type", 0),
                     )
                     print(x)
                     return x
@@ -40,8 +44,8 @@ def get_ig_download_url(url: str):
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", ""),
-                item.get("caption", {}).get("text", "") if item.get("caption") else "",
-                0,
+                item.get("caption", {}).get(
+                    "text", "") if item.get("caption") else "",
                 item.get("media_type", 0),
             )
             print(x)
@@ -54,8 +58,8 @@ def get_ig_download_url(url: str):
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", ""),
-                item.get("caption", {}).get("text", ""),
-                item.get("video_duration", 0),
+                item.get("caption", {}).get(
+                    "text", "") if item.get("caption") else "",
                 item.get("media_type", 0),
             )
         else:
@@ -67,11 +71,10 @@ def get_ig_download_url(url: str):
                 "",
                 "",
                 0,
-                0,
             )
     except (JSONDecodeError, KeyError, IndexError) as err:
         print(err)
-        return "", 0, 0, "", "", 0, 0
+        return "", 0, 0, "", "", 0
 
 
 @newMsg(pattern="(insta|instagram|instadl|instadownload)")
@@ -92,7 +95,6 @@ async def _insta(message):
         comments,
         username,
         caption,
-        duration,
         media_type,
     ) = get_ig_download_url(url)
     if not dl_url:
