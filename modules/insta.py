@@ -35,7 +35,7 @@ def get_ig_download_url(url: str):
                     )
                     print(x)
                     return x
-            x = (
+            x = ( 
                 images[0].get("url", ""),
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
