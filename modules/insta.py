@@ -34,7 +34,7 @@ def get_ig_download_url(url: str):
                         item.get("comment_count", 0),
                         item.get("user", {}).get("username", ""),
                         item.get("caption", {}).get(
-                            "text", "") if item.get("caption") else "",
+                            "text", "") if item.get("caption") else "", 
                         item.get("media_type", 0),
                     )
                     print(x)
