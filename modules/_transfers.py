@@ -1,12 +1,18 @@
+"""
+> Based on parallel_file_transfer.py from mautrix-telegram, with permission to distribute under the MIT license
+> Copyright (C) 2019 Tulir Asokan - https://github.com/tulir/mautrix-telegram
+"""
+from .FastTelethon import download_file, upload_file
+import time
+import sys
+import pathlib
+import datetime as dt
 import asyncio
 import hashlib
 import inspect
 import logging
 import math
 import os
-import pathlib
-import sys
-import time
 from collections import defaultdict
 from typing import (
     AsyncGenerator,
@@ -44,11 +50,9 @@ from telethon.tl.types import (
     TypeInputFile,
 )
 
-from ._helpers import human_readable_size
-
 filename = ""
 
-log: logging.Logger = logging.getLogger("telethon")
+log: logging.Logger = logging.getLogger("FastTelethon")
 
 TypeLocation = Union[
     Document,
@@ -118,7 +122,8 @@ class UploadSender:
         self.sender = sender
         self.part_count = part_count
         if big:
-            self.request = SaveBigFilePartRequest(file_id, index, part_count, b"")
+            self.request = SaveBigFilePartRequest(
+                file_id, index, part_count, b"")
         else:
             self.request = SaveFilePartRequest(file_id, index, b"")
         self.stride = stride
@@ -226,7 +231,8 @@ class ParallelTransferrer:
             await self._create_upload_sender(file_id, part_count, big, 0, connections),
             *await asyncio.gather(
                 *[
-                    self._create_upload_sender(file_id, part_count, big, i, connections)
+                    self._create_upload_sender(
+                        file_id, part_count, big, i, connections)
                     for i in range(1, connections)
                 ]
             ),
@@ -275,8 +281,10 @@ class ParallelTransferrer:
         part_size_kb: Optional[float] = None,
         connection_count: Optional[int] = None,
     ) -> Tuple[int, int, bool]:
-        connection_count = connection_count or self._get_connection_count(file_size)
-        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(
+            file_size)
+        part_size = (
+            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = (file_size + part_size - 1) // part_size
         is_large = file_size > 10 * 1024 * 1024
         await self._init_upload(connection_count, file_id, part_count, is_large)
@@ -296,8 +304,10 @@ class ParallelTransferrer:
         part_size_kb: Optional[float] = None,
         connection_count: Optional[int] = None,
     ) -> AsyncGenerator[bytes, None]:
-        connection_count = connection_count or self._get_connection_count(file_size)
-        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(
+            file_size)
+        part_size = (
+            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = math.ceil(file_size / part_size)
         await self._init_download(connection_count, file, part_count, part_size)
 
@@ -430,10 +440,21 @@ def progress_bar_str(done, total):
     return final
 
 
+def human_readable_size(size, decimal_places=2):
+    for unit in ["B", "KB", "MB", "GB", "TB", "PB"]:
+        if size < 1024.0 or unit == "PB":
+            break
+        size /= 1024.0
+    return f"{size:.{decimal_places}f} {unit}"
+
+
 async def fast_download(
-    client, msg, reply=None, download_folder="/", progress_bar_function=progress_bar_str
+    client,
+    msg,
+    reply=None,
+    download_folder=None,
+    progress_bar_function=progress_bar_str,
 ):
-    """Download a file from a message."""
     timer = Timer()
 
     async def progress_bar(downloaded_bytes, total_bytes):
@@ -442,8 +463,21 @@ async def fast_download(
             await reply.edit(f"Downloading...\n{data}")
 
     file = msg.document
-    filename = msg.file.name or "file"
-    download_location = os.path.join(download_folder, filename)
+    filename = msg.file.name
+    dir = "downloads/"
+
+    try:
+        os.mkdir("downloads/")
+    except:
+        pass
+
+    if not filename:
+        filename = "video.mp4"
+
+    if download_folder == None:
+        download_location = dir + filename
+    else:
+        download_location = download_folder + filename
 
     with open(download_location, "wb") as f:
         if reply != None:
@@ -462,14 +496,13 @@ async def fast_download(
 async def fast_upload(
     client, file_location, reply=None, name=None, progress_bar_function=progress_bar_str
 ):
-    """Upload a file to a tg."""
     timer = Timer()
-    name = file_location.split("/")[-1] if not name else name
+    if name == None:
+        name = file_location.split("/")[-1]
 
     async def progress_bar(downloaded_bytes, total_bytes):
         if timer.can_send():
             data = progress_bar_function(downloaded_bytes, total_bytes)
-            print(f"{data}")
             await reply.edit(f"Uploading...\n{data}")
 
     if reply != None:
@@ -484,4 +517,5 @@ async def fast_upload(
                 file=f,
                 name=name,
             )
+
     return the_file
