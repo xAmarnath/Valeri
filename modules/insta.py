@@ -21,14 +21,6 @@ def get_ig_download_url(url: str):
         req = get(url, cookies=cookies).json()
         if req.get("items", [])[0].get("media_type") == 1:
             item = req.get("items", [])[0]
-            if item.get("carousel_media"):
-                urls = [
-                    item["carousel_media"][i]["image_versions2"]["candidates"][0]["url"]
-                    for i in range(len(item["carousel_media"]))
-                ]
-                print(urls)
-                return
-
             w, h = item.get("original_width"), item.get("original_height")
             images = item.get("image_versions2", {}).get("candidates", [])
             for image in images:
@@ -67,15 +59,18 @@ def get_ig_download_url(url: str):
                 item.get("media_type", 0),
             )
         else:
-            pprint(req)
-            return (
-                "",
-                0,
-                0,
-                "",
-                "",
-                0,
-            )
+            item = req.get("items", [])[0]
+            if item.get("carousel_media"):
+                urls = [
+                    item["carousel_media"][i]["image_versions2"]["candidates"][0]["url"]
+                    for i in range(len(item["carousel_media"]))
+                ]
+                print(urls)
+                return urls, item.get("like_count", 0), item.get("comment_count", 0), item.get(
+                    "user", {}
+                ).get("username", ""), item.get("caption", {}).get("text", "") if item.get(
+                    "caption"
+                ) else "", item.get("media_type", 0)
     except (JSONDecodeError, KeyError, IndexError) as err:
         print(err)
         return "", 0, 0, "", "", 0
