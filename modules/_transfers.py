@@ -1,7 +1,3 @@
-from ._helpers import human_readable_size
-import time
-import sys
-import pathlib
 import asyncio
 import hashlib
 import inspect
@@ -48,6 +44,7 @@ from telethon.tl.types import (
     TypeInputFile,
 )
 
+from ._helpers import human_readable_size
 from .helpers import human_readable_size
 
 filename = ""
