@@ -15,8 +15,7 @@ cookies = {
 
 def get_ig_download_url(url: str):
     """Get the download url for the media."""
-    url = url + \
-        "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
+    url = url + "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
     try:
         req = get(url, cookies=cookies).json()
         if req.get("items", [])[0].get("media_type") == 1:
@@ -70,10 +69,11 @@ async def _insta(message):
         await message.reply("`Failed to get the download url.`")
         return
     msg = await message.reply("`Downloading...`")
-    caption = '<b>📷 {}</b>\n<i>{}</i>\n<b>Likes:</b> {}\n<b>Comments:</b> {}'.format(
+    caption = "<b>📷 {}</b>\n<i>{}</i>\n<b>Likes:</b> {}\n<b>Comments:</b> {}".format(
         username.upper(), caption, likes, comments
     )
     with io.BytesIO(get(dl_url, cookies=cookies).content) as f:
-        await message.client.send_file(message.chat_id, f, caption=caption, parse_mode="html",
-                                       reply_to=message.id)
+        await message.client.send_file(
+            message.chat_id, f, caption=caption, parse_mode="html", reply_to=message.id
+        )
     await msg.delete()
