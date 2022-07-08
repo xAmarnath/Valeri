@@ -44,8 +44,6 @@ from telethon.tl.types import (
     TypeInputFile,
 )
 
-from .FastTelethon import download_file, upload_file
-
 filename = ""
 
 log: logging.Logger = logging.getLogger("FastTelethon")
