@@ -74,6 +74,6 @@ async def _insta(message):
         username.upper(), caption, likes, comments
     )
     with io.BytesIO(get(dl_url, cookies=cookies).content) as f:
-        await message.client.send_file(message.chat_id, f, caption=caption, parse_mode="html"
+        await message.client.send_file(message.chat_id, f, caption=caption, parse_mode="html",
                                        reply_to=message.id)
     await msg.delete()
