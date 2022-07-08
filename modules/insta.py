@@ -31,7 +31,7 @@ def get_ig_download_url(url: str):
                         item.get("like_count", 0),
                         item.get("comment_count", 0),
                         item.get("user", {}).get("username", ""),
-                        item.get("caption", {}).get("text", ""),
+                        item.get("caption", {}).get("text", "") if item.get("caption") else "",
                     )
                     print(x)
                     return x
@@ -40,7 +40,7 @@ def get_ig_download_url(url: str):
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", ""),
-                item.get("caption", {}).get("text", ""),
+                item.get("caption", {}).get("text", "") if item.get("caption") else "",
                 0,
                 item.get("media_type", 0),
             )
@@ -69,7 +69,8 @@ def get_ig_download_url(url: str):
                 0,
                 0,
             )
-    except (JSONDecodeError, KeyError, IndexError):
+    except (JSONDecodeError, KeyError, IndexError) as err:
+        print(err)
         return "", 0, 0, "", "", 0, 0
 
 
