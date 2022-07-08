@@ -60,6 +60,7 @@ async def _ul(e):
         await fast_upload(
             e.client,
             l,
+            reply=await e.reply("`Uploading...`"),
         )
     except OSError:
         await e.reply("`Failed to upload.`")
