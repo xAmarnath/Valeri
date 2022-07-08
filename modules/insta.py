@@ -34,23 +34,23 @@ def get_ig_download_url(url: str):
 
 
 @newMsg(pattern="(insta|instagram|instadl|instadownload)")
-async def _insta(e):
+async def _insta(message):
     if not IG_SESSION:
-        await e.reply("`Instagram session not found.`")
+        await message.reply("`Instagram session not found.`")
         return
-    url = await get_text_content(e)
+    url = await get_text_content(message)
     if not url:
-        await e.reply("`Usage: !insta <url>`")
+        await message.reply("`Usage: !insta <url>`")
         return
-    if not url.startswith("https://www.instagram.com/p/"):
-        await e.reply("`Invalid url.`")
+    if not url.startswith("https://www.instagram.com"):
+        await message.reply("`Invalid url.`")
         return
     dl_url, likes, comments, username, caption = get_ig_download_url(url)
     if not dl_url:
-        await e.reply("`Failed to get the download url.`")
+        await message.reply("`Failed to get the download url.`")
         return
-    msg = await e.reply("`Downloading...`")
+    msg = await message.reply("`Downloading...`")
     with io.BytesIO(get(dl_url, cookies=cookies).content) as f:
-        await e.client.send_file(e.chat_id, f, caption=f"**📷 {username}** \n\n💬 {caption} \n\n💬 {comments} \n\n👍 {likes}",
-                                 reply_to=e.id)
+        await message.client.send_file(message.chat_id, f, caption=f"**📷 {username}** \n\n💬 {caption} \n\n💬 {comments} \n\n👍 {likes}",
+                                 reply_to=message.id)
     await msg.delete()
