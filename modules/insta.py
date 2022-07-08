@@ -58,7 +58,7 @@ def get_ig_download_url(url: str):
         return "", 0, 0, "", ""
 
 
-@ newMsg(pattern="(insta|instagram|instadl|instadownload)")
+@newMsg(pattern="(insta|instagram|instadl|instadownload)")
 async def _insta(message):
     if not IG_SESSION:
         await message.reply("`Instagram session not found.`")
@@ -70,8 +70,15 @@ async def _insta(message):
     if not url.startswith("https://www.instagram.com"):
         await message.reply("`Invalid url.`")
         return
-    dl_url, likes, comments, username, caption, duration, media_type = get_ig_download_url(
-        url)
+    (
+        dl_url,
+        likes,
+        comments,
+        username,
+        caption,
+        duration,
+        media_type,
+    ) = get_ig_download_url(url)
     if not dl_url:
         await message.reply("`Failed to get the download url.`")
         return
@@ -81,6 +88,7 @@ async def _insta(message):
     )
     with io.BytesIO(get(dl_url, cookies=cookies).content) as f:
         f.name = "instagram.jpg" if media_type == 1 else "instagram.mp4"
-        await message.client.send_file(message.chat_id, f, caption=caption, parse_mode="html",
-                                       reply_to=message.id)
+        await message.client.send_file(
+            message.chat_id, f, caption=caption, parse_mode="html", reply_to=message.id
+        )
     await msg.delete()
