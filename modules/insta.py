@@ -1,6 +1,5 @@
 import io
 from os import getenv
-from pprint import pprint
 
 from requests import JSONDecodeError, get
 
