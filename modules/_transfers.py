@@ -1,5 +1,4 @@
 import asyncio
-from ._helpers import human_readable_size
 import hashlib
 import inspect
 import logging
@@ -44,6 +43,8 @@ from telethon.tl.types import (
     InputPhotoFileLocation,
     TypeInputFile,
 )
+
+from ._helpers import human_readable_size
 
 filename = ""
 
