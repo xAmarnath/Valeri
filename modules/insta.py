@@ -1,6 +1,5 @@
 import io
 from os import getenv
-from pprint import pprint
 
 from requests import JSONDecodeError, get
 
@@ -66,11 +65,16 @@ def get_ig_download_url(url: str):
                     for i in range(len(item["carousel_media"]))
                 ]
                 print(urls)
-                return urls, item.get("like_count", 0), item.get("comment_count", 0), item.get(
-                    "user", {}
-                ).get("username", ""), item.get("caption", {}).get("text", "") if item.get(
-                    "caption"
-                ) else "", item.get("media_type", 0)
+                return (
+                    urls,
+                    item.get("like_count", 0),
+                    item.get("comment_count", 0),
+                    item.get("user", {}).get("username", ""),
+                    item.get("caption", {}).get("text", "")
+                    if item.get("caption")
+                    else "",
+                    item.get("media_type", 0),
+                )
     except (JSONDecodeError, KeyError, IndexError) as err:
         print(err)
         return "", 0, 0, "", "", 0
