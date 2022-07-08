@@ -2,7 +2,7 @@ from os import listdir, path
 
 from ._handler import auth_only, master_only, newMsg
 from ._helpers import get_mention, get_text_content, get_user, human_readable_size
-from ._transfers import fast_upload, fast_download
+from ._transfers import fast_download, fast_upload
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
 
@@ -34,8 +34,7 @@ async def _ls(e):
             elif file.endswith(".mp3") or file.endswith(".wav"):
                 emoji = "🎵"
             elif (
-                file.endswith(".jpg") or file.endswith(
-                    ".jpeg") or file.endswith(".png")
+                file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png")
             ):
                 emoji = "🖼"
             elif file.endswith(".gif"):
