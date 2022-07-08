@@ -108,12 +108,11 @@ async def _insta(message):
         username.upper(), caption, likes, comments
     )
     if carousel:
-        print(dl_url)
-        return
+        dl_bytes = [get(i, cookies=cookies).content for i in dl_url]
         return await message.respond(
             caption,
             parse_mode="html",
-            file=dl_url,
+            file=dl_bytes,
         )
     with io.BytesIO(get(dl_url, cookies=cookies).content) as f:
         f.name = "instagram.jpg" if media_type == 1 else "instagram.mp4"
