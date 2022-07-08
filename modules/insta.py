@@ -1,5 +1,6 @@
 import io
 from os import getenv
+from pprint import pprint
 
 from requests import JSONDecodeError, get
 
@@ -35,7 +36,7 @@ def get_ig_download_url(url: str):
                     )
                     print(x)
                     return x
-            x = ( 
+            x = (
                 images[0].get("url", ""),
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
@@ -58,8 +59,19 @@ def get_ig_download_url(url: str):
                 item.get("video_duration", 0),
                 item.get("media_type", 0),
             )
+        else:
+            pprint(req)
+            return (
+                "",
+                0,
+                0,
+                "",
+                "",
+                0,
+                0,
+            )
     except (JSONDecodeError, KeyError, IndexError):
-        return "", 0, 0, "", ""
+        return "", 0, 0, "", "", 0, 0
 
 
 @newMsg(pattern="(insta|instagram|instadl|instadownload)")
