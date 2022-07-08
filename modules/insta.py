@@ -22,10 +22,13 @@ def get_ig_download_url(url: str):
         if req.get("items", [])[0].get("media_type") == 1:
             item = req.get("items", [])[0]
             if item.get("carousel_media"):
-                urls = [item["carousel_media"][i]["image_versions2"]["candidates"][0]["url"] for i in range(len(item["carousel_media"]))]
+                urls = [
+                    item["carousel_media"][i]["image_versions2"]["candidates"][0]["url"]
+                    for i in range(len(item["carousel_media"]))
+                ]
                 print(urls)
                 return
-                
+
             w, h = item.get("original_width"), item.get("original_height")
             images = item.get("image_versions2", {}).get("candidates", [])
             for image in images:
