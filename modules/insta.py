@@ -108,6 +108,8 @@ async def _insta(message):
         username.upper(), caption, likes, comments
     )
     if carousel:
+        print(dl_url)
+        return
         return await message.respond(
             caption, parse_mode="html", file=dl_url,
         )
