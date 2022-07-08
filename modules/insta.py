@@ -15,23 +15,27 @@ cookies = {
 
 def get_ig_download_url(url: str):
     """Get the download url for the media."""
-    url = url + "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
+    url = url + \
+        "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
     try:
         req = get(url, cookies=cookies).json()
         if req.get("items", [])[0].get("media_type") == 1:
+            print("hi")
             item = req.get("items", [])[0]
             w, h = item.get("original_width"), item.get("original_height")
             images = item.get("image_versions2", {}).get("candidates", [])
             for image in images:
                 if image.get("width") == w and image.get("height") == h:
-                    return (
+                    x = (
                         image.get("url", ""),
                         item.get("like_count", 0),
                         item.get("comment_count", 0),
                         item.get("user", {}).get("username", ""),
                         item.get("caption", {}).get("text", ""),
                     )
-            x= (
+                    print(x)
+                    return x
+            x = (
                 images[0].get("url", ""),
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
