@@ -16,8 +16,7 @@ cookies = {
 
 def get_ig_download_url(url: str):
     """Get the download url for the media."""
-    url = url + \
-        "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
+    url = url + "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
     try:
         req = get(url, cookies=cookies).json()
         if req.get("items", [])[0].get("media_type") == 1:
