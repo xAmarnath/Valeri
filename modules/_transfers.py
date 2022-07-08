@@ -118,7 +118,8 @@ class UploadSender:
         self.sender = sender
         self.part_count = part_count
         if big:
-            self.request = SaveBigFilePartRequest(file_id, index, part_count, b"")
+            self.request = SaveBigFilePartRequest(
+                file_id, index, part_count, b"")
         else:
             self.request = SaveFilePartRequest(file_id, index, b"")
         self.stride = stride
@@ -226,7 +227,8 @@ class ParallelTransferrer:
             await self._create_upload_sender(file_id, part_count, big, 0, connections),
             *await asyncio.gather(
                 *[
-                    self._create_upload_sender(file_id, part_count, big, i, connections)
+                    self._create_upload_sender(
+                        file_id, part_count, big, i, connections)
                     for i in range(1, connections)
                 ]
             ),
@@ -275,8 +277,10 @@ class ParallelTransferrer:
         part_size_kb: Optional[float] = None,
         connection_count: Optional[int] = None,
     ) -> Tuple[int, int, bool]:
-        connection_count = connection_count or self._get_connection_count(file_size)
-        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(
+            file_size)
+        part_size = (
+            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = (file_size + part_size - 1) // part_size
         is_large = file_size > 10 * 1024 * 1024
         await self._init_upload(connection_count, file_id, part_count, is_large)
@@ -296,8 +300,10 @@ class ParallelTransferrer:
         part_size_kb: Optional[float] = None,
         connection_count: Optional[int] = None,
     ) -> AsyncGenerator[bytes, None]:
-        connection_count = connection_count or self._get_connection_count(file_size)
-        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(
+            file_size)
+        part_size = (
+            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = math.ceil(file_size / part_size)
         await self._init_download(connection_count, file, part_count, part_size)
 
@@ -469,7 +475,10 @@ async def fast_upload(
     async def progress_bar(downloaded_bytes, total_bytes):
         if timer.can_send():
             data = progress_bar_function(downloaded_bytes, total_bytes)
+            print(f"{data}")
             await reply.edit(f"Uploading...\n{data}")
+
+
 
     if reply != None:
         with open(file_location, "rb") as f:

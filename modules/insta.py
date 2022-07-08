@@ -100,6 +100,7 @@ async def _insta(message):
         media_type,
         carousel,
     ) = get_ig_download_url(url)
+    caption = caption[:700] if len(caption) > 700 else caption
     if not dl_url:
         await message.reply("`Failed to get the download url.`")
         return
