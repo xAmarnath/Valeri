@@ -117,7 +117,7 @@ async def _insta(message):
             parse_mode="html",
             file=dl_bytes,
         )
-        await msg.delete()
+        return await msg.delete()
     with io.BytesIO(get(dl_url, cookies=cookies).content) as f:
         f.name = "instagram.jpg" if media_type == 1 else "instagram.mp4"
         await message.client.send_file(
