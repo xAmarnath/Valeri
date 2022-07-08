@@ -15,8 +15,7 @@ cookies = {
 
 def get_ig_download_url(url: str):
     """Get the download url for the media."""
-    url = url + \
-        "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
+    url = url + "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
     try:
         req = get(url, cookies=cookies).json()
         if req.get("items", [])[0].get("media_type") == 1:
@@ -41,8 +40,7 @@ def get_ig_download_url(url: str):
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", ""),
-                item.get("caption", {}).get(
-                    "text", "") if item.get("caption") else "",
+                item.get("caption", {}).get("text", "") if item.get("caption") else "",
                 item.get("media_type", 0),
                 False,
             )
@@ -54,8 +52,7 @@ def get_ig_download_url(url: str):
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", ""),
-                item.get("caption", {}).get(
-                    "text", "") if item.get("caption") else "",
+                item.get("caption", {}).get("text", "") if item.get("caption") else "",
                 item.get("media_type", 0),
                 False,
             )
@@ -66,11 +63,17 @@ def get_ig_download_url(url: str):
                     item["carousel_media"][i]["image_versions2"]["candidates"][0]["url"]
                     for i in range(len(item["carousel_media"]))
                 ]
-                return urls, item.get("like_count", 0), item.get("comment_count", 0), item.get(
-                    "user", {}
-                ).get("username", ""), item.get("caption", {}).get("text", "") if item.get(
-                    "caption"
-                ) else "", item.get("media_type", 0), True
+                return (
+                    urls,
+                    item.get("like_count", 0),
+                    item.get("comment_count", 0),
+                    item.get("user", {}).get("username", ""),
+                    item.get("caption", {}).get("text", "")
+                    if item.get("caption")
+                    else "",
+                    item.get("media_type", 0),
+                    True,
+                )
     except (JSONDecodeError, KeyError, IndexError) as err:
         print(err)
         return "", 0, 0, "", "", 0
@@ -94,7 +97,8 @@ async def _insta(message):
         comments,
         username,
         caption,
-        media_type, carousel,
+        media_type,
+        carousel,
     ) = get_ig_download_url(url)
     if not dl_url:
         await message.reply("`Failed to get the download url.`")
@@ -104,7 +108,9 @@ async def _insta(message):
         username.upper(), caption, likes, comments
     )
     if carousel:
-        return await message.client.send_file(dl_url, caption=caption, parse_mode="html")
+        return await message.client.send_file(
+            dl_url, caption=caption, parse_mode="html"
+        )
     with io.BytesIO(get(dl_url, cookies=cookies).content) as f:
         f.name = "instagram.jpg" if media_type == 1 else "instagram.mp4"
         await message.client.send_file(
