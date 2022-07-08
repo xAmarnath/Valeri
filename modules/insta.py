@@ -108,8 +108,8 @@ async def _insta(message):
         username.upper(), caption, likes, comments
     )
     if carousel:
-        return await message.client.send_file(
-            dl_url, caption=caption, parse_mode="html"
+        return await message.respond(
+            caption, parse_mode="html", file=dl_url,
         )
     with io.BytesIO(get(dl_url, cookies=cookies).content) as f:
         f.name = "instagram.jpg" if media_type == 1 else "instagram.mp4"
