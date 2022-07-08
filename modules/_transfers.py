@@ -48,11 +48,9 @@ from telethon.tl.types import (
     TypeInputFile,
 )
 
-from .helpers import human_readable_size
-
 filename = ""
 
-log: logging.Logger = logging.getLogger("FastTelethon")
+log: logging.Logger = logging.getLogger("telethon")
 
 TypeLocation = Union[
     Document,
