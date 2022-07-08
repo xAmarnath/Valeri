@@ -1,4 +1,3 @@
-from asyncio.log import logger
 import time
 from logging import INFO, StreamHandler, basicConfig, getLogger
 from os import getenv
@@ -19,7 +18,7 @@ help_dict = {}
 # Load .env file
 load_dotenv()
 
-log = getLogger('valeri')
+log = getLogger("valeri")
 # Environment variables
 TOKEN = getenv("TOKEN")
 API_KEY = getenv("API_KEY")
