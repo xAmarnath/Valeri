@@ -1,8 +1,5 @@
-from ._helpers import human_readable_size
-import time
-import sys
-import pathlib
 import asyncio
+from ._helpers import human_readable_size
 import hashlib
 import inspect
 import logging
