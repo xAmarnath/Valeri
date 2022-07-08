@@ -22,7 +22,7 @@ def get_ig_download_url(url: str):
         req = get(url, cookies=cookies).json()
         if req.get("items", [])[0].get("media_type") == 1:
             item = req.get("items", [])[0]
-            if item.get("carousel_media_count") > 1:
+            if item.get("carousel_media_count", 0) > 1:
                 print("Carousel")
             w, h = item.get("original_width"), item.get("original_height")
             images = item.get("image_versions2", {}).get("candidates", [])
