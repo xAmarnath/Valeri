@@ -31,7 +31,7 @@ def get_ig_download_url(url: str):
                         item.get("user", {}).get("username", ""),
                         item.get("caption", {}).get("text", ""),
                     )
-            return (
+            x= (
                 images[0].get("url", ""),
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
@@ -40,6 +40,8 @@ def get_ig_download_url(url: str):
                 0,
                 item.get("media_type", 0),
             )
+            print(x)
+            return x
         elif req.get("items", [])[0].get("media_type") == 2:
             item = req.get("items", [])[0]
             video = item.get("video_versions", [])[0]
