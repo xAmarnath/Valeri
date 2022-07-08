@@ -1,4 +1,4 @@
-from .helpers import human_readable_size
+from ._helpers import human_readable_size
 import time
 import sys
 import pathlib
