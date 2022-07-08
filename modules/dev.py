@@ -2,7 +2,7 @@ from os import listdir, path
 
 from ._handler import auth_only, master_only, newMsg
 from ._helpers import get_mention, get_text_content, get_user, human_readable_size
-from ._transfers import fast_upload
+from ._transfers import fast_upload, fast_download
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
 
@@ -34,7 +34,8 @@ async def _ls(e):
             elif file.endswith(".mp3") or file.endswith(".wav"):
                 emoji = "🎵"
             elif (
-                file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png")
+                file.endswith(".jpg") or file.endswith(
+                    ".jpeg") or file.endswith(".png")
             ):
                 emoji = "🖼"
             elif file.endswith(".gif"):
@@ -65,6 +66,17 @@ async def _ul(e):
     except OSError:
         await e.reply("`Failed to upload.`")
         return
+
+
+@newMsg(pattern="dl")
+@auth_only
+async def _dl(e):
+    r = await e.get_reply_message()
+    if not r:
+        return await e.reply("`Reply to a file.`")
+    if not r.media:
+        return await e.reply("`Reply to a file.`")
+    await fast_download(e.client, r, reply=await e.reply("`Downloading...`"))
 
 
 @newMsg(pattern="auth")
