@@ -111,7 +111,9 @@ async def _insta(message):
         print(dl_url)
         return
         return await message.respond(
-            caption, parse_mode="html", file=dl_url,
+            caption,
+            parse_mode="html",
+            file=dl_url,
         )
     with io.BytesIO(get(dl_url, cookies=cookies).content) as f:
         f.name = "instagram.jpg" if media_type == 1 else "instagram.mp4"
