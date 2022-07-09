@@ -3,8 +3,10 @@ from subprocess import PIPE, Popen
 
 import aria2p
 from requests import get
-from ._handlers import newMsg, auth_only
+
+from ._handlers import auth_only, newMsg
 from ._helpers import human_readable_size
+
 
 def subprocess_run(cmd):
     subproc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
@@ -220,5 +222,3 @@ async def pause_all(message):
 async def resume_all(message):
     await message.reply("`Resuming downloads...`")
     aria2p_client.resume_all()
-
-
