@@ -1,6 +1,6 @@
 from asyncio import sleep
 from subprocess import PIPE, Popen
-
+import os
 import aria2p
 from requests import get
 
@@ -9,12 +9,7 @@ from ._helpers import human_readable_size
 
 
 def subprocess_run(cmd):
-    subproc = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
-    talk = subproc.communicate()
-    exitCode = subproc.returncode
-    if exitCode != 0:
-        return
-    return talk
+    os.system(cmd)
 
 
 def aria_start():
