@@ -1,11 +1,13 @@
 import sys
 from os import environ, execle, listdir, path, system
 
+import speedtest
+
 from ._handler import auth_only, master_only, newMsg
 from ._helpers import get_mention, get_text_content, get_user, human_readable_size
 from ._transfers import fast_download, fast_upload
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
-import speedtest
+
 
 @newMsg(pattern="ls")
 @auth_only
@@ -138,6 +140,7 @@ async def restart_process(e):
     await e.reply("`Restarting...`")
     args = [sys.executable, "main.py"]
     execle(sys.executable, *args, environ)
+
 
 @newMsg(pattern="speedtest")
 @auth_only
