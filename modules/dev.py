@@ -125,7 +125,7 @@ async def _unauth(e):
 @newMsg(pattern="update")
 @master_only
 async def update_origin(e):
-    msg = await e.reply('`Updating...`")
+    msg = await e.reply('`Updating...`')
     system('git pull')
     await msg.edit('`Restarting...`')
     args = [sys.executable, "main.py"]
