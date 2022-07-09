@@ -119,3 +119,13 @@ async def _unauth(e):
     await e.reply(
         "<b>{}</b> is now unauthorized.".format(get_mention(user)), parse_mode="html"
     )
+
+@newMsg(pattern='update')
+@master_only
+async def update_origin(e):
+ pass
+
+@newMsg(pattern='restart')
+@master_only
+async def restart_process(e):
+ pass
