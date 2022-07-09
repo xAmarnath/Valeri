@@ -3,10 +3,12 @@ from platform import platform
 
 import psutil
 import speedtest
+
 from ._handler import auth_only, newMsg
 from ._helpers import human_readable_size, human_readable_time
 
 StartTime = time.time()
+
 
 @newMsg(pattern="speedtest")
 @auth_only
