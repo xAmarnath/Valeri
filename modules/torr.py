@@ -4,7 +4,7 @@ from subprocess import PIPE, Popen
 import aria2p
 from requests import get
 
-from ._handlers import auth_only, newMsg
+from ._handler import auth_only, newMsg
 from ._helpers import human_readable_size
 
 
