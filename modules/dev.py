@@ -5,7 +5,7 @@ from ._handler import auth_only, master_only, newMsg
 from ._helpers import get_mention, get_text_content, get_user, human_readable_size
 from ._transfers import fast_download, fast_upload
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
-
+import speedtest
 
 @newMsg(pattern="ls")
 @auth_only
@@ -138,3 +138,27 @@ async def restart_process(e):
     await e.reply("`Restarting...`")
     args = [sys.executable, "main.py"]
     execle(sys.executable, *args, environ)
+
+@newMsg(pattern="speedtest")
+@auth_only
+async def _speedtest(e):
+    msg = await e.reply("Testing internet speed...")
+    st = speedtest.Speedtest()
+    download = st.download()
+    upload = st.upload()
+    ping = st.results.ping
+    server = st.results.server.get("name", "Unknown")
+    isp = st.results.client.get("isp", "Unknown")
+    ip = st.results.client.get("ip", "Unknown")
+    country = st.results.client.get("country", "Unknown")
+    result = (
+        f"**Speedtest Results:**\n\n"
+        f"**Download:** `{human_readable_size(download, True)}`\n"
+        f"**Upload:** `{human_readable_size(upload, True)}`\n"
+        f"**Ping:** `{ping} ms`\n"
+        f"**Server:** `{server}`\n"
+        f"**ISP:** `{isp}`\n"
+        f"**IP:** `{ip}`\n"
+        f"**Country:** `{country}`"
+    )
+    await msg.edit(result)
