@@ -120,12 +120,14 @@ async def _unauth(e):
         "<b>{}</b> is now unauthorized.".format(get_mention(user)), parse_mode="html"
     )
 
-@newMsg(pattern='update')
+
+@newMsg(pattern="update")
 @master_only
 async def update_origin(e):
- pass
+    pass
 
-@newMsg(pattern='restart')
+
+@newMsg(pattern="restart")
 @master_only
 async def restart_process(e):
- pass
+    pass
