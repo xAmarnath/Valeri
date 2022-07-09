@@ -1,4 +1,5 @@
-from os import listdir, path
+from os import listdir, path, execle, environ, system
+import sys
 
 from ._handler import auth_only, master_only, newMsg
 from ._helpers import get_mention, get_text_content, get_user, human_readable_size
@@ -124,10 +125,17 @@ async def _unauth(e):
 @newMsg(pattern="update")
 @master_only
 async def update_origin(e):
-    pass
+    msg = await e.reply('`Updating...`")
+    system('git pull')
+    await msg.edit('`Restarting...`')
+    args = [sys.executable, "main.py"]
+    execle(sys.executable, *args, environ)
 
 
 @newMsg(pattern="restart")
 @master_only
 async def restart_process(e):
-    pass
+    await e.reply('`Restarting...`')
+    args = [sys.executable, "main.py"]
+    execle(sys.executable, *args, environ)
+
