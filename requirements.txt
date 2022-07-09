@@ -10,3 +10,4 @@ seedrcc
 pillow 
 mega.py
 bs4
+aria2p
