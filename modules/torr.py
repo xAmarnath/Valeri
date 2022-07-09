@@ -1,6 +1,6 @@
-from asyncio import sleep
-from subprocess import PIPE, Popen
 import os
+from asyncio import sleep
+
 import aria2p
 from requests import get
 
