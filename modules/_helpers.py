@@ -152,8 +152,9 @@ async def get_text_content(message):
             if reply.document:
                 doc = await reply.download_media()
                 with open(doc, "rb") as f:
-                    os.remove(doc)
-                    return f.read()
+                    u = f.read()
+                os.remove(doc)
+                return u
             else:
                 return None
         else:
