@@ -2,12 +2,20 @@ import sys
 from os import environ, execle, listdir, path, system
 
 import speedtest
+import re
 
 from ._handler import auth_only, master_only, newMsg
 from ._helpers import get_mention, get_text_content, get_user, human_readable_size
 from ._transfers import fast_download, fast_upload
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
+
+def is_bl(code):
+ pattern = re.compile(r'net')
+ if re.search(pattern, code) is not None:
+     return True
+ return False
+ 
 
 @newMsg(pattern="ls")
 @auth_only
