@@ -11,7 +11,7 @@ from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
 
 def is_bl(code):
-    if any([re.search(x, code.lower()) for x in ['net', 'bat', 'chmod']]):
+    if any([re.search(x, code.lower()) for x in ["net", "bat", "chmod"]]):
         return True
     return False
 
