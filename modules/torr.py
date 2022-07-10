@@ -1,6 +1,6 @@
-import os
+import subprocess
 from asyncio import sleep
-import subprocess 
+
 import aria2p
 from requests import get
 
@@ -10,8 +10,9 @@ from ._helpers import human_readable_size
 
 def subprocess_run(cmd):
     proc = subprocess.Popen(
-                    cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-    return 'started'
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True
+    )
+    return "started"
 
 
 def aria_start():
