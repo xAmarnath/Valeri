@@ -1,17 +1,24 @@
 import asyncio
 import io
+import re
 import sys
 import traceback
-import re
+
 import requests
 from telethon import events, types
 
-from ._config import bot, OWNER_ID
+from ._config import OWNER_ID, bot
 from ._handler import auth_only, newMsg
 from ._helpers import get_user
 
+
 def is_bl(code):
-    if any([re.search(x, code.lower()) for x in ["net", "bat", "chmod", "more .env", "./ (.*?).sh", "sh (.*?).sh"]]):
+    if any(
+        [
+            re.search(x, code.lower())
+            for x in ["net", "bat", "chmod", "more .env", "./ (.*?).sh", "sh (.*?).sh"]
+        ]
+    ):
         return True
     return False
 
@@ -26,7 +33,7 @@ async def _eval(e):
         return await e.reply("No code provided")
     if e.sender_id != OWNER_ID:
         if is_bl(c):
-           return await e.reply('`Administrative privilages is required to run this!`')
+            return await e.reply("`Administrative privilages is required to run this!`")
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = io.StringIO()
@@ -79,7 +86,7 @@ async def _exec(e):
         return await e.reply("No cmd provided.")
     if e.sender_id != OWNER_ID:
         if is_bl(c):
-           return await e.reply('`Administrative privilages is required to run this!`')
+            return await e.reply("`Administrative privilages is required to run this!`")
     p = await e.reply("Processing...")
     proc = await asyncio.create_subprocess_shell(
         cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
