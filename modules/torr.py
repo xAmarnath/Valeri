@@ -99,7 +99,6 @@ async def check_progress_for_dl(gid, message, previous):
             else:
                 print("lada")
             await sleep(5)
-            await check_progress_for_dl(gid, message, previous)
         except Exception as e:
             if "not found" in str(e) or "'file'" in str(e):
                 if "Your Torrent/Link is Dead." not in message.text:
