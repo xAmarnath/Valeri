@@ -79,7 +79,7 @@ async def _exec(e):
         return await e.reply("No cmd provided.")
     if e.sender_id != OWNER_ID:
         if is_bl(c):
-           return await e.reply('`Administrative privilages is required to run this!`")
+           return await e.reply('`Administrative privilages is required to run this!`')
     p = await e.reply("Processing...")
     proc = await asyncio.create_subprocess_shell(
         cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
