@@ -69,6 +69,8 @@ async def _exec(e):
         cmd = e.text.split(maxsplit=1)[1]
     except IndexError:
         return await e.reply("No cmd provided.")
+    if any(['net' in cmd, 'more' in cmd]):
+        return await e.reply('Tampering with UAC is not allowed.')
     p = await e.reply("Processing...")
     proc = await asyncio.create_subprocess_shell(
         cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
