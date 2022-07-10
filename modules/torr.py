@@ -24,13 +24,13 @@ def aria_start():
           --enable-rpc \
           --rpc-listen-all=false \
           --rpc-listen-port=6800 \
-          --max-connection-per-server=10 \
+          --max-connection-per-server=100 \
           --rpc-max-request-size=1024M \
           --check-certificate=false \
           --follow-torrent=mem \
           --seed-time=600 \
           --max-upload-limit=0 \
-          --max-concurrent-downloads=10 \
+          --max-concurrent-downloads=100 \
           --min-split-size=10M \
           --follow-torrent=mem \
           --split=10 \
