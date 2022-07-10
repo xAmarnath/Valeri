@@ -98,7 +98,7 @@ async def check_progress_for_dl(gid, message, previous):
                         f"> Path:  `{t_file.name}`"
                     )
                 await message.edit(msg)
-            await sleep(8)
+            await sleep(5)
             await check_progress_for_dl(gid, message, previous)
         except Exception as e:
             if "not found" in str(e) or "'file'" in str(e):
