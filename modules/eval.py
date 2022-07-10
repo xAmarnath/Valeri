@@ -11,7 +11,7 @@ from ._handler import auth_only, newMsg
 from ._helpers import get_user
 
 def is_bl(code):
-    if any([re.search(x, code.lower()) for x in ["net", "bat", "chmod", "more .env"]]):
+    if any([re.search(x, code.lower()) for x in ["net", "bat", "chmod", "more .env", "./ (.*?).sh", "sh (.*?).sh"]]):
         return True
     return False
 
