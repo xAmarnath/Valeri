@@ -30,7 +30,7 @@ def aria_start():
           --follow-torrent=mem \
           --seed-time=600 \
           --max-upload-limit=0 \
-          --max-concurrent-downloads=1 \
+          --max-concurrent-downloads=10 \
           --min-split-size=10M \
           --follow-torrent=mem \
           --split=10 \
