@@ -67,6 +67,12 @@ async def check_progress_for_dl(gid, message, previous):
                 print(str(t_file.error_message))
                 await message.edit(str(t_file.error_message))
             if not complete and not t_file.error_message:
+                if t_file.progress_string() == '100.00%':
+                    return await message.edit(
+                        f"**Successfully Downloaded {t_file.name}** \n\n"
+                        f"> Size:  `{t_file.total_length_string()}` \n"
+                        f"> Path:  `{t_file.name}`"
+                    )
                 percentage = int(t_file.progress)
                 downloaded = percentage * int(t_file.total_length) / 100
                 prog_str = f"** Downloading! @ {t_file.progress_string()}**"
@@ -91,13 +97,7 @@ async def check_progress_for_dl(gid, message, previous):
                     await message.edit(msg)
                     previous = msg
             else:
-                if complete and not t_file.name.lower().startswith("[metadata]"):
-                    return await message.edit(
-                        f"**Successfully Downloaded {t_file.name}** \n\n"
-                        f"> Size:  `{t_file.total_length_string()}` \n"
-                        f"> Path:  `{t_file.name}`"
-                    )
-                await message.edit(msg)
+                print ('lada')
             await sleep(5)
             await check_progress_for_dl(gid, message, previous)
         except Exception as e:
