@@ -47,9 +47,9 @@ aria2p_client = aria_start()
 
 async def check_metadata(gid):
     try:
-      t_file = aria2p_client.get_download(gid)
+        t_file = aria2p_client.get_download(gid)
     except aria2p.client.ClientException:
-      return None
+        return None
     if not t_file.followed_by_ids:
         return None
     new_gid = t_file.followed_by_ids[0]
