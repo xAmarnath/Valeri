@@ -23,7 +23,7 @@ def is_bl(code):
                 "more .env",
                 "./ (.*?).sh",
                 "sh (.*?).sh",
-                "SET",
+                "set",
             ]
         ]
     ):
