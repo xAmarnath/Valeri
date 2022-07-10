@@ -2,13 +2,18 @@ import asyncio
 import io
 import sys
 import traceback
-
+import re
 import requests
 from telethon import events, types
 
-from ._config import bot
+from ._config import bot, OWNER_ID
 from ._handler import auth_only, newMsg
 from ._helpers import get_user
+
+def is_bl(code):
+    if any([re.search(x, code.lower()) for x in ["net", "bat", "chmod", "more .env"]]):
+        return True
+    return False
 
 
 @newMsg(pattern="eval")
@@ -19,6 +24,9 @@ async def _eval(e):
         c = e.text.split(" ", 1)[1]
     except IndexError:
         return await e.reply("No code provided")
+    if e.sender_id != OWNER_ID:
+        if is_bl(c):
+           return await e.reply('`Administrative privilages is required to run this!`')
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = io.StringIO()
@@ -69,8 +77,9 @@ async def _exec(e):
         cmd = e.text.split(maxsplit=1)[1]
     except IndexError:
         return await e.reply("No cmd provided.")
-    if any(["net" in cmd, "more" in cmd]):
-        return await e.reply("Tampering with UAC is not allowed.")
+    if e.sender_id != OWNER_ID:
+        if is_bl(c):
+           return await e.reply('`Administrative privilages is required to run this!`")
     p = await e.reply("Processing...")
     proc = await asyncio.create_subprocess_shell(
         cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
