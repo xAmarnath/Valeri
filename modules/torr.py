@@ -46,7 +46,10 @@ aria2p_client = aria_start()
 
 
 async def check_metadata(gid):
-    t_file = aria2p_client.get_download(gid)
+    try:
+      t_file = aria2p_client.get_download(gid)
+    except aria2p.client.ClientException:
+      return None
     if not t_file.followed_by_ids:
         return None
     new_gid = t_file.followed_by_ids[0]
@@ -169,13 +172,13 @@ async def clr_aria(message):
     await message.reply("`Successfully cleared all downloads.`")
 
 
-@newMsg(pattern="ariacancel")
+@newMsg(pattern="cancel")
 async def remove_a_download(message):
     g_id = message.pattern_match.group(1)
     try:
         downloads = aria2p_client.get_download(g_id)
     except:
-        await eor(message, "GID not found ....")
+        await message.reply("GID not found ....")
         return
     file_name = downloads.name
     aria2p_client.remove(downloads=[downloads], force=True, files=True, clean=True)
