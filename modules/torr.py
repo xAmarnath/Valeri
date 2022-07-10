@@ -93,7 +93,7 @@ async def check_progress_for_dl(gid, message, previous):
                     )
                 msg = (
                     f"`{prog_str}` \n\n"
-                    f"**Name:**  `{t_file.name}` \n"
+                    f"**Name:**  `{t_file.name or 'unknown'}` \n"
                     f"**Completed:**  `{human_readable_size(downloaded)}` \n"
                     f"**Total:**  `{t_file.total_length_string()}` \n"
                     f"**Speed:**  `{t_file.download_speed_string()}` \n"
