@@ -152,7 +152,7 @@ async def t_url_download(message):
             new_gid = await check_metadata(gid)
             await check_progress_for_dl(gid=new_gid, message=message, previous="")
     elif is_mag:
-        await sleep(6)
+        await sleep(4)
         new_gid = await check_metadata(gid)
         await check_progress_for_dl(gid=new_gid, message=message, previous="")
 
@@ -181,10 +181,9 @@ async def remove_a_download(message):
         await message.reply("GID not found ....")
         return
     file_name = downloads.name
-    aria2p_client.remove(downloads=[downloads], force=True, files=True, clean=True)
     await message.reply(f"**Successfully cancelled download.** \n`{file_name}`")
-
-
+    aria2p_client.remove(downloads=[downloads], force=True, files=True, clean=True)
+    
 @newMsg(pattern="ariastatus$")
 async def show_all(message):
     downloads = aria2p_client.get_downloads()
@@ -193,9 +192,9 @@ async def show_all(message):
         if str(download.status) != "complete":
             msg = (
                 msg
-                + "**File:**  "
+                + "**File:**  ```"
                 + str(download.name)
-                + "\n**Speed:**  "
+                + "```\n**Speed:**  "
                 + str(download.download_speed_string())
                 + "\n**Progress:**  "
                 + str(download.progress_string())
