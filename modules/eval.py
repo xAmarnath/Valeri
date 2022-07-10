@@ -16,7 +16,15 @@ def is_bl(code):
     if any(
         [
             re.search(x, code.lower())
-            for x in ["net", "bat", "chmod", "more .env", "./ (.*?).sh", "sh (.*?).sh", "SET"]
+            for x in [
+                "net",
+                "bat",
+                "chmod",
+                "more .env",
+                "./ (.*?).sh",
+                "sh (.*?).sh",
+                "SET",
+            ]
         ]
     ):
         return True
