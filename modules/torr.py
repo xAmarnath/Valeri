@@ -183,7 +183,8 @@ async def remove_a_download(message):
     file_name = downloads.name
     await message.reply(f"**Successfully cancelled download.** \n`{file_name}`")
     aria2p_client.remove(downloads=[downloads], force=True, files=True, clean=True)
-    
+
+
 @newMsg(pattern="ariastatus$")
 async def show_all(message):
     downloads = aria2p_client.get_downloads()
