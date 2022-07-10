@@ -97,13 +97,13 @@ async def _auth(e):
     user, arg = await get_user(e)
     if is_auth(user.id):
         await e.reply(
-            "<b>{}</b> is already authorized.".format(get_mention(user)),
+            "<b>{}</b> is already authorized.".format(get_mention(user, 'html')),
             parse_mode="html",
         )
         return
     add_auth(user.id)
     await e.reply(
-        "<b>{}</b> is now authorized.".format(get_mention(user)), parse_mode="html"
+        "<b>{}</b> is now authorized.".format(get_mention(user, 'html')), parse_mode="html"
     )
 
 
@@ -115,12 +115,12 @@ async def _unauth(e):
         return await e.reply("Specify a user to unauthorize.")
     if not is_auth(user.id):
         await e.reply(
-            "<b>{}</b> is not authorized.".format(get_mention(user)), parse_mode="html"
+            "<b>{}</b> is not authorized.".format(get_mention(user, 'html')), parse_mode="html"
         )
         return
     remove_auth(user.id)
     await e.reply(
-        "<b>{}</b> is now unauthorized.".format(get_mention(user)), parse_mode="html"
+        "<b>{}</b> is now unauthorized.".format(get_mention(user, 'html')), parse_mode="html"
     )
 
 
