@@ -29,8 +29,7 @@ def aria_start():
           --check-certificate=false \
           --follow-torrent=mem \
           --seed-time=600 \
-          --max-upload-limit=0 \
-          --max-concurrent-downloads=100 \
+          --max-concurrent-downloads=10 \
           --min-split-size=10M \
           --follow-torrent=mem \
           --split=10 \
@@ -69,6 +68,12 @@ async def check_progress_for_dl(gid, message, previous):
             if t_file.error_message:
                 print(str(t_file.error_message))
                 await message.edit(str(t_file.error_message))
+            if t_file.is_complete:
+                    return await message.edit(
+                        f"**Successfully Downloaded {t_file.name}** \n\n"
+                        f"> Size:  `{t_file.total_length_string()}` \n"
+                        f"> Path:  `{t_file.name}`"
+                    )
             if not complete and not t_file.error_message:
                 if t_file.progress_string() == "100.00%":
                     return await message.edit(
