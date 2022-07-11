@@ -40,9 +40,6 @@ def aria_start():
     return aria2
 
 
-
-
-
 async def check_metadata(gid):
     try:
         t_file = aria2p_client.get_download(gid)
