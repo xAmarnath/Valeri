@@ -40,7 +40,7 @@ def aria_start():
     return aria2
 
 
-aria2p_client = aria_start()
+
 
 
 async def check_metadata(gid):
