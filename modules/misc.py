@@ -1,8 +1,8 @@
 import io
 import json
 import os
-from random import choice, randint
 import time
+from random import choice, randint
 from urllib.parse import quote
 
 from bs4 import BeautifulSoup
@@ -10,7 +10,7 @@ from requests import get, post
 from telethon import Button, types
 
 from ._config import TMDB_KEY as tapiKey
-from ._functions import get_weather, search_imdb, translate, get_imdb_soup
+from ._functions import get_imdb_soup, get_weather, search_imdb, translate
 from ._handler import newMsg
 from ._helpers import gen_random_string, get_text_content, get_user
 
@@ -61,8 +61,7 @@ async def ip_lookup(message):
     resp = resp.json()
     if resp.get("data", {}).get("status", 200) != 200:
         return await message.reply(
-            "Error: {}".format(resp.get("data", {}).get(
-                "message", "Unknown error"))
+            "Error: {}".format(resp.get("data", {}).get("message", "Unknown error"))
         )
     data = resp.get("data", {})
     ip_info = (
@@ -135,10 +134,20 @@ async def urban_dictionary(message):
     downvote = result.get("thumbs_down", "-")
     author = result.get("author", "-")
     word = result.get("word", "-")
-    udict = ("<b>Word:</b> " + word + "\n" +
-             "<b>Definition:</b> " + definition + "\n" +
-             "<b>Example:</b> " + example + "\n" +
-             "<b>Author:</b> " + author + "\n")
+    udict = (
+        "<b>Word:</b> "
+        + word
+        + "\n"
+        + "<b>Definition:</b> "
+        + definition
+        + "\n"
+        + "<b>Example:</b> "
+        + example
+        + "\n"
+        + "<b>Author:</b> "
+        + author
+        + "\n"
+    )
     await message.reply(
         udict,
         buttons=[
@@ -176,8 +185,7 @@ async def pinterest(message):
     if result.get("resource_response", {}).get("status", "") != "success":
         return await message.reply("No results found!")
     urls = []
-    pins = result.get("resource_response", {}).get(
-        "data", {}).get("results", [])
+    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
@@ -264,8 +272,7 @@ async def _raddr(msg):
         for i in result.find_all("a"):
             if not i.text == "":
                 name = i.find(class_="BNeawe deIvCb AP7Wnd").text
-                address = BeautifulSoup(str(i).split(
-                    "<br/>")[1], "html.parser").text
+                address = BeautifulSoup(str(i).split("<br/>")[1], "html.parser").text
             results.append("<b>{}</b>\n{}".format(name, address))
     if len(results) == 0:
         return await msg.reply("No results found!")
@@ -277,8 +284,7 @@ async def _raddr(msg):
             [
                 Button.url(
                     "🔎 View on Google",
-                    "https://www.google.com/search?q=food+places+near" +
-                    quote(query),
+                    "https://www.google.com/search?q=food+places+near" + quote(query),
                 )
             ]
         ],
@@ -411,8 +417,7 @@ async def paste_(message):
                 data=content,
                 timeout=5,
             )
-            url = "https://www.toptal.com/developers/hastebin/" + \
-                resp.json()["key"]
+            url = "https://www.toptal.com/developers/hastebin/" + resp.json()["key"]
             paste_name = "Hastebin"
         elif arg == "s":
             req = post(
@@ -493,11 +498,11 @@ async def _gif(msg):
     text = await get_text_content(message=msg)
     if text is None:
         return await msg.reply("No text provided to search for gif")
-    url = 'https://api.giphy.com/v1/videos/search'
-    params = {'q': text, 'api_key': 'Gc7131jiJuvI7IdN0HZ1D7nh0ow5BU6g'}
+    url = "https://api.giphy.com/v1/videos/search"
+    params = {"q": text, "api_key": "Gc7131jiJuvI7IdN0HZ1D7nh0ow5BU6g"}
     gifs = []
-    for gif in get(url, params=params).json()['data']:
-        url = gif.get('images', {}).get('original', {}).get('url')
+    for gif in get(url, params=params).json()["data"]:
+        url = gif.get("images", {}).get("original", {}).get("url")
         if url:
             gifs.append(url)
         if len(gifs) > 4:
@@ -522,27 +527,57 @@ async def _imdb(msg):
     soup = get_imdb_soup(text)
     jsonD = soup.find("script", type="application/ld+json").text
     js = json.loads(jsonD)
-    js["sameAs"] = [x.text for x in soup.find_all(
-        class_="ipc-poster-card__title ipc-poster-card__title--clamp-2 ipc-poster-card__title--clickable")]
-    js["creator"] = [i for i in [(x.get("name", "-") if x.get("@type") ==
-                                 "Person" else None) for x in js.get("creator", [])] if i]
+    js["sameAs"] = [
+        x.text
+        for x in soup.find_all(
+            class_="ipc-poster-card__title ipc-poster-card__title--clamp-2 ipc-poster-card__title--clickable"
+        )
+    ]
+    js["creator"] = [
+        i
+        for i in [
+            (x.get("name", "-") if x.get("@type") == "Person" else None)
+            for x in js.get("creator", [])
+        ]
+        if i
+    ]
     imdb_title = (
-        '<b>' + js.get("name", "No title") + '</b>' +
-        '\n<b>Rating:</b> <code>' + str(js.get("aggregateRating", {}).get("ratingValue", "-")) + '/10</code>' +
-        '\n<b>Genres:</b> <code>' + ', '.join(js.get("genre", [])) + '</code>' +
-        '\n<b>Cast:</b> <code>' + ', '.join([x.get("name", "-") for x in js.get("actor", [])]) + '</code>' +
-        '\n<b>Type:</b> <code>' + js.get("type", "-") + '</code>' +
-        '\n<b>Release date:</b> <code>' + js.get("datePublished", "-") + '</code>' +
-        '\n<b>Description:</b> <i>' + js.get("description", "-") + '</i>' +
-        '\n<b>Content rating:</b> <code>' + js.get("contentRating", "-") + '</code>' +
-        '\n<b>Creators:</b> <code>' + ', '.join(js.get("creator", [])) + '</code>' +
-        '\n<b>Tags:</b> <code>' + js.get("keywords", '') + '</code>' +
-        '\n<b>Similar:</b> <code>' +
-        ', '.join(js.get("sameAs", [])) + '</code>'
+        "<b>"
+        + js.get("name", "No title")
+        + "</b>"
+        + "\n<b>Rating:</b> <code>"
+        + str(js.get("aggregateRating", {}).get("ratingValue", "-"))
+        + "/10</code>"
+        + "\n<b>Genres:</b> <code>"
+        + ", ".join(js.get("genre", []))
+        + "</code>"
+        + "\n<b>Cast:</b> <code>"
+        + ", ".join([x.get("name", "-") for x in js.get("actor", [])])
+        + "</code>"
+        + "\n<b>Type:</b> <code>"
+        + js.get("type", "-")
+        + "</code>"
+        + "\n<b>Release date:</b> <code>"
+        + js.get("datePublished", "-")
+        + "</code>"
+        + "\n<b>Description:</b> <i>"
+        + js.get("description", "-")
+        + "</i>"
+        + "\n<b>Content rating:</b> <code>"
+        + js.get("contentRating", "-")
+        + "</code>"
+        + "\n<b>Creators:</b> <code>"
+        + ", ".join(js.get("creator", []))
+        + "</code>"
+        + "\n<b>Tags:</b> <code>"
+        + js.get("keywords", "")
+        + "</code>"
+        + "\n<b>Similar:</b> <code>"
+        + ", ".join(js.get("sameAs", []))
+        + "</code>"
     )
     poster_url = js.get("image", None)
-    trailer_url = 'https://imdb.com' + \
-        js.get("trailer", {}).get("embedUrl", "-")
+    trailer_url = "https://imdb.com" + js.get("trailer", {}).get("embedUrl", "-")
     buttons = [
         [
             Button.url(

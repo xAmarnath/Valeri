@@ -43,14 +43,12 @@ def search_imdb(query: str):
             )
             caption = "<b>{}</b>\n".format(result["title"])
             caption += (
-                "<b>Year:</b> <code>{}</code>\n".format(
-                    result["release_date"][:4])
+                "<b>Year:</b> <code>{}</code>\n".format(result["release_date"][:4])
                 if result.get("release_date")
                 else ""
             )
             caption += (
-                "<b>Runtime:</b> <code>{} min</code>\n".format(
-                    result["runtime"])
+                "<b>Runtime:</b> <code>{} min</code>\n".format(result["runtime"])
                 if result.get("runtime")
                 else ""
             )
@@ -62,8 +60,7 @@ def search_imdb(query: str):
                 else ""
             )
             caption += (
-                "<b>Rating:</b> <code>{}/10</code>\n".format(
-                    result["vote_average"])
+                "<b>Rating:</b> <code>{}/10</code>\n".format(result["vote_average"])
                 if result.get("vote_average")
                 else ""
             )
@@ -73,15 +70,13 @@ def search_imdb(query: str):
                 else ""
             )
             caption += (
-                "<b>Revenue:</b> {}\n".format(
-                    human_currency(result["revenue"]))
+                "<b>Revenue:</b> {}\n".format(human_currency(result["revenue"]))
                 if result.get("revenue")
                 else ""
             )
             caption += (
                 "<b>Production Companies:</b> {}\n".format(
-                    ", ".join(c["name"]
-                              for c in result["production_companies"])
+                    ", ".join(c["name"] for c in result["production_companies"])
                 )
                 if result.get("production_companies")
                 else ""
@@ -94,8 +89,7 @@ def search_imdb(query: str):
                 else ""
             )
             caption += (
-                "\n<b>Overview:</b> <code>{}</code>\n".format(
-                    result["overview"])
+                "\n<b>Overview:</b> <code>{}</code>\n".format(result["overview"])
                 if result.get("overview")
                 else ""
             )
@@ -108,8 +102,7 @@ def search_imdb(query: str):
                 [
                     Button.url(
                         "📖 More Info",
-                        url="https://www.imdb.com/title/{}".format(
-                            result["imdb_id"]),
+                        url="https://www.imdb.com/title/{}".format(result["imdb_id"]),
                     ),
                 ],
             ]
@@ -156,8 +149,7 @@ def search_imdb(query: str):
                 else ""
             )
             caption += (
-                "<b>Rating:</b> <code>{}/10</code>\n".format(
-                    result["vote_average"])
+                "<b>Rating:</b> <code>{}/10</code>\n".format(result["vote_average"])
                 if result.get("vote_average")
                 else ""
             )
@@ -168,8 +160,7 @@ def search_imdb(query: str):
             )
             caption += (
                 "<b>Production Companies:</b> {}\n".format(
-                    ", ".join(c["name"]
-                              for c in result["production_companies"])
+                    ", ".join(c["name"] for c in result["production_companies"])
                 )
                 if result.get("production_companies")
                 else ""
@@ -212,8 +203,7 @@ def search_imdb(query: str):
                 else ""
             )
             caption += (
-                "\n<b>Overview:</b> <code>{}</code>\n".format(
-                    result["overview"])
+                "\n<b>Overview:</b> <code>{}</code>\n".format(result["overview"])
                 if result.get("overview")
                 else ""
             )
@@ -261,8 +251,7 @@ def get_weather(city: str):
     data = weather.find_all("p")
     stat = data[0].text
     info = str(data[1]).split("<br/>")
-    details = [x.text for x in soup.find(
-        class_="bk-focus__info").find_all("td")]
+    details = [x.text for x in soup.find(class_="bk-focus__info").find_all("td")]
     result = (
         "<b>Weather in <code>{}</code></b>\n\n".format(city)
         + "<b>Temperature:</b> <code>{}</code>\n".format(
