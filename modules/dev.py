@@ -7,6 +7,7 @@ import speedtest
 from ._handler import auth_only, master_only, newMsg
 from ._helpers import get_mention, get_text_content, get_user, human_readable_size
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
+from ._transfers import upload_file
 
 
 def is_bl(code):
@@ -43,7 +44,8 @@ async def _ls(e):
             elif file.endswith(".mp3") or file.endswith(".wav"):
                 emoji = "🎵"
             elif (
-                file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png")
+                file.endswith(".jpg") or file.endswith(
+                    ".jpeg") or file.endswith(".png")
             ):
                 emoji = "🖼"
             elif file.endswith(".gif"):
@@ -66,7 +68,8 @@ async def _ul(e):
     if not l:
         return await _ls(e)
     try:
-        await e.reply(file=l)
+        file = await upload_file(e, l)
+        await e.reply("`Uploaded successfully!`", file=file)
     except OSError:
         await e.reply("`Failed to upload.`")
         return
@@ -103,7 +106,8 @@ async def _auth(e):
     user, _ = await get_user(e)
     if is_auth(user.id):
         await e.reply(
-            "<b>{}</b> is already authorized.".format(get_mention(user, "html")),
+            "<b>{}</b> is already authorized.".format(
+                get_mention(user, "html")),
             parse_mode="html",
         )
         return

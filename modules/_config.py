@@ -1,5 +1,6 @@
+import logging
 import time
-from logging import INFO, StreamHandler, basicConfig, getLogger
+from logging import INFO, StreamHandler, basicConfig, getLogger, handlers
 from os import getenv
 
 from dotenv import load_dotenv
@@ -9,9 +10,20 @@ from telethon import TelegramClient
 basicConfig(
     format="%(asctime)s %(levelname)s %(name)s %(message)s",
     level=INFO,
-    handlers=[StreamHandler()],
-    filename="logs.txt",
 )
+
+handler = handlers.RotatingFileHandler(
+    "logs.txt", maxBytes=10 * 1024 * 1024, backupCount=10
+)
+handler.setLevel(INFO)
+handler.setFormatter(
+    logging.Formatter(
+        "%(asctime)s %(levelname)s %(name)s %(message)s",
+        "%Y-%m-%d %H:%M:%S",
+    )
+)
+getLogger("valeri").addHandler(handler)
+
 
 StartTime = time.time()
 help_dict = {}
