@@ -11,8 +11,7 @@ import os
 from collections import defaultdict
 from typing import AsyncGenerator, Awaitable, BinaryIO, Union
 
-from telethon import TelegramClient, helpers, types, utils, crypto
-from telethon.crypto import AuthKey
+from telethon import TelegramClient, helpers, types, utils
 from telethon.network import MTProtoSender
 from telethon.tl.alltlobjects import LAYER
 from telethon.tl.functions import InvokeWithLayerRequest
@@ -97,8 +96,7 @@ class UploadSender:
         self.sender = sender
         self.part_count = part_count
         if big:
-            self.request = SaveBigFilePartRequest(
-                file_id, index, part_count, b"")
+            self.request = SaveBigFilePartRequest(file_id, index, part_count, b"")
         else:
             self.request = SaveFilePartRequest(file_id, index, b"")
         self.stride = stride
@@ -203,8 +201,7 @@ class ParallelTransferrer:
             await self._create_upload_sender(file_id, part_count, big, 0, connections),
             *await asyncio.gather(
                 *(
-                    self._create_upload_sender(
-                        file_id, part_count, big, i, connections)
+                    self._create_upload_sender(file_id, part_count, big, i, connections)
                     for i in range(1, connections)
                 )
             ),
@@ -253,10 +250,8 @@ class ParallelTransferrer:
         part_size_kb: float | None = None,
         connection_count: int | None = None,
     ) -> tuple[int, int, bool]:
-        connection_count = connection_count or self._get_connection_count(
-            file_size)
-        part_size = (
-            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(file_size)
+        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = (file_size + part_size - 1) // part_size
         is_large = file_size > 10 * 1024 * 1024
         await self._init_upload(connection_count, file_id, part_count, is_large)
@@ -276,10 +271,8 @@ class ParallelTransferrer:
         part_size_kb: float | None = None,
         connection_count: int | None = None,
     ) -> AsyncGenerator[bytes, None]:
-        connection_count = connection_count or self._get_connection_count(
-            file_size)
-        part_size = (
-            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(file_size)
+        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = math.ceil(file_size / part_size)
         log.debug(
             f"Starting parallel download: {connection_count} {part_size} {part_count} {file!s}"
@@ -316,7 +309,7 @@ def stream_file(file_to_stream: BinaryIO, chunk_size=1024):
         yield data_read
 
 
-async def internal_transfer_to_telegram(client, response, filename='upload'):
+async def internal_transfer_to_telegram(client, response, filename="upload"):
     """Transfers a file to telegram"""
     file_id = helpers.generate_random_long()
     file_size = os.path.getsize(response.name)
@@ -354,8 +347,10 @@ async def upload_file(client, file):
     """Uploads a file to telegram"""
     if isinstance(file, str):
         try:
-            with open(file, 'rb') as f:
-                return await internal_transfer_to_telegram(client, f, os.path.basename(file))
+            with open(file, "rb") as f:
+                return await internal_transfer_to_telegram(
+                    client, f, os.path.basename(file)
+                )
         except FileNotFoundError:
             raise FileNotFoundError(f"File {file} not found")
     if isinstance(file, io.IOBase):
