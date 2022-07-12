@@ -92,7 +92,7 @@ class UploadSender:
         log.debug("Sending file part %d/%d",
                   self.request.file_part, self.part_count)
         await self.sender.send(self.request)
-        self.request.file_part += self.stride
+        self.request.file_part += self.stride 
 
     async def disconnect(self) -> None:
         """disconnect the sender"""
