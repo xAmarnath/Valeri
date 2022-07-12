@@ -7,7 +7,11 @@ import logging
 import math
 import os
 
+<<<<<<< HEAD
 from telethon import helpers, types, utils, functions
+=======
+from telethon import TelegramClient, helpers, types, utils
+>>>>>>> 7cf040acb74cf14acb5e54364a054e17c5b6b6ef
 from telethon.network import MTProtoSender
 from telethon.tl.alltlobjects import LAYER
 from telethon.tl.functions import InvokeWithLayerRequest
@@ -184,8 +188,7 @@ class ParallelTransferrer:
             await self._create_upload_sender(file_id, part_count, big, 0, connections),
             *await asyncio.gather(
                 *(
-                    self._create_upload_sender(
-                        file_id, part_count, big, i, connections)
+                    self._create_upload_sender(file_id, part_count, big, i, connections)
                     for i in range(1, connections)
                 )
             ),
@@ -298,7 +301,7 @@ def stream_file(file_to_stream, chunk_size=1024):
         yield data_read
 
 
-async def internal_transfer_to_telegram(client, response, filename='upload'):
+async def internal_transfer_to_telegram(client, response, filename="upload"):
     """Transfers a file to telegram"""
     file_id = helpers.generate_random_long()
     file_size = os.path.getsize(response.name)
