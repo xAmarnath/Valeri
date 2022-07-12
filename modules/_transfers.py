@@ -1,22 +1,25 @@
-'''idk'''
+"""idk"""
 
 from __future__ import annotations
-import io
-import os
 
-from typing import AsyncGenerator, Awaitable, BinaryIO, Union
-from collections import defaultdict
 import asyncio
 import hashlib
+import io
 import logging
 import math
+import os
+from collections import defaultdict
+from typing import AsyncGenerator, Awaitable, BinaryIO, Union
 
-from telethon import helpers, utils, TelegramClient, types
+from telethon import TelegramClient, helpers, types, utils
 from telethon.crypto import AuthKey
 from telethon.network import MTProtoSender
 from telethon.tl.alltlobjects import LAYER
 from telethon.tl.functions import InvokeWithLayerRequest
-from telethon.tl.functions.auth import ExportAuthorizationRequest, ImportAuthorizationRequest
+from telethon.tl.functions.auth import (
+    ExportAuthorizationRequest,
+    ImportAuthorizationRequest,
+)
 from telethon.tl.functions.upload import (
     GetFileRequest,
     SaveBigFilePartRequest,
@@ -28,7 +31,6 @@ from telethon.tl.types import (
     InputFileLocation,
     InputPeerPhotoFileLocation,
     InputPhotoFileLocation,
-    TypeInputFile,
 )
 
 log = logging.getLogger(__name__)
@@ -43,11 +45,12 @@ TypeLocation = Union[
 
 
 class DownloadSender:
-    '''
+    """
     async def __aiter__(self) -> AsyncGenerator[bytes, None]:
         while self.remaining:
             yield await self.next()
-    '''
+    """
+
     sender: MTProtoSender
     request: GetFileRequest
     remaining: int
@@ -68,11 +71,11 @@ class DownloadSender:
         self.remaining = count
 
     async def next(self) -> bytes | None:
-        '''
+        """
         if self.remaining:
             self.remaining -= 1
             return await self.sender.send(self.request)
-        '''
+        """
         if not self.remaining:
             return None
         result = await self.sender.send(self.request)
@@ -81,18 +84,19 @@ class DownloadSender:
         return result.bytes
 
     def disconnect(self) -> Awaitable[None]:
-        '''
+        """
         disconnect the sender
-        '''
+        """
         return self.sender.disconnect()
 
 
 class UploadSender:
-    '''
+    """
     async def __aiter__(self) -> AsyncGenerator[bytes, None]:
         while self.remaining:
             yield await self.next()
-    '''
+    """
+
     sender: MTProtoSender
     request: SaveFilePartRequest < SaveBigFilePartRequest
     part_count: int
@@ -113,8 +117,7 @@ class UploadSender:
         self.sender = sender
         self.part_count = part_count
         if big:
-            self.request = SaveBigFilePartRequest(
-                file_id, index, part_count, b"")
+            self.request = SaveBigFilePartRequest(file_id, index, part_count, b"")
         else:
             self.request = SaveFilePartRequest(file_id, index, b"")
         self.stride = stride
@@ -154,7 +157,9 @@ class ParallelTransferrer:
         self.loop = self.client.loop
         self.dc_id = dc_id or self.client.session.dc_id
         self.auth_key = (
-            None if dc_id and self.client.session.dc_id != dc_id else self.client.session.auth_key
+            None
+            if dc_id and self.client.session.dc_id != dc_id
+            else self.client.session.auth_key
         )
         self.senders = None
         self.upload_ticker = 0
@@ -200,10 +205,20 @@ class ParallelTransferrer:
         ]
 
     async def _create_download_sender(
-        self, file: TypeLocation, index: int, part_size: int, stride: int, part_count: int
+        self,
+        file: TypeLocation,
+        index: int,
+        part_size: int,
+        stride: int,
+        part_count: int,
     ) -> DownloadSender:
         return DownloadSender(
-            await self._create_sender(), file, index * part_size, part_size, stride, part_count
+            await self._create_sender(),
+            file,
+            index * part_size,
+            part_size,
+            stride,
+            part_count,
         )
 
     async def _init_upload(
@@ -213,8 +228,7 @@ class ParallelTransferrer:
             await self._create_upload_sender(file_id, part_count, big, 0, connections),
             *await asyncio.gather(
                 *(
-                    self._create_upload_sender(
-                        file_id, part_count, big, i, connections)
+                    self._create_upload_sender(file_id, part_count, big, i, connections)
                     for i in range(1, connections)
                 )
             ),
@@ -224,7 +238,13 @@ class ParallelTransferrer:
         self, file_id: int, part_count: int, big: bool, index: int, stride: int
     ) -> UploadSender:
         return UploadSender(
-            await self._create_sender(), file_id, part_count, big, index, stride, loop=self.loop
+            await self._create_sender(),
+            file_id,
+            part_count,
+            big,
+            index,
+            stride,
+            loop=self.loop,
         )
 
     async def _create_sender(self) -> MTProtoSender:
@@ -232,7 +252,11 @@ class ParallelTransferrer:
         sender = MTProtoSender(self.auth_key, loggers=self.client._log)
         await sender.connect(
             self.client._connection(
-                dc.ip_address, dc.port, dc.id, loggers=self.client._log, proxy=self.client._proxy
+                dc.ip_address,
+                dc.port,
+                dc.id,
+                loggers=self.client._log,
+                proxy=self.client._proxy,
             )
         )
         if not self.auth_key:
@@ -253,10 +277,8 @@ class ParallelTransferrer:
         part_size_kb: float | None = None,
         connection_count: int | None = None,
     ) -> tuple[int, int, bool]:
-        connection_count = connection_count or self._get_connection_count(
-            file_size)
-        part_size = (
-            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(file_size)
+        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = (file_size + part_size - 1) // part_size
         is_large = file_size > 10 * 1024 * 1024
         await self._init_upload(connection_count, file_id, part_count, is_large)
@@ -276,10 +298,8 @@ class ParallelTransferrer:
         part_size_kb: float | None = None,
         connection_count: int | None = None,
     ) -> AsyncGenerator[bytes, None]:
-        connection_count = connection_count or self._get_connection_count(
-            file_size)
-        part_size = (
-            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(file_size)
+        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = math.ceil(file_size / part_size)
         log.debug(
             f"Starting parallel download: {connection_count} {part_size} {part_count} {file!s}"
@@ -303,7 +323,8 @@ class ParallelTransferrer:
 
 
 parallel_transfer_locks: defaultdict[int, asyncio.Lock] = defaultdict(
-    lambda: asyncio.Lock())
+    lambda: asyncio.Lock()
+)
 
 
 def stream_file(file_to_stream: BinaryIO, chunk_size=1024):
@@ -315,9 +336,9 @@ def stream_file(file_to_stream: BinaryIO, chunk_size=1024):
 
 
 async def _internal_transfer_to_telegram(client, response):
-    '''
+    """
     Transfers a file to telegram
-    '''
+    """
     file_id = helpers.generate_random_long()
     file_size = os.path.getsize(response.name)
     hash_md5 = hashlib.md5()
@@ -344,13 +365,16 @@ async def _internal_transfer_to_telegram(client, response):
     await uploader.finish_upload()
     if is_large:
         return types.InputFileBig(file_id, part_count, "upload"), file_size
-    return types.InputFile(file_id, part_count, "upload", hash_md5.hexdigest()), file_size
+    return (
+        types.InputFile(file_id, part_count, "upload", hash_md5.hexdigest()),
+        file_size,
+    )
 
 
 async def upload_file(client, file):
-    '''
+    """
     Uploads a file to telegram
-    '''
+    """
     if isinstance(file, str):
         file = open(file, "rb")
     if isinstance(file, io.IOBase):
