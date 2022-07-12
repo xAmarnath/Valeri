@@ -7,11 +7,7 @@ import logging
 import math
 import os
 
-<<<<<<< HEAD
 from telethon import helpers, types, utils, functions
-=======
-from telethon import TelegramClient, helpers, types, utils
->>>>>>> 7cf040acb74cf14acb5e54364a054e17c5b6b6ef
 from telethon.network import MTProtoSender
 from telethon.tl.alltlobjects import LAYER
 from telethon.tl.functions import InvokeWithLayerRequest
