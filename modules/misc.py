@@ -61,8 +61,7 @@ async def ip_lookup(message):
     resp = resp.json()
     if resp.get("data", {}).get("status", 200) != 200:
         return await message.reply(
-            "Error: {}".format(resp.get("data", {}).get(
-                "message", "Unknown error"))
+            "Error: {}".format(resp.get("data", {}).get("message", "Unknown error"))
         )
     data = resp.get("data", {})
     ip_info = (
@@ -186,8 +185,7 @@ async def pinterest(message):
     if result.get("resource_response", {}).get("status", "") != "success":
         return await message.reply("No results found!")
     urls = []
-    pins = result.get("resource_response", {}).get(
-        "data", {}).get("results", [])
+    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
@@ -274,8 +272,7 @@ async def _raddr(msg):
         for i in result.find_all("a"):
             if not i.text == "":
                 name = i.find(class_="BNeawe deIvCb AP7Wnd").text
-                address = BeautifulSoup(str(i).split(
-                    "<br/>")[1], "html.parser").text
+                address = BeautifulSoup(str(i).split("<br/>")[1], "html.parser").text
             results.append("<b>{}</b>\n{}".format(name, address))
     if len(results) == 0:
         return await msg.reply("No results found!")
@@ -287,8 +284,7 @@ async def _raddr(msg):
             [
                 Button.url(
                     "🔎 View on Google",
-                    "https://www.google.com/search?q=food+places+near" +
-                    quote(query),
+                    "https://www.google.com/search?q=food+places+near" + quote(query),
                 )
             ]
         ],
@@ -421,8 +417,7 @@ async def paste_(message):
                 data=content,
                 timeout=5,
             )
-            url = "https://www.toptal.com/developers/hastebin/" + \
-                resp.json()["key"]
+            url = "https://www.toptal.com/developers/hastebin/" + resp.json()["key"]
             paste_name = "Hastebin"
         elif arg == "s":
             req = post(
@@ -584,18 +579,20 @@ async def _imdb(msg):
         + ""
     )
     poster_url = js.get("image", None)
-    trailer_url = "https://imdb.com" + \
-        js.get("trailer", {}).get("embedUrl", "-")
+    trailer_url = "https://imdb.com" + js.get("trailer", {}).get("embedUrl", "-")
     buttons = [
         [
             Button.url(
                 "IMDB",
                 "https://imdb.com" + js.get("url", ""),
-            )],
-        [Button.url(
-            "Trailer",
-            trailer_url,
-        )],
+            )
+        ],
+        [
+            Button.url(
+                "Trailer",
+                trailer_url,
+            )
+        ],
     ]
     await msg.reply(
         imdb_title,
