@@ -1,6 +1,6 @@
 import logging
 import time
-from logging import INFO, StreamHandler, basicConfig, getLogger, handlers
+from logging import INFO, basicConfig, getLogger, handlers
 from os import getenv
 
 from dotenv import load_dotenv

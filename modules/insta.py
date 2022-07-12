@@ -15,14 +15,12 @@ cookies = {
 
 def get_ig_download_url(url: str):
     """Get the download url for the media."""
-    url = url + \
-        "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
+    url = url + "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
     try:
         req = get(url, cookies=cookies).json()
         if req.get("items", [])[0].get("media_type") == 1:
             item = req.get("items", [])[0]
-            width, hieght = item.get(
-                "original_width"), item.get("original_height")
+            width, hieght = item.get("original_width"), item.get("original_height")
             images = item.get("image_versions2", {}).get("candidates", [])
             for image in images:
                 if image.get("width") == width and image.get("height") == hieght:
@@ -42,8 +40,7 @@ def get_ig_download_url(url: str):
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", ""),
-                item.get("caption", {}).get(
-                    "text", "") if item.get("caption") else "",
+                item.get("caption", {}).get("text", "") if item.get("caption") else "",
                 item.get("media_type", 0),
                 False,
             )
@@ -55,8 +52,7 @@ def get_ig_download_url(url: str):
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", ""),
-                item.get("caption", {}).get(
-                    "text", "") if item.get("caption") else "",
+                item.get("caption", {}).get("text", "") if item.get("caption") else "",
                 item.get("media_type", 0),
                 False,
             )
@@ -126,5 +122,6 @@ async def _insta(message):
             message.chat_id, f, caption=caption, parse_mode="html", reply_to=message.id
         )
     await msg.delete()
+
 
 # TODO : Add insta user search
