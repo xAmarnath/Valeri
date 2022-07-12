@@ -30,7 +30,8 @@ class DownloadSender:
         count,
     ):
         self.sender = sender
-        self.request = functions.upload.GetFileRequest(file, offset=offset, limit=limit)
+        self.request = functions.upload.GetFileRequest(
+            file, offset=offset, limit=limit)
         self.stride = stride
         self.remaining = count
 
@@ -72,7 +73,8 @@ class UploadSender:
                 file_id, index, part_count, b""
             )
         else:
-            self.request = functions.upload.SaveFilePartRequest(file_id, index, b"")
+            self.request = functions.upload.SaveFilePartRequest(
+                file_id, index, b"")
         self.stride = stride
         self.previous = None
         self.loop = loop
@@ -88,7 +90,7 @@ class UploadSender:
     async def _next(self, data: bytes) -> None:
         self.request.bytes = data
         log.debug("Sending file part %d/%d",
-                 self.request.file_part, self.part_count)
+                  self.request.file_part, self.part_count)
         await self.sender.send(self.request)
         self.request.file_part += self.stride
 
@@ -183,7 +185,8 @@ class ParallelTransferrer:
             await self._create_upload_sender(file_id, part_count, big, 0, connections),
             *await asyncio.gather(
                 *(
-                    self._create_upload_sender(file_id, part_count, big, i, connections)
+                    self._create_upload_sender(
+                        file_id, part_count, big, i, connections)
                     for i in range(1, connections)
                 )
             ),
@@ -236,8 +239,10 @@ class ParallelTransferrer:
         connection_count: int | None = None,
     ) -> tuple[int, int, bool]:
         """Initialize an upload."""
-        connection_count = connection_count or self._get_connection_count(file_size)
-        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(
+            file_size)
+        part_size = (
+            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = (file_size + part_size - 1) // part_size
         is_large = file_size > 10 * 1024 * 1024
         await self._init_upload(connection_count, file_id, part_count, is_large)
@@ -260,8 +265,10 @@ class ParallelTransferrer:
         connection_count: int | None = None,
     ):
         """Download a file from Telegram."""
-        connection_count = connection_count or self._get_connection_count(file_size)
-        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(
+            file_size)
+        part_size = (
+            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = math.ceil(file_size / part_size)
         log.debug(
             "Starting parallel download: %s parts of %s bytes",

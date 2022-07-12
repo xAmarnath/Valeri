@@ -10,6 +10,7 @@ basicConfig(
     format="%(asctime)s %(levelname)s %(name)s %(message)s",
     level=INFO,
     handlers=[StreamHandler()],
+    filename="logs.txt",
 )
 
 StartTime = time.time()

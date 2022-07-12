@@ -43,12 +43,14 @@ def search_imdb(query: str):
             )
             caption = "<b>{}</b>\n".format(result["title"])
             caption += (
-                "<b>Year:</b> <code>{}</code>\n".format(result["release_date"][:4])
+                "<b>Year:</b> <code>{}</code>\n".format(
+                    result["release_date"][:4])
                 if result.get("release_date")
                 else ""
             )
             caption += (
-                "<b>Runtime:</b> <code>{} min</code>\n".format(result["runtime"])
+                "<b>Runtime:</b> <code>{} min</code>\n".format(
+                    result["runtime"])
                 if result.get("runtime")
                 else ""
             )
@@ -60,7 +62,8 @@ def search_imdb(query: str):
                 else ""
             )
             caption += (
-                "<b>Rating:</b> <code>{}/10</code>\n".format(result["vote_average"])
+                "<b>Rating:</b> <code>{}/10</code>\n".format(
+                    result["vote_average"])
                 if result.get("vote_average")
                 else ""
             )
@@ -70,13 +73,15 @@ def search_imdb(query: str):
                 else ""
             )
             caption += (
-                "<b>Revenue:</b> {}\n".format(human_currency(result["revenue"]))
+                "<b>Revenue:</b> {}\n".format(
+                    human_currency(result["revenue"]))
                 if result.get("revenue")
                 else ""
             )
             caption += (
                 "<b>Production Companies:</b> {}\n".format(
-                    ", ".join(c["name"] for c in result["production_companies"])
+                    ", ".join(c["name"]
+                              for c in result["production_companies"])
                 )
                 if result.get("production_companies")
                 else ""
@@ -89,7 +94,8 @@ def search_imdb(query: str):
                 else ""
             )
             caption += (
-                "\n<b>Overview:</b> <code>{}</code>\n".format(result["overview"])
+                "\n<b>Overview:</b> <code>{}</code>\n".format(
+                    result["overview"])
                 if result.get("overview")
                 else ""
             )
@@ -102,7 +108,8 @@ def search_imdb(query: str):
                 [
                     Button.url(
                         "📖 More Info",
-                        url="https://www.imdb.com/title/{}".format(result["imdb_id"]),
+                        url="https://www.imdb.com/title/{}".format(
+                            result["imdb_id"]),
                     ),
                 ],
             ]
@@ -149,7 +156,8 @@ def search_imdb(query: str):
                 else ""
             )
             caption += (
-                "<b>Rating:</b> <code>{}/10</code>\n".format(result["vote_average"])
+                "<b>Rating:</b> <code>{}/10</code>\n".format(
+                    result["vote_average"])
                 if result.get("vote_average")
                 else ""
             )
@@ -160,7 +168,8 @@ def search_imdb(query: str):
             )
             caption += (
                 "<b>Production Companies:</b> {}\n".format(
-                    ", ".join(c["name"] for c in result["production_companies"])
+                    ", ".join(c["name"]
+                              for c in result["production_companies"])
                 )
                 if result.get("production_companies")
                 else ""
@@ -203,7 +212,8 @@ def search_imdb(query: str):
                 else ""
             )
             caption += (
-                "\n<b>Overview:</b> <code>{}</code>\n".format(result["overview"])
+                "\n<b>Overview:</b> <code>{}</code>\n".format(
+                    result["overview"])
                 if result.get("overview")
                 else ""
             )
@@ -215,6 +225,25 @@ def search_imdb(query: str):
     else:
         caption, poster_url, buttons = "No results found.", None, None
     return caption, poster_url, buttons
+
+
+def get_imdb_title_with_keyword(keyword: str):
+    """Get IMDB title with keyword"""
+    url = "https://www.imdb.com/find?ref_=nv_sr_fn&q={}&s=tt".format(keyword)
+    response = get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
+    result = soup.find("td", {"class": "result_text"})
+    if result:
+        return result.a.attrs["href"].split("/")[2]
+    return "No results found"
+
+
+def get_imdb_soup(keyword: str):
+    """Get IMDB soup"""
+    imdb_id = get_imdb_title_with_keyword(keyword)
+    url = "https://www.imdb.com/title/{}/".format(imdb_id)
+    response = get(url)
+    return BeautifulSoup(response.text, "html.parser")
 
 
 def get_weather(city: str):
@@ -232,7 +261,8 @@ def get_weather(city: str):
     data = weather.find_all("p")
     stat = data[0].text
     info = str(data[1]).split("<br/>")
-    details = [x.text for x in soup.find(class_="bk-focus__info").find_all("td")]
+    details = [x.text for x in soup.find(
+        class_="bk-focus__info").find_all("td")]
     result = (
         "<b>Weather in <code>{}</code></b>\n\n".format(city)
         + "<b>Temperature:</b> <code>{}</code>\n".format(
