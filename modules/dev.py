@@ -1,3 +1,4 @@
+from msilib.schema import File
 import re
 import sys
 from os import environ, execle, listdir, path, system
@@ -44,7 +45,8 @@ async def _ls(e):
             elif file.endswith(".mp3") or file.endswith(".wav"):
                 emoji = "🎵"
             elif (
-                file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png")
+                file.endswith(".jpg") or file.endswith(
+                    ".jpeg") or file.endswith(".png")
             ):
                 emoji = "🖼"
             elif file.endswith(".gif"):
@@ -67,11 +69,7 @@ async def _ul(e):
     if not l:
         return await _ls(e)
     try:
-        await fast_upload(
-            e.client,
-            l,
-            reply=await e.reply("`Uploading...`"),
-        )
+        await e.reply(file=l)
     except OSError:
         await e.reply("`Failed to upload.`")
         return
@@ -85,7 +83,9 @@ async def _dl(e):
         return await e.reply("`Reply to a file.`")
     if not r.media:
         return await e.reply("`Reply to a file.`")
-    await fast_download(e.client, r, reply=await e.reply("`Downloading...`"))
+    msg = await e.reply("`Downloading...`")
+    await e.client.download_media(r.media, "./")
+    await msg.edit("`Downloaded successfully.`")
 
 
 @newMsg(pattern="auth")
@@ -96,15 +96,16 @@ async def _auth(e):
         sno = 0
         for user in get_auth():
             sno += 1
-            AUTH_LIST += "<b>{}.</b> <a href='tg://user?id={}'>{}</a>\n".format(
-                sno, user, user
+            AUTH_LIST += "<b>{sno}.</b> <a href='tg://user?id={user}'>{user_name}</a>\n".format(
+                sno=sno, user=user, user_name=user
             )
         await e.reply(AUTH_LIST, parse_mode="HTML")
         return
-    user, arg = await get_user(e)
+    user, _ = await get_user(e)
     if is_auth(user.id):
         await e.reply(
-            "<b>{}</b> is already authorized.".format(get_mention(user, "html")),
+            "<b>{}</b> is already authorized.".format(
+                get_mention(user, "html")),
             parse_mode="html",
         )
         return
@@ -118,7 +119,7 @@ async def _auth(e):
 @newMsg(pattern="(unauth|rmauth)")
 @master_only
 async def _unauth(e):
-    user, arg = await get_user(e)
+    user, _ = await get_user(e)
     if user is None:
         return await e.reply("Specify a user to unauthorize.")
     if not is_auth(user.id):
