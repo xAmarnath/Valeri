@@ -39,7 +39,10 @@ def aria_start():
     aria2 = aria2p.API(aria2p.Client(host="http://localhost", port=6800, secret=""))
     return aria2
 
+
 aria2p_client = aria_start()
+
+
 async def check_metadata(gid):
     try:
         t_file = aria2p_client.get_download(gid)
