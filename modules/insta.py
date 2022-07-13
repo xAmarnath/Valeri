@@ -5,8 +5,25 @@ from requests import JSONDecodeError, get
 
 from ._handler import newMsg
 from ._helpers import get_text_content
+import time
 
 IG_SESSION = getenv("IG_SESSION", "")
+
+spam = {}
+
+
+def check_if_spam(user_id: int) -> bool:
+    """Check if the user is spam."""
+    if user_id in spam:
+        if time.time() - spam[user_id] > 20:
+            spam.pop(user_id)
+            return False
+        else:
+            return True
+    else:
+        spam[user_id] = time.time()
+        return False
+
 
 cookies = {
     "sessionid": IG_SESSION,
@@ -15,12 +32,14 @@ cookies = {
 
 def get_ig_download_url(url: str):
     """Get the download url for the media."""
-    url = url + "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
+    url = url + \
+        "?&__a=1&__d=dis" if not url.endswith("?&__a=1&__d=dis") else url
     try:
         req = get(url, cookies=cookies).json()
         if req.get("items", [])[0].get("media_type") == 1:
             item = req.get("items", [])[0]
-            width, hieght = item.get("original_width"), item.get("original_height")
+            width, hieght = item.get(
+                "original_width"), item.get("original_height")
             images = item.get("image_versions2", {}).get("candidates", [])
             for image in images:
                 if image.get("width") == width and image.get("height") == hieght:
@@ -40,7 +59,8 @@ def get_ig_download_url(url: str):
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", ""),
-                item.get("caption", {}).get("text", "") if item.get("caption") else "",
+                item.get("caption", {}).get(
+                    "text", "") if item.get("caption") else "",
                 item.get("media_type", 0),
                 False,
             )
@@ -52,7 +72,8 @@ def get_ig_download_url(url: str):
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", ""),
-                item.get("caption", {}).get("text", "") if item.get("caption") else "",
+                item.get("caption", {}).get(
+                    "text", "") if item.get("caption") else "",
                 item.get("media_type", 0),
                 False,
             )
@@ -81,6 +102,8 @@ def get_ig_download_url(url: str):
 
 @newMsg(pattern="(insta|instagram|instadl|instadownload)")
 async def _insta(message):
+    if check_if_spam(message.sender_id):
+        return await message.reply("You are spamming.")
     if not IG_SESSION:
         await message.reply("`Instagram session not found.`")
         return
