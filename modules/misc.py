@@ -511,7 +511,7 @@ async def _gif(msg):
         return await msg.reply("No gifs found")
     gifs_bytes = [io.BytesIO(get(gif).content) for gif in gifs]
     for x in range(len(gifs_bytes)):
-        gifs_bytes[x].name = "gif" + str(x) + ".gif"
+        gifs_bytes[x].name = "gif" + str(x) + ".mp4"
     await msg.reply(
         file=gifs_bytes,
         attributes=[
