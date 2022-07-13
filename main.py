@@ -1,5 +1,3 @@
-from modules._config import TOKEN, bot
-from modules._helpers import __load_modules
 import http.server
 import socketserver
 from os import getenv
