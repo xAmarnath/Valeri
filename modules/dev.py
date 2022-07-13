@@ -67,7 +67,7 @@ async def _ul(e):
     if not l:
         return await _ls(e)
     try:
-        file = await upload_file(e, l)
+        file = await upload_file(e.client, l)
         await e.reply("`Uploaded successfully!`", file=file)
     except OSError:
         await e.reply("`Failed to upload.`")

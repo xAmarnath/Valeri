@@ -115,7 +115,7 @@ async def t_url_download(message):
         if args.lower().startswith("http"):
             try:
                 is_url = True
-                download = aria2p_client.add_uris([args], options=None)
+                download = aria2p_client.add_uris([args], options=
             except Exception as e:
                 return await message.edit(f"**ERROR while adding URI** \n`{e}`")
         elif args.lower().startswith("magnet:"):
