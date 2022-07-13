@@ -344,6 +344,7 @@ async def upload_file(client, file):
         return await internal_transfer_to_telegram(client, file, file.name)
     raise ValueError("Invalid file type")
 
+
 async def progress_callback(current, total, message):
     """Callback for the progress of the upload."""
     if total == 0:
@@ -352,4 +353,3 @@ async def progress_callback(current, total, message):
     if current % 4 == 0:
         return
     await message.edit(f"Uploading... {progress}%")
-    
