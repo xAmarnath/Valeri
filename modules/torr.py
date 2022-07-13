@@ -16,10 +16,10 @@ def subprocess_run(cmd):
 
 
 def aria_start():
-    trackers_list = get(
+    trackers = get(
         "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
     ).text.replace("\n\n", ",")
-    f"[{trackers_list}]"
+    trackers = f"[{trackers}]"
     cmd = f"aria2c \
           --enable-rpc \
           --rpc-listen-all=false \
