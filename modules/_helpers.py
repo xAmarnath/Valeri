@@ -32,7 +32,7 @@ def human_readable_size(size, speed=False):
             return "%3.1f %s" % (size, x)
         size /= 1024.0
     return "%3.1f %s" % (size, "EB")
-
+ 
 
 async def get_user(e: telethon.events.NewMessage.Event):
     user: telethon.tl.types.User
@@ -195,6 +195,7 @@ def get_file_type(file):
 
 
 def generate_thumbnail(in_filename, out_filename):
+    """gen thumb for video"""
     probe = ffmpeg.probe(in_filename)
     time = float(probe["streams"][0]["duration"]) // 2
     width = probe["streams"][0]["width"]
