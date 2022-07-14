@@ -3,7 +3,8 @@ import os
 import random
 import string
 from os import listdir, path
-import ffmpeg 
+
+import ffmpeg
 import telethon
 from PIL import Image
 from telethon import errors
@@ -192,20 +193,20 @@ def get_file_type(file):
     elif isinstance(file, telethon.types.MessageMediaGeo):
         return "geo"
 
+
 def generate_thumbnail(in_filename, out_filename):
     probe = ffmpeg.probe(in_filename)
-    time = float(probe['streams'][0]['duration']) // 2
-    width = probe['streams'][0]['width']
+    time = float(probe["streams"][0]["duration"]) // 2
+    width = probe["streams"][0]["width"]
     try:
         (
-            ffmpeg
-            .input(in_filename, ss=time)
-            .filter('scale', width, -1)
+            ffmpeg.input(in_filename, ss=time)
+            .filter("scale", width, -1)
             .output(out_filename, vframes=1)
             .overwrite_output()
             .run(capture_stdout=True, capture_stderr=True)
         )
     except ffmpeg.Error as e:
         print(e.stderr.decode(), file=sys.stderr)
-        return ''
+        return ""
     return out_filename
