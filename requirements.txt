@@ -12,3 +12,4 @@ mega.py
 bs4
 aria2p
 aiohttp
+ffmpeg-python 
