@@ -212,6 +212,7 @@ def generate_thumbnail(in_filename, out_filename):
         return ""
     return out_filename
 
+
 def get_video(file):
-    data = ffmpeg.probe(file).get('format')
+    data = ffmpeg.probe(file).get("format")
     return data
