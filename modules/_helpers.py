@@ -211,3 +211,7 @@ def generate_thumbnail(in_filename, out_filename):
         print(e.stderr.decode(), file=sys.stderr)
         return ""
     return out_filename
+
+def get_video(file):
+    data = ffmpeg.probe(file).get('format')
+    return data
