@@ -32,7 +32,7 @@ def human_readable_size(size, speed=False):
             return "%3.1f %s" % (size, x)
         size /= 1024.0
     return "%3.1f %s" % (size, "EB")
- 
+
 
 async def get_user(e: telethon.events.NewMessage.Event):
     user: telethon.tl.types.User
