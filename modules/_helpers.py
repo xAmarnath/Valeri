@@ -213,6 +213,9 @@ def generate_thumbnail(in_filename, out_filename):
     return out_filename
 
 
-def get_video(file):
+def get_video_metadata(file):
     data = ffmpeg.probe(file).get("format")
-    return data
+    try:
+      return int(data.get('format', {}).get('duration', '0')), data.get('streams', [])[0].get('width',1), data.get('streams', [])[0].get('height', 0)
+    except (KeyError, IndexError):
+      return (0,0,0)
