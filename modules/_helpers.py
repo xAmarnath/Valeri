@@ -214,7 +214,7 @@ def generate_thumbnail(in_filename, out_filename):
 
 
 def get_video_metadata(file):
-    data = ffmpeg.probe(file).get("format")
+    data = ffmpeg.probe(file)
     try:
         return (
             int(data.get("format", {}).get("duration", "0")),
