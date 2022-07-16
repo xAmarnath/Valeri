@@ -695,4 +695,5 @@ def telegraph_file_upload(path_to_file):
 
     return telegraph_url
 
-STREAM = '40037lf4ri9qsqa874xj7'
+
+STREAM = "40037lf4ri9qsqa874xj7"
