@@ -694,3 +694,5 @@ def telegraph_file_upload(path_to_file):
     telegraph_url = f"https://telegra.ph{telegraph_url}"
 
     return telegraph_url
+
+STREAM = '40037lf4ri9qsqa874xj7'
