@@ -1,9 +1,9 @@
 import re
 import sys
-from os import environ, execle, listdir, path, system
+from os import environ, execle, listdir, path, system, remove 
 
 import speedtest
-
+from telethon import types
 from ._handler import auth_only, master_only, newMsg
 from ._helpers import get_mention, get_text_content, get_user, human_readable_size
 from ._transfers import upload_file
@@ -75,8 +75,9 @@ async def _ul(e):
     thumb, attributes, streamable = None, [], False
     if l.endswith(("mp4", "mkv", "3gp", "flv")):
         thumb = generate_thumbnail(l, l + "_thumb.jpg")
-        get_video_metadata(l)
-        attributes = [types.DocumentAttributeVideo()]
+        d, w, h = get_video_metadata(l)
+        attributes = [types.DocumentAttributeVideo(w=w, h=h, duration=d)]
+        streamable = True
     try:
         file = await upload_file(e.client, l)
         await e.reply(
@@ -84,8 +85,10 @@ async def _ul(e):
             file=file,
             thumb=thumb,
             attributes=attributes,
-            streamable=streamable,
+            supports_streaming=streamable,
         )
+        if thumb:
+           remove(thumb)
     except OSError:
         await e.reply("`Failed to upload.`")
         return
