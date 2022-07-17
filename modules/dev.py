@@ -46,7 +46,7 @@ async def _ls(e):
             elif file.lower().endswith((".mp3", ".wav", ".flv", ".ogg", ".opus")):
                 emoji = "🎵"
             elif (
-                file.lower().endswith((".jpg", ".jpeg", ".png", ".webp")
+                file.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))
             ):
                 emoji = "🖼"
             elif file.lower().endswith(".gif"):
