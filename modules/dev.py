@@ -52,7 +52,6 @@ async def _ls(e):
                 emoji = "🗜"
             elif (
                 file.lower()
-                .lower()
                 .endswith((".json", ".xml", ".txt", ".text", ".csv", ".pptx", ".md"))
             ):
                 emoji = "📝"
