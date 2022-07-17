@@ -1,9 +1,10 @@
 import re
 import sys
-from os import environ, execle, listdir, path, system, remove 
+from os import environ, execle, listdir, path, remove, system
 
 import speedtest
 from telethon import types
+
 from ._handler import auth_only, master_only, newMsg
 from ._helpers import get_mention, get_text_content, get_user, human_readable_size
 from ._transfers import upload_file
@@ -88,7 +89,7 @@ async def _ul(e):
             supports_streaming=streamable,
         )
         if thumb:
-           remove(thumb)
+            remove(thumb)
     except OSError:
         await e.reply("`Failed to upload.`")
         return
