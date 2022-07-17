@@ -24,6 +24,7 @@ async def _ls(e):
         directory = directory + "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
+    print(directory)
     contents = listdir(directory)
     if len(contents) == 0:
         await e.reply("`No files found.`")
