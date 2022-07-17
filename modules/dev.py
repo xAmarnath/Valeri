@@ -50,9 +50,8 @@ async def _ls(e):
                 emoji = "🎇"
             elif file.lower().endswith((".zip", ".rar", ".7z", ".tar", ".gzip")):
                 emoji = "🗜"
-            elif (
-                file.lower()
-                .endswith((".json", ".xml", ".txt", ".text", ".csv", ".pptx", ".md"))
+            elif file.lower().endswith(
+                (".json", ".xml", ".txt", ".text", ".csv", ".pptx", ".md")
             ):
                 emoji = "📝"
             elif file.lower().endswith(".py"):
