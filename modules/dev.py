@@ -41,19 +41,19 @@ async def _ls(e):
             )
         else:
             file_count += 1
-            if file.endswith.lower().((".mp4", ".mkv", ".webm", ".3gp", ".mpeg")):
+            if file.lower().endswith((".mp4", ".mkv", ".webm", ".3gp", ".mpeg")):
                 emoji = "🎥"
-            elif file.endswith((".mp3", ".wav", ".flv", ".ogg", ".opus")):
+            elif file.lower().endswith((".mp3", ".wav", ".flv", ".ogg", ".opus")):
                 emoji = "🎵"
             elif (
-                file.endswith((".jpg", ".jpeg", ".png", ".webp")
+                file.lower().endswith((".jpg", ".jpeg", ".png", ".webp")
             ):
                 emoji = "🖼"
-            elif file.endswith(".gif"):
+            elif file.lower().endswith(".gif"):
                 emoji = "🎇"
-            elif file.endswith((".zip", ".rar", ".7z", ".tar", ".gzip")):
+            elif file.lower().endswith((".zip", ".rar", ".7z", ".tar", ".gzip")):
                 emoji = "🗜"
-            elif file.lower().endswith((".json", ".xml", ".txt", ".text", ".csv", ".pptx", ".md")):
+            elif file.lower().lower().endswith((".json", ".xml", ".txt", ".text", ".csv", ".pptx", ".md")):
                 emoji = "📝"
             elif file.lower().endswith(".py"):
                 emoji = "🐍"
