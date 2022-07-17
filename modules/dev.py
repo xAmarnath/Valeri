@@ -3,6 +3,7 @@ import sys
 from os import environ, execle, listdir, path, system
 
 import speedtest
+from telethon import types
 
 from ._handler import auth_only, master_only, newMsg
 from ._helpers import get_mention, get_text_content, get_user, human_readable_size
@@ -21,6 +22,7 @@ def is_bl(code):
 async def _ls(e):
     try:
         directory = e.text.split(" ", 1)[1]
+        directory = directory + '/' if not directory.endswith("/") and not re.match
     except IndexError:
         directory = "./"
     contents = listdir(directory)
@@ -39,18 +41,22 @@ async def _ls(e):
             )
         else:
             file_count += 1
-            if file.endswith(".mp4") or file.endswith(".mkv") or file.endswith(".webm"):
+            if file.endswith.lower().((".mp4", ".mkv", ".webm", ".3gp", ".mpeg")):
                 emoji = "🎥"
-            elif file.endswith(".mp3") or file.endswith(".wav"):
+            elif file.endswith((".mp3", ".wav", ".flv", ".ogg", ".opus")):
                 emoji = "🎵"
             elif (
-                file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png")
+                file.endswith((".jpg", ".jpeg", ".png", ".webp")
             ):
                 emoji = "🖼"
             elif file.endswith(".gif"):
                 emoji = "🎇"
-            elif file.endswith(".zip") or file.endswith(".rar") or file.endswith(".7z"):
+            elif file.endswith((".zip", ".rar", ".7z", ".tar", ".gzip")):
                 emoji = "🗜"
+            elif file.lower().endswith((".json", ".xml", ".txt", ".text", ".csv", ".pptx", ".md")):
+                emoji = "📝"
+            elif file.lower().endswith(".py"):
+                emoji = "🐍"
             else:
                 emoji = "📄"
             caption += "{} <code>{}</code> (<code>{}</code>)\n".format(
@@ -72,7 +78,6 @@ async def _ul(e):
     except OSError:
         await e.reply("`Failed to upload.`")
         return
-
 
 @newMsg(pattern="dl")
 @auth_only
