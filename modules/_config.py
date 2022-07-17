@@ -22,7 +22,7 @@ handler.setFormatter(
         "%Y-%m-%d %H:%M:%S",
     )
 )
-getLogger("valeri").addHandler(handler)
+getLogger("").addHandler(handler)
 
 
 StartTime = time.time()
