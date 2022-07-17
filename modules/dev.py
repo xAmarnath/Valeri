@@ -74,12 +74,18 @@ async def _ul(e):
         return await _ls(e)
     thumb, attributes, streamable = None, [], False
     if l.endswith(("mp4", "mkv", "3gp", "flv")):
-       thumb= generate_thumbnail(l, l+'_thumb.jpg')
-       metadata = get_video_metadata(l)
-       attributes=[types.DocumentAttributeVideo()]
+        thumb = generate_thumbnail(l, l + "_thumb.jpg")
+        get_video_metadata(l)
+        attributes = [types.DocumentAttributeVideo()]
     try:
         file = await upload_file(e.client, l)
-        await e.reply("`Uploaded successfully!`", file=file, thumb=thumb, attributes=attributes, streamable=streamable)
+        await e.reply(
+            "`Uploaded successfully!`",
+            file=file,
+            thumb=thumb,
+            attributes=attributes,
+            streamable=streamable,
+        )
     except OSError:
         await e.reply("`Failed to upload.`")
         return
