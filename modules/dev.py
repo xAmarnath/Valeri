@@ -22,7 +22,7 @@ def is_bl(code):
 async def _ls(e):
     try:
         directory = e.text.split(" ", 1)[1]
-        directory = directory + '/' if not directory.endswith("/") and not re.match
+        directory = directory + '/' if not directory.endswith("/") else directory 
     except IndexError:
         directory = "./"
     contents = listdir(directory)
