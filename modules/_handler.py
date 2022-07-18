@@ -62,6 +62,7 @@ def auth_only(func):
         if any([is_auth(event.sender_id), event.sender_id == OWNER_ID]):
             await func(event)
         return
+
     return sed
 
 
