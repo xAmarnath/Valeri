@@ -7,8 +7,7 @@ psutil
 requests 
 cryptg
 seedrcc
-pillow 
-mega.py
+pillow
 bs4
 aria2p
 aiohttp
