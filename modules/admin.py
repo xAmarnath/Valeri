@@ -89,13 +89,13 @@ async def promote_demote(e):
 @newMsg(pattern="(ban|kick|unban|tban|sban|mute|tmute|smute|skick|unmute|kickme)")
 async def restrict_user(msg):
     action = msg.text.split(" ")[0][1:]
-    if action=="kickme":
-     try:
+    if action == "kickme":
+        try:
             await msg.client.kick_participant(msg.chat_id, msg.from_id)
             await msg.reply("I have kicked you!")
-     except Exception as ex:
+        except Exception as ex:
             await msg.reply(str(ex) + str(type(ex)))
-   
+
     r, arg = await has_admin_rights(msg.chat_id, msg.from_id, "ban_users")
     if not r:
         return await msg.reply(arg)
@@ -118,10 +118,14 @@ async def restrict_user(msg):
                 until_date=None,
             )
         )
-        ban_rights = types.ChatBannedRights(
+        ban_rights = (
+            types.ChatBannedRights(
                 view_messages=False,
                 until_date=None,
-            ) if action=="unban" else ban_rights
+            )
+            if action == "unban"
+            else ban_rights
+        )
         try:
             await msg.client(
                 functions.channels.EditBannedRequest(
@@ -164,12 +168,15 @@ async def restrict_user(msg):
             )
             if action in ["mute", "smute"]
             else types.ChatBannedRights(
-                send_messages=True, until_date=None,
+                send_messages=True,
+                until_date=None,
             )
         )
-        mute_rights = types.ChatBannedRights(
-                send_messages=False, until_date=None
-            ) if action== "unmute" else mute_rights
+        mute_rights = (
+            types.ChatBannedRights(send_messages=False, until_date=None)
+            if action == "unmute"
+            else mute_rights
+        )
         try:
             await msg.client(
                 functions.channels.EditBannedRequest(
