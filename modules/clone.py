@@ -32,7 +32,7 @@ async def addBot(token):
 async def addbt(e):
     tok = await get_text_content(e)
     if not tok:
-       return await e.reply('No token given.')
+        return await e.reply("No token given.")
     add = await addBot(tok)
     if add != "":
         return await e.reply(add)
