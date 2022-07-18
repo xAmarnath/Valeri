@@ -9,8 +9,8 @@ clients = []
 
 
 async def start_(msg):
-    me = await msg.get_me()
-    return await msg.reply(f"Hello Im, @-{me.username}")
+    me = await msg.client.get_me()
+    return await msg.reply(f"Hello Im, @-{me.username}, running in cloneMode.")
 
 
 def load_handlers(bot):
