@@ -286,4 +286,3 @@ def translate(text, to_lang="en"):
     soup = BeautifulSoup(request.text, "html.parser")
     result = soup.find("span", {"id": "tw-answ-target-text"})
     return result.text if result else "vision.google.api returned err."
-
