@@ -1,4 +1,4 @@
-from telethon import TelegramClient as client
+from telethon import TelegramClient as client, events
 
 from ._config import API_HASH, API_KEY
 from ._handler import auth_only, newMsg
