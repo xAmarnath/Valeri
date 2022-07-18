@@ -1,7 +1,7 @@
 from telethon import TelegramClient as client
 
 from ._config import API_HASH, API_KEY
-from ._handlers import newMsg
+from ._handler import newMsg, auth_only
 from ._helpers import get_text_content
 
 clients = []
@@ -29,6 +29,7 @@ async def addBot(token):
 
 
 @newMsg(pattern="addbot")
+@auth_only
 async def addbt(e):
     tok = await get_text_content(e)
     if not tok:
