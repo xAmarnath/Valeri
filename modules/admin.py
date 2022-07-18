@@ -89,6 +89,13 @@ async def promote_demote(e):
 @newMsg(pattern="(ban|kick|unban|tban|sban|mute|tmute|smute|skick|unmute|kickme)")
 async def restrict_user(msg):
     action = msg.text.split(" ")[0][1:]
+    if action=="kickme":
+     try:
+            await msg.client.kick_participant(msg.chat_id, msg.from_id)
+            await msg.reply("I have kicked you!")
+     except Exception as ex:
+            await msg.reply(str(ex) + str(type(ex)))
+   
     r, arg = await has_admin_rights(msg.chat_id, msg.from_id, "ban_users")
     if not r:
         return await msg.reply(arg)
@@ -111,6 +118,10 @@ async def restrict_user(msg):
                 until_date=None,
             )
         )
+        ban_rights = types.ChatBannedRights(
+                view_messages=False,
+                until_date=None,
+            ) if action=="unban" else ban_rights
         try:
             await msg.client(
                 functions.channels.EditBannedRequest(
@@ -153,9 +164,12 @@ async def restrict_user(msg):
             )
             if action in ["mute", "smute"]
             else types.ChatBannedRights(
-                send_messages=True,
+                send_messages=True, until_date=None,
             )
         )
+        mute_rights = types.ChatBannedRights(
+                send_messages=False, until_date=None
+            ) if action== "unmute" else mute_rights
         try:
             await msg.client(
                 functions.channels.EditBannedRequest(
@@ -166,9 +180,9 @@ async def restrict_user(msg):
             )
             if action != "smute":
                 await msg.reply(
-                    "Another one bites the dust! banned {}".format(get_mention(user))
+                    "Muted {}!".format(get_mention(user))
                     if action in ["mute", "tmute"]
-                    else "Unbanned!, {} is now free to chat".format(get_mention(user))
+                    else "Unmuted!, {} is now free to talk".format(get_mention(user))
                 )
         except errors.rpcerrorlist.UserAdminInvalidError:
             await msg.reply(
@@ -205,11 +219,5 @@ async def restrict_user(msg):
             await msg.reply(
                 "I would love to kick the chat creator, but... not in the mood to do so."
             )
-        except Exception as ex:
-            await msg.reply(str(ex) + str(type(ex)))
-    elif action == "kickme":
-        try:
-            await msg.client.kick_participant(msg.chat_id, msg.from_id)
-            await msg.reply("I have kicked you!")
         except Exception as ex:
             await msg.reply(str(ex) + str(type(ex)))
