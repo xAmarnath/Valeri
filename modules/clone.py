@@ -8,7 +8,8 @@ clients = []
 
 
 async def start_(msg):
-    return await msg.reply("Hello Im, botID-{}")
+    me = await msg.get_me()
+    return await msg.reply(f"Hello Im, @-{me.username}")
 
 
 def load_handlers(bot):
@@ -21,8 +22,8 @@ async def addBot(token):
     clients.append(tgClient)
     try:
         await tgClient.start(bot_token=token)
-    except Exception as d:
-        return str(d)
+    except Exception as err:
+        return str(err)
     load_handlers(tgClient)
     return ""
 
@@ -30,6 +31,8 @@ async def addBot(token):
 @newMsg(pattern="addbot")
 async def addbt(e):
     tok = await get_text_content(e)
+    if not tok:
+       return await e.reply('No token given.')
     add = await addBot(tok)
     if add != "":
         return await e.reply(add)
