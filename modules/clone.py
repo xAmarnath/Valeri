@@ -1,7 +1,7 @@
 from telethon import TelegramClient as client
 
 from ._config import API_HASH, API_KEY
-from ._handler import newMsg, auth_only
+from ._handler import auth_only, newMsg
 from ._helpers import get_text_content
 
 clients = []
