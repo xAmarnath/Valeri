@@ -6,7 +6,7 @@ from ._helpers import get_mention, get_user, has_admin_rights, parse_time
 
 @newMsg(pattern="(promote|superpromote|demote)")
 async def promote_demote(e):
-    action = e.text.split(" ")[0][1:]
+    action = e.text.split(" ")[0][1:].lower()
     r, arg = await has_admin_rights(e.chat_id, e.from_id, "promote_members")
     if not r:
         return await e.reply(arg)
@@ -88,7 +88,7 @@ async def promote_demote(e):
 
 @newMsg(pattern="(ban|kick|unban|tban|sban|mute|tmute|smute|skick|unmute|kickme)")
 async def restrict_user(msg):
-    action = msg.text.split(" ")[0][1:]
+    action = msg.text.split(" ")[0][1:].lower()
     if action == "kickme":
         try:
             await msg.client.kick_participant(msg.chat_id, msg.from_id)
@@ -102,7 +102,7 @@ async def restrict_user(msg):
     user, arg = await get_user(msg)
     if not user:
         return
-    if action in ["ban", "sban", "tban"]:
+    if action in ["ban", "sban", "tban", "unban"]:
         if arg == "" and action == "tban":
             await msg.reply("Please specify a time!")
             return
@@ -156,7 +156,7 @@ async def restrict_user(msg):
             )
         except Exception as ex:
             await msg.reply(str(ex) + str(type(ex)))
-    elif action in ["mute", "tmute", "smute"]:
+    elif action in ["mute", "tmute", "smute", "unmute"]:
         if arg == "" and action == "tban":
             await msg.reply("Please specify a time!")
             return
