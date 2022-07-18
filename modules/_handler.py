@@ -11,7 +11,7 @@ def newMsg(**args):
     """
     Decorator for handling new messages.
     """
-    args["pattern"] = "(?i)^[!/]" + args["pattern"] + "(?: |$|@MissValeri_Bot)(.*)"
+    args["pattern"] = "(?i)^[!/-]" + args["pattern"] + "(?: |$|@MissValeri_Bot)(.*)"
 
     def decorator(func):
         async def wrapper(event):
@@ -61,9 +61,7 @@ def auth_only(func):
     async def sed(event):
         if any([is_auth(event.sender_id), event.sender_id == OWNER_ID]):
             await func(event)
-        else:
-            await event.reply("You are not authorized to use this command")
-
+        return
     return sed
 
 
