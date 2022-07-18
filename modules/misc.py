@@ -203,7 +203,7 @@ async def pinterest(message):
                 )
             ]
         ],
-        parse_mode="html",
+        parse_mode="md",
     )
     await message.reply(file=urls)
 
@@ -264,7 +264,7 @@ async def _raddr(msg):
     if query is None:
         return await msg.reply("No query was given!")
     url = "https://www.google.com/search"
-    params = {"q": "foodplace near" + query}
+    params = {"q": "foodplace near " + query}
     response = get(url, params=params)
     soup = BeautifulSoup(response.text, "html.parser")
     results = []
@@ -284,7 +284,7 @@ async def _raddr(msg):
             [
                 Button.url(
                     "🔎 View on Google",
-                    "https://www.google.com/search?q=food+places+near" + quote(query),
+                    "https://www.google.com/search?q=foodplaces+near+" + quote(query),
                 )
             ]
         ],
@@ -467,7 +467,7 @@ def paste_mode(args, content: str):
                 return p[0].split("-")[1], content.replace(p[0], "", 1)
             elif arg == p[1]:
                 return p[0].split("-")[1], content.replace(p[1], "", 1)
-    return "n"
+    return "n", content 
 
 
 @newMsg(pattern="(tl|tr|translate)")
