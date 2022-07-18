@@ -1,7 +1,7 @@
 from urllib.parse import quote
 
 from bs4 import BeautifulSoup
-from requests import get, post, Session
+from requests import Session, get, post
 from telethon import Button
 
 from ._config import TMDB_KEY as tapiKey
