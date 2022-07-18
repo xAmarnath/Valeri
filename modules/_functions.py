@@ -1,7 +1,7 @@
 from urllib.parse import quote
 
 from bs4 import BeautifulSoup
-from requests import get, post, session
+from requests import get, post, Session
 from telethon import Button
 
 from ._config import TMDB_KEY as tapiKey
@@ -296,7 +296,7 @@ def netflix_login(combos):
     bad = 0
     result = []
     for combo in combos:
-        client = session.Session()
+        client = Session()
         login = client.get(
             "https://www.netflix.com/login", headers={"User-Agent": ua().random}
         )
