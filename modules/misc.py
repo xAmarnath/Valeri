@@ -467,7 +467,7 @@ def paste_mode(args, content: str):
                 return p[0].split("-")[1], content.replace(p[0], "", 1)
             elif arg == p[1]:
                 return p[0].split("-")[1], content.replace(p[1], "", 1)
-    return "n", content 
+    return "n", content
 
 
 @newMsg(pattern="(tl|tr|translate)")
