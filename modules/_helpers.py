@@ -34,9 +34,8 @@ def human_readable_size(size, speed=False):
     return "%3.1f %s" % (size, "EB")
 
 
-async def get_user(e: telethon.events.NewMessage.Event):
-    user: telethon.tl.types.User
-    arg = ""
+async def get_user(e):
+    """get user from event.Object"""
     args = e.text.split(maxsplit=2)
     if e.is_reply:
         user = (await e.get_reply_message()).sender
@@ -152,7 +151,7 @@ async def get_text_content(message):
         if reply.media:
             if reply.document:
                 doc = await reply.download_media()
-                with open(doc, "rb") as f:
+                with open(doc, "r", errors="ignore") as f:
                     u = f.read()
                 os.remove(doc)
                 return u
