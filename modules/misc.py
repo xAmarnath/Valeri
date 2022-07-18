@@ -704,12 +704,5 @@ async def _netflix_checker(e):
     emailpass = await get_text_content(e)
     if not emailpass:
         return await e.reply("Usage: email:pass, or combofile")
-    if e.reply_to:
-        r = await e.get_reply_message()
-        if r.media:
-            combo = list(emailpass.split("\n"))
-        else:
-            combo = [emailpass]
-    else:
-        combo = [emailpass]
+    combo = list(emailpass.split("\n"))
     return await e.reply(str(combo))
