@@ -6,7 +6,7 @@ import speedtest
 from telethon import types
 
 from ._handler import auth_only, master_only, newMsg
-from ._helpers import get_mention, get_text_content, get_user, human_readable_size
+from ._helpers import get_mention, get_text_content, get_user, human_readable_size, generate_thumbnail, get_video_metadata
 from ._transfers import upload_file
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
@@ -74,6 +74,7 @@ async def _ul(e):
     if not l:
         return await _ls(e)
     thumb, attributes, streamable = None, [], False
+    filename = l.split("\")[-1]
     if l.endswith(("mp4", "mkv", "3gp", "flv")):
         thumb = generate_thumbnail(l, l + "_thumb.jpg")
         d, w, h = get_video_metadata(l)
@@ -82,7 +83,7 @@ async def _ul(e):
     try:
         file = await upload_file(e.client, l)
         await e.reply(
-            "`Uploaded successfully!`",
+            f"```{filename}```",
             file=file,
             thumb=thumb,
             attributes=attributes,
