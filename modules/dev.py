@@ -74,7 +74,7 @@ async def _ul(e):
     if not l:
         return await _ls(e)
     thumb, attributes, streamable = None, [], False
-    filename = l.split("\")[-1]
+    filename = l.split("\\")[-1]
     if l.endswith(("mp4", "mkv", "3gp", "flv")):
         thumb = generate_thumbnail(l, l + "_thumb.jpg")
         d, w, h = get_video_metadata(l)
