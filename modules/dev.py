@@ -32,7 +32,6 @@ async def _ls(e):
         directory = directory + "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
-    print(directory)
     contents = listdir(directory)
     if len(contents) == 0:
         await e.reply("`No files found.`")
@@ -82,6 +81,7 @@ async def _ul(e):
         return await _ls(e)
     thumb, attributes, streamable = None, [], False
     filename = l.split("\\")[-1]
+    filename = filename.split("/")[-1] if filename == l else filename
     if l.endswith(("mp4", "mkv", "3gp", "flv")):
         thumb = generate_thumbnail(l, l + "_thumb.jpg")
         d, w, h = get_video_metadata(l)
