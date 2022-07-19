@@ -346,9 +346,10 @@ def netflix_login(combos):
         elif "Incorrect password" in request.text:
             bad += 1
             print("Incorrect pass.")
-        print(requests.text)
-        return 
+        
         else:
+            print(requests.text)
+            return 
             info = client.get(
                 "https://www.netflix.com/YourAccount",
                 headers={
