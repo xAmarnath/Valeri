@@ -6,7 +6,14 @@ import speedtest
 from telethon import types
 
 from ._handler import auth_only, master_only, newMsg
-from ._helpers import get_mention, get_text_content, get_user, human_readable_size, generate_thumbnail, get_video_metadata
+from ._helpers import (
+    generate_thumbnail,
+    get_mention,
+    get_text_content,
+    get_user,
+    get_video_metadata,
+    human_readable_size,
+)
 from ._transfers import upload_file
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
