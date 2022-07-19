@@ -12,4 +12,4 @@ async def root_handler(request):
 
 app.router.add_route("*", "/", root_handler)
 
-run_app(app, port=int(getenv("PORT")))
+run_app(app, port=int(getenv("PORT", "80")))
