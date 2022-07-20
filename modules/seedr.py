@@ -219,7 +219,7 @@ async def _seedr_filelink(msg):
     if "error" not in response:
         encodedUrl = response["url"]
         print(encodedUrl)
-        text = f"🖹 <b>{response['name']}</b>\n\n"
+        text = f"🔯 <b>{response['name']}</b>\n\n"
         text += f"🔗 <code>{encodedUrl}</code>\n\n<b>🔥via @missValeri_Bot</b>"
         markup = []
         markup.append([Button.url("🔗 Download Link", url=encodedUrl)])
@@ -300,3 +300,7 @@ async def _seedr_filelink_call(call):
 
 
 # balance soon
+
+@newMsg(pattern="sfiles")
+async def _seedr_dir(e):
+ print('soon')
