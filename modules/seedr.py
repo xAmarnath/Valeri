@@ -5,6 +5,7 @@ from ._handler import newCall, newMsg
 from ._helpers import human_readable_size
 from .db.seedr_db import get_seedr, update_seedr
 
+cache = {}
 
 @newMsg(pattern="account", func=lambda msg: msg.is_private)
 async def _seedr_account(msg):
@@ -87,10 +88,14 @@ async def noAccount(msg, call=False):
 
 
 def getUserSeedr(user_id):
+    if user_id in cache:
+       return cache[user_id]
     token = get_seedr(user_id)
     if token is None:
         return None
-    return Seedr(token, callbackFunc=lambda token: update_seedr(user_id, token))
+    client = Seedr(token, callbackFunc=lambda token: update_seedr(user_id, token))
+    cache[user_id] = client
+    return client
 
 
 @newMsg(pattern="addtorrent")
@@ -154,11 +159,13 @@ async def _seedr_files(msg):
         return await noAccount(msg)
     files = seedr.listContents()
     caption = "<b>Seedr Files</b>\n"
+    buttons = []
     if files["folders"]:
         for i in files["folders"]:
             caption += f"<b>📂 {i['fullname']}</b>\n\n💾 {human_readable_size(i['size'])}, ⏰ {i['last_update']}"
             caption += f"\n\nFiles: /getFiles_{i['id']}\nLink: /getLink_{i['id']}\nDelete: /delete_{i['id']}\n\n"
-        await msg.reply(caption, parse_mode="HTML")
+            buttons.append([Button.inline(f"🚮 {i['fullname'][:30]}", "delete_{i['id']}")])
+        await msg.reply(caption, parse_mode="HTML", buttons=buttons)
     else:
         await msg.reply("⚠️ You don't have any files.")
 
