@@ -7,6 +7,7 @@ from .db.seedr_db import get_seedr, update_seedr
 
 cache = {}
 
+
 @newMsg(pattern="account", func=lambda msg: msg.is_private)
 async def _seedr_account(msg):
     user = msg.sender_id
@@ -89,7 +90,7 @@ async def noAccount(msg, call=False):
 
 def getUserSeedr(user_id):
     if user_id in cache:
-       return cache[user_id]
+        return cache[user_id]
     token = get_seedr(user_id)
     if token is None:
         return None
@@ -164,7 +165,9 @@ async def _seedr_files(msg):
         for i in files["folders"]:
             caption += f"<b>📂 {i['fullname']}</b>\n\n💾 {human_readable_size(i['size'])}, ⏰ {i['last_update']}"
             caption += f"\n\nFiles: /getFiles_{i['id']}\nLink: /getLink_{i['id']}\nDelete: /delete_{i['id']}\n\n"
-            buttons.append([Button.inline(f"🚮 {i['fullname'][:30]}", "delete_{i['id']}")])
+            buttons.append(
+                [Button.inline(f"🚮 {i['fullname'][:30]}", "delete_{i['id']}")]
+            )
         await msg.reply(caption, parse_mode="HTML", buttons=buttons)
     else:
         await msg.reply("⚠️ You don't have any files.")
