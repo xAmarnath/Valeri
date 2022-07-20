@@ -101,7 +101,7 @@ class UploadSender:
 class ParallelTransferrer:
     """ParallelTransferrer(sender, file, offset, limit, stride, count)"""
 
-    def __init__(self, client, dc_id: int | None = None) -> None:
+    def __init__(self, client, dc_id):
         self.client = client
         self.loop = self.client.loop
         self.dc_id = dc_id or self.client.session.dc_id
@@ -113,7 +113,7 @@ class ParallelTransferrer:
         self.senders = None
         self.upload_ticker = 0
 
-    async def _cleanup(self) -> None:
+    async def _cleanup(self):
         """Cleanup the senders."""
         await asyncio.gather(*(sender.disconnect() for sender in self.senders))
         self.senders = None
