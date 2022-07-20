@@ -99,7 +99,7 @@ def get_ig_download_url(url: str):
 @newMsg(pattern="(insta|instagram|instadl|instadownload)")
 async def _insta(message):
     # if check_if_spam(message.sender_id):
-        # return await message.reply("You are spamming.")
+    # return await message.reply("You are spamming.")
     if not IG_SESSION:
         await message.reply("`Instagram session not found.`")
         return
