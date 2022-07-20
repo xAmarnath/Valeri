@@ -301,6 +301,7 @@ async def _seedr_filelink_call(call):
 
 # balance soon
 
+
 @newMsg(pattern="sfiles")
 async def _seedr_dir(e):
- print('soon')
+    print("soon")
