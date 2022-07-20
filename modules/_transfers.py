@@ -231,8 +231,8 @@ class ParallelTransferrer:
         self,
         file_id: int,
         file_size: int,
-        part_size_kb: float | None = None,
-        connection_count: int | None = None,
+        part_size_kb,
+        connection_count,
     ) -> tuple[int, int, bool]:
         """Initialize an upload."""
         connection_count = connection_count or self._get_connection_count(file_size)
@@ -255,8 +255,8 @@ class ParallelTransferrer:
         self,
         file,
         file_size: int,
-        part_size_kb: float | None = None,
-        connection_count: int | None = None,
+        part_size_kb: float,
+        connection_count: int,
     ):
         """Download a file from Telegram."""
         connection_count = connection_count or self._get_connection_count(file_size)
