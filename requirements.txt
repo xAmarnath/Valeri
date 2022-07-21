@@ -13,3 +13,4 @@ aria2p
 aiohttp
 ffmpeg-python 
 fake_useragent
+yt-dlp
