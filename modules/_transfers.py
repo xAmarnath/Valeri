@@ -175,7 +175,11 @@ class ParallelTransferrer:
         )
 
     async def _init_upload(
-        self, connections: int, file_id: int = None, part_count: int = None, big: bool = None
+        self,
+        connections: int,
+        file_id: int = None,
+        part_count: int = None,
+        big: bool = None,
     ) -> None:
         """Initialize the upload senders."""
         self.senders = [
@@ -231,8 +235,8 @@ class ParallelTransferrer:
         self,
         file_id: int,
         file_size: int = None,
-        part_size_kb = None,
-        connection_count = None,
+        part_size_kb=None,
+        connection_count=None,
     ) -> tuple[int, int, bool]:
         """Initialize an upload."""
         connection_count = connection_count or self._get_connection_count(file_size)
