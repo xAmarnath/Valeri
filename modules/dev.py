@@ -88,6 +88,7 @@ async def _ul(e):
         attributes = [types.DocumentAttributeVideo(w=w, h=h, duration=d)]
         streamable = True
     try:
+        print(d, w, h, "#INFO")
         file = await upload_file(e.client, l)
         await e.reply(
             f"```{filename}```",
