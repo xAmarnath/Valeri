@@ -82,7 +82,7 @@ async def _ul(e):
     thumb, attributes, streamable = None, [], False
     filename = l.split("\\")[-1]
     filename = filename.split("/")[-1] if filename == l else filename
-    if l.endswith(("mp4", "mkv", "3gp", "flv")):
+    if l.endswith(("mp4", "mkv", "3gp", "flv", "webm")):
         thumb = generate_thumbnail(l, l + "_thumb.jpg")
         d, w, h = get_video_metadata(l)
         attributes = [types.DocumentAttributeVideo(w=w, h=h, duration=d)]
