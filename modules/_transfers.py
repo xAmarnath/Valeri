@@ -232,7 +232,7 @@ class ParallelTransferrer:
         file_id: int,
         file_size: int = None,
         part_size_kb = None,
-        connection_count,
+        connection_count = None,
     ) -> tuple[int, int, bool]:
         """Initialize an upload."""
         connection_count = connection_count or self._get_connection_count(file_size)
