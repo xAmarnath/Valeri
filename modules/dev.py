@@ -87,6 +87,7 @@ async def _ul(e):
         d, w, h = get_video_metadata(l)
         attributes = [types.DocumentAttributeVideo(w=w, h=h, duration=d)]
         streamable = True
+        await e.respond("Width: {}, Height: {}, Duration: {}".format(w, h, d))
     try:
 
         file = await upload_file(e.client, l)
