@@ -101,6 +101,8 @@ async def _ul(e):
     except OSError:
         await e.reply("`Failed to upload.`")
         return
+    except Exception as exc:
+        return await e.reply("`{}`".format(str(exc)))
 
 
 @newMsg(pattern="dl")
