@@ -101,7 +101,7 @@ class UploadSender:
 class ParallelTransferrer:
     """ParallelTransferrer(sender, file, offset, limit, stride, count)"""
 
-    def __init__(self, client, dc_id):
+    def __init__(self, client, dc_id=None):
         self.client = client
         self.loop = self.client.loop
         self.dc_id = dc_id or self.client.session.dc_id
@@ -175,7 +175,7 @@ class ParallelTransferrer:
         )
 
     async def _init_upload(
-        self, connections: int, file_id: int, part_count: int, big: bool
+        self, connections: int, file_id: int = None, part_count: int = None, big: bool
     ) -> None:
         """Initialize the upload senders."""
         self.senders = [
@@ -230,8 +230,8 @@ class ParallelTransferrer:
     async def init_upload(
         self,
         file_id: int,
-        file_size: int,
-        part_size_kb,
+        file_size: int = None,
+        part_size_kb = None,
         connection_count,
     ) -> tuple[int, int, bool]:
         """Initialize an upload."""
