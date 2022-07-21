@@ -98,10 +98,8 @@ async def _ul(e):
         )
         if thumb:
             remove(thumb)
-    except OSError:
-        await e.reply("`Failed to upload.`")
-        return
     except Exception as exc:
+        print(exc)
         return await e.reply("`{}`".format(str(exc)))
 
 
