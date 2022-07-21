@@ -175,7 +175,7 @@ class ParallelTransferrer:
         )
 
     async def _init_upload(
-        self, connections: int, file_id: int = None, part_count: int = None, big: bool
+        self, connections: int, file_id: int = None, part_count: int = None, big: bool = None
     ) -> None:
         """Initialize the upload senders."""
         self.senders = [
