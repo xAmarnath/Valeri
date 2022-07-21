@@ -216,7 +216,7 @@ def get_video_metadata(file):
     data = ffmpeg.probe(file)
     try:
         return (
-            int(data.get("format", {}).get("duration", "0")),
+            int(data.get("format", {}).get("duration", "0").split(".")[0]),
             data.get("streams", [])[0].get("width", 1),
             data.get("streams", [])[0].get("height", 0),
         )
