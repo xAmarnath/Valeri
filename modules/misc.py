@@ -550,21 +550,21 @@ async def _imdb(msg):
         + "\n<b>Rating:</b> <code>"
         + str(js.get("aggregateRating", {}).get("ratingValue", "-"))
         + "/10</code>"
-        + "\n<b>Genres:</b> <code>"
-        + ", ".join(js.get("genre", []))
-        + "</code>"
-        + "\n<b>Cast:</b> <code>"
+        + "\n<b>Genres:</b> "
+        + ", ".join(["#" + x for x in js.get("genre", [])])
+        + ""
+        + "\n<b>Cast:</b> "
         + ", ".join([x.get("name", "-") for x in js.get("actor", [])])
-        + "</code>"
+        + ""
         + "\n<b>Type:</b> <code>"
         + js.get("type", "-")
         + "</code>"
         + "\n<b>Release date:</b> <code>"
         + js.get("datePublished", "-")
         + "</code>"
-        + "\n<b>Description:</b> <i>"
+        + "\n<b>Description:</b> <u>"
         + js.get("description", "-")
-        + "</i>"
+        + "</u>"
         + "\n<b>Content rating:</b> <code>"
         + js.get("contentRating", "-")
         + "</code>"
@@ -579,7 +579,7 @@ async def _imdb(msg):
         + ""
     )
     poster_url = js.get("image", None)
-    trailer_url = "https://imdb.com" + js.get("trailer", {}).get("embedUrl", "-")
+    trailer_url = "https://imdb.com" + js.get("trailer", {}).get("embedUrl", "")
     buttons = [
         [
             Button.url(
