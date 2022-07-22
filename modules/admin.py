@@ -93,7 +93,7 @@ async def restrict_user(msg):
         try:
             await msg.client.kick_participant(msg.chat_id, msg.from_id)
             return await msg.reply("I have kicked you!")
-        except Exception as ex:
+        except Exception:
             return await msg.reply("Unable to kick you.")
     r, arg = await has_admin_rights(msg.chat_id, msg.sender_id, "ban_users")
     if not r:
