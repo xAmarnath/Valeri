@@ -98,9 +98,19 @@ async def restrict_user(msg):
     r, arg = await has_admin_rights(msg.chat_id, msg.sender_id, "ban_users")
     if not r:
         return await msg.reply(arg)
+    
     user, arg = await get_user(msg)
     if not user:
         return
+    try:
+        p = await msg.client(functions.channels.GetParticipantRequest(msg.chat_id, user.id))
+        try:
+          p.participant.admin_rights
+          return await msg.reply("Sorry, can't restrict admins!")
+        except AttributeError:
+          pass
+    except:
+        pass
     if action in ["ban", "sban", "tban", "unban"]:
         if arg == "" and action == "tban":
             await msg.reply("Please specify a time!")
