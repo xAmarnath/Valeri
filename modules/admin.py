@@ -7,7 +7,7 @@ from ._helpers import get_mention, get_user, has_admin_rights, parse_time
 @newMsg(pattern="(promote|superpromote|demote)")
 async def promote_demote(e):
     action = e.text.split(" ")[0][1:].lower()
-    r, arg = await has_admin_rights(e.chat_id, e.from_id, "promote_members")
+    r, arg = await has_admin_rights(e.chat_id, e.sender_id, "add_admins")
     if not r:
         return await e.reply(arg)
     user, arg = await get_user(e)
@@ -95,8 +95,7 @@ async def restrict_user(msg):
             await msg.reply("I have kicked you!")
         except Exception as ex:
             await msg.reply(str(ex) + str(type(ex)))
-
-    r, arg = await has_admin_rights(msg.chat_id, msg.from_id, "ban_users")
+    r, arg = await has_admin_rights(msg.chat_id, msg.sender_id, "ban_users")
     if not r:
         return await msg.reply(arg)
     user, arg = await get_user(msg)
