@@ -9,16 +9,17 @@ import telethon
 from PIL import Image
 from telethon import errors
 
-from ._config import OWNER_ID, bot, log
+from ._config import OWNER_ID, bot, log, help_dict
 
 
-def __load_modules():
+def load_modules():
     # Load all modules in the modules folder
     for module in listdir(path.dirname(__file__)):
         if module.startswith("_") or not module.endswith(".py"):
             continue
-        importlib.import_module("modules." + module[:-3])
+        mod = importlib.import_module("modules." + module[:-3])
         log.info("Loaded module: %s", module[:-3])
+        help_dict[module[:-3]] = {}
     log.info("Bot Started.")
 
 

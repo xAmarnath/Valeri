@@ -11,7 +11,7 @@ async def _start(msg):
         [Button.inline("Commands", data="commands")],
         [
             Button.inline("About", data="about"),
-            Button.url("Support", "https://t.me/MissValeri_Bot"),
+            Button.url("Support", "https://t.me/rosexcd"),
         ],
         [Button.url("Source", "https://github.com/amarnathcjd/valeri")],
     ]

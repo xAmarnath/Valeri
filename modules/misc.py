@@ -1,7 +1,6 @@
 import io
 import json
 import os
-import time
 from random import choice, randint
 from urllib.parse import quote
 
@@ -10,25 +9,9 @@ from requests import get, post
 from telethon import Button, types
 
 from ._config import TMDB_KEY as tapiKey
-from ._functions import get_imdb_soup, get_weather, search_imdb, translate
+from ._functions import get_imdb_soup, get_weather, translate
 from ._handler import newMsg
-from ._helpers import gen_random_string, get_text_content, get_user
-
-TELEGRAPH_API_KEY = ""
-
-
-@newMsg(pattern="tmdb")
-async def _imdb_search(e):
-    if tapiKey is None:
-        return await e.reply("IMDB API key is not set.")
-    try:
-        query = e.text.split(None, maxsplit=1)[1]
-    except IndexError:
-        return await e.reply("Provide the title name!")
-    caption, url, buttons = search_imdb(query)
-    if len(caption) > 1024:
-        caption = caption[:1020] + "..."
-    await e.reply(caption, file=url, parse_mode="html", buttons=buttons)
+from ._helpers import get_text_content, get_user
 
 
 @newMsg(pattern="math")
@@ -61,7 +44,8 @@ async def ip_lookup(message):
     resp = resp.json()
     if resp.get("data", {}).get("status", 200) != 200:
         return await message.reply(
-            "Error: {}".format(resp.get("data", {}).get("message", "Unknown error"))
+            "Error: {}".format(resp.get("data", {}).get(
+                "message", "Unknown error"))
         )
     data = resp.get("data", {})
     ip_info = (
@@ -185,7 +169,8 @@ async def pinterest(message):
     if result.get("resource_response", {}).get("status", "") != "success":
         return await message.reply("No results found!")
     urls = []
-    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
+    pins = result.get("resource_response", {}).get(
+        "data", {}).get("results", [])
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
@@ -272,7 +257,8 @@ async def _raddr(msg):
         for i in result.find_all("a"):
             if not i.text == "":
                 name = i.find(class_="BNeawe deIvCb AP7Wnd").text
-                address = BeautifulSoup(str(i).split("<br/>")[1], "html.parser").text
+                address = BeautifulSoup(str(i).split(
+                    "<br/>")[1], "html.parser").text
             results.append("<b>{}</b>\n{}".format(name, address))
     if len(results) == 0:
         return await msg.reply("No results found!")
@@ -284,7 +270,8 @@ async def _raddr(msg):
             [
                 Button.url(
                     "🔎 View on Google",
-                    "https://www.google.com/search?q=foodplaces+near+" + quote(query),
+                    "https://www.google.com/search?q=foodplaces+near+" +
+                    quote(query),
                 )
             ]
         ],
@@ -417,7 +404,8 @@ async def paste_(message):
                 data=content,
                 timeout=5,
             )
-            url = "https://www.toptal.com/developers/hastebin/" + resp.json()["key"]
+            url = "https://www.toptal.com/developers/hastebin/" + \
+                resp.json()["key"]
             paste_name = "Hastebin"
         elif arg == "s":
             req = post(
@@ -565,21 +553,20 @@ async def _imdb(msg):
         + "\n<b>Description:</b> <u>"
         + js.get("description", "-")
         + "</u>"
-        + "\n<b>Content rating:</b> <code>"
+        + "\n<b>Content rating:</b> "
         + js.get("contentRating", "-")
-        + "</code>"
         + "\n<b>Creators:</b> <code>"
         + ", ".join(js.get("creator", []))
         + "</code>"
-        + "\n<b>Tags:</b> <code>"
+        + "\n<b>Tags:</b> "
         + js.get("keywords", "")
-        + "</code>"
-        + "\n<b>Similar:</b> "
+        + "\n<b>Similar:</b> <b><i>"
         + ", ".join(js.get("sameAs", []))
-        + ""
+        + "</i></b>"
     )
     poster_url = js.get("image", None)
-    trailer_url = "https://imdb.com" + js.get("trailer", {}).get("embedUrl", "")
+    trailer_url = "https://imdb.com" + \
+        js.get("trailer", {}).get("embedUrl", "")
     buttons = [
         [
             Button.url(
@@ -602,107 +589,12 @@ async def _imdb(msg):
         file=poster_url,
     )
 
-
-@newMsg(pattern="(telegraph|tg)")
-async def telegraph_(message):
-    media, file = False, ""
-    if message.reply_to:
-        r = await message.get_reply_message()
-        if r.media:
-            media = True
-            file = await r.download_media()
-            caption = r.caption if r.caption else ""
-    else:
-        caption = await get_text_content(message)
-    if caption is None and file == "":
-        return await message.reply("No caption or media provided!")
-
-    if media:
-        url = telegraph_file_upload(file)
-    else:
-        url = "https://api.telegra.ph/createPage"
-        params = {
-            "content": caption,
-            "access_token": get_tgf_key(),
-            "title": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "author_name": "valeri",
-            "author_url": "https://t.me/missvaleri_bot",
-            "return_content": "false",
-        }
-        response = get(url, params=params)
-        if response.status_code != 200:
-            return await message.reply("Error: {}".format(response.status_code))
-        result = response.json()
-        url = result.get("result", {}).get("url", "")
-    await message.reply(
-        "Uploaded to <b><a href='{}'>{}</a></b>".format(url, "Telegr.aph"),
-        parse_mode="html",
-        buttons=[
-            [
-                Button.url(
-                    "View",
-                    url,
-                ),
-            ],
-        ],
-    )
-
-
-def get_tgf_key():
-    global TELEGRAPH_API_KEY
-    if TELEGRAPH_API_KEY != "":
-        return TELEGRAPH_API_KEY
-    else:
-        url = "https://api.telegra.ph/createAccount?short_name={}&author_name=Anonymous".format(
-            gen_random_string(10)
-        )
-        response = get(url)
-        if response.status_code != 200:
-            return None
-        result = response.json()
-        token = result.get("result", {}).get("access_token", "")
-        TELEGRAPH_API_KEY = token
-        return token
-
-
-def telegraph_file_upload(path_to_file):
-    file_types = {
-        "gif": "image/gif",
-        "jpeg": "image/jpeg",
-        "jpg": "image/jpg",
-        "png": "image/png",
-        "mp4": "video/mp4",
-    }
-    file_ext = path_to_file.split(".")[-1]
-
-    if file_ext in file_types:
-        file_type = file_types[file_ext]
-    else:
-        return f"error, {file_ext}-file can not be proccessed"
-
-    with open(path_to_file, "rb") as f:
-        url = "https://telegra.ph/upload"
-        response = post(
-            url,
-            files={"file": ("file", f, file_type)},
-            timeout=1,
-            params={"access_token": get_tgf_key()},
-        )
-
-    telegraph_url = json.loads(response.content)
-    telegraph_url = telegraph_url[0]["src"]
-    telegraph_url = f"https://telegra.ph{telegraph_url}"
-
-    return telegraph_url
-
-
-STREAM = "40037lf4ri9qsqa874xj7"
-
-
-@newMsg(pattern="(nf|netflix)")
-async def _netflix_checker(e):
-    emailpass = await get_text_content(e)
-    if not emailpass:
-        return await e.reply("Usage: email:pass, or combofile")
-    combo = list(emailpass.split("\n"))
-    return await e.reply(str(combo))
+@newMsg(pattern="(dog|dogfact|dogfacts)")
+async def _dog_facts(msg):
+    url = "https://dog-api.kinduff.com/api/facts"
+    data = get(url).json()
+    fact = f'''
+    <b>Dog Fact</b>
+    <code>{data["facts"][0]}</code>
+    '''
+    await msg.reply(fact, parse_mode="html")

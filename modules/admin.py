@@ -1,7 +1,7 @@
 from telethon import errors, functions, types
 
 from ._handler import newMsg
-from ._helpers import get_mention, get_user, has_admin_rights, parse_time
+from ._helpers import get_mention, get_user, has_admin_rights, parse_time, get_text_content
 
 
 @newMsg(pattern="(promote|superpromote|demote)")
@@ -238,3 +238,98 @@ async def restrict_user(msg):
             )
         except Exception as ex:
             await msg.reply(str(ex) + str(type(ex)))
+
+@newMsg(pattern="chatid")
+async def chatid(msg):
+    await msg.reply('Chat ID: `{}`'.format(msg.chat_id))
+
+@newMsg(pattern="(setgpic|setgp|setdesc|setgdesc|setgname|setgtitle)")
+async def set_group_info(msg):
+    command = msg.text.split(" ")[0][1:].lower()
+    if command in ["setgpic", "setgp"]:
+        reply = await msg.get_reply_message()
+        if not reply:
+            await msg.reply("Reply to a photo!")
+            return
+        if not reply.media:
+            await msg.reply("Reply to a photo!")
+            return
+        if not reply.media.photo:
+            await msg.reply("Reply to a photo to set it as group photo!")
+            return
+        try:
+            await msg.client(
+                functions.messages.EditChatPhotoRequest(
+                    msg.chat_id,
+                    reply.media.photo.file_id,
+                )
+            )
+            await msg.reply("Successfully set group photo!")
+        except Exception as ex:
+            await msg.reply(str(ex) + str(type(ex)))
+    elif command in ["setdesc", "setgdesc"]:
+        content = await get_text_content(msg)
+        if not content:
+            await msg.reply("Specify a description!")
+            return
+        try:
+            await msg.client(
+                functions.messages.EditChatAboutRequest(
+                    msg.chat_id, content
+                )
+            )
+            await msg.reply("Successfully set group description!")
+        except Exception as ex:
+            await msg.reply(str(ex) + str(type(ex)))
+    elif command in ["setgname", "setgtitle"]:
+        content = await get_text_content(msg)
+        if not content:
+            await msg.reply("Specify a name!")
+            return
+        try:
+            await msg.client(
+                functions.channels.EditTitleRequest(
+                    msg.chat_id, content
+                )
+            )
+            await msg.reply("Successfully set group name!")
+        except Exception as ex:
+            await msg.reply(str(ex) + str(type(ex)))
+
+@newMsg(pattern="adminlist")
+async def adminlist(msg):
+    admins = await msg.client.get_participants(msg.chat_id, filters=types.ChannelParticipantsAdmins)
+    admins = [get_mention(x) for x in admins]
+    await msg.reply("Admins in this chat: " + ", ".join(admins))
+
+
+__help__ = """
+<b>Help for Admin module.</b>
+ - <code>/adminlist</code>: list of admins in chat
+ - <code>/chatid</code>: get the current chat id
+
+ - <code>/setgpic</code>: reply to a photo to set group photo
+ - <code>/setgdesc</code>: <text> to set group description
+ - <code>/setgtitle</code>: <text> to set group title
+
+ - <code>/ban</code>: bans user from group
+ - <code>/sban</code>: silent ban, no message sent to the user
+ - <code>/tban</code>: temporary ban for x time
+ - <code>/unban</code>: unbans user from group
+
+ - <code>/kick</code>: kicks user from group
+ - <code>/skick</code>: silent kick, no message sent to the user
+
+ - <code>/tmute</code>: temporary mute for x time
+ - <code>/smute</code>: silent mute, no message sent to the user
+ - <code>/mute</code>: mute user in group, works on admins too
+ - <code>/unmute</code>: unmute user from group, works on admins too
+
+ - <code>/kickme</code>: kicks user from group (user command)
+ - <code>/unbanall</code>: unbans all users from group
+ - <code>/cleanup</code>: deletes messages from user in group
+ - <code>/cleangroups</code>: deletes messages from all groups
+ - <code>/cleanbans</code>: deletes all banned users from groups
+ - <code>/<code>cleanbots</code> bans all bots from groups
+ - <code>/<code>cleanall</code>: deletes all messages from groups
+"""
