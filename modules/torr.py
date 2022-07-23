@@ -11,16 +11,20 @@ from ._helpers import human_readable_size
 
 def aria_start():
     try:
-        trackers = BeautifulSoup(get("https://www.torrenttrackerlist.com/torrent-tracker-list/").text,
-                                 "html.parser").find(class_="customcodewords").text.replace("\n\n", ",")
+        trackers = (
+            BeautifulSoup(
+                get("https://www.torrenttrackerlist.com/torrent-tracker-list/").text,
+                "html.parser",
+            )
+            .find(class_="customcodewords")
+            .text.replace("\n\n", ",")
+        )
     except:
         trackers = ""
     trackers = f"[{trackers}]"
     cmd = f"aria2c --enable-rpc --rpc-listen-all=false --rpc-listen-port=6800 --max-connection-per-server=10 --rpc-max-request-size=1024M --check-certificate=false --follow-torrent=mem --seed-time=600 --max-upload-limit=0 --max-concurrent-downloads=10 --min-split-size=10M --follow-torrent=mem --split=10 --bt-tracker={trackers} --daemon=true --allow-overwrite=true"
-    subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                     stderr=subprocess.STDOUT, shell=True)
-    aria2 = aria2p.API(aria2p.Client(
-        host="http://localhost", port=6800, secret=""))
+    subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+    aria2 = aria2p.API(aria2p.Client(host="http://localhost", port=6800, secret=""))
     return aria2
 
 
@@ -170,8 +174,7 @@ async def remove_a_download(message):
         return
     file_name = downloads.name
     await message.reply(f"**Successfully cancelled download.** \n`{file_name}`")
-    aria2p_client.remove(downloads=[downloads],
-                         force=True, files=True, clean=True)
+    aria2p_client.remove(downloads=[downloads], force=True, files=True, clean=True)
 
 
 @newMsg(pattern="ariastatus$")

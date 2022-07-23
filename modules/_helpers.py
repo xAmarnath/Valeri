@@ -9,7 +9,7 @@ import telethon
 from PIL import Image
 from telethon import errors
 
-from ._config import OWNER_ID, bot, log, help_dict
+from ._config import OWNER_ID, bot, help_dict, log
 
 
 def load_modules():

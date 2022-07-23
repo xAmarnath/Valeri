@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 from requests import get, post
 from telethon import Button, types
 
-from ._config import TMDB_KEY as tapiKey
 from ._functions import get_imdb_soup, get_weather, translate
 from ._handler import newMsg
 from ._helpers import get_text_content, get_user
@@ -44,8 +43,7 @@ async def ip_lookup(message):
     resp = resp.json()
     if resp.get("data", {}).get("status", 200) != 200:
         return await message.reply(
-            "Error: {}".format(resp.get("data", {}).get(
-                "message", "Unknown error"))
+            "Error: {}".format(resp.get("data", {}).get("message", "Unknown error"))
         )
     data = resp.get("data", {})
     ip_info = (
@@ -169,8 +167,7 @@ async def pinterest(message):
     if result.get("resource_response", {}).get("status", "") != "success":
         return await message.reply("No results found!")
     urls = []
-    pins = result.get("resource_response", {}).get(
-        "data", {}).get("results", [])
+    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
@@ -257,8 +254,7 @@ async def _raddr(msg):
         for i in result.find_all("a"):
             if not i.text == "":
                 name = i.find(class_="BNeawe deIvCb AP7Wnd").text
-                address = BeautifulSoup(str(i).split(
-                    "<br/>")[1], "html.parser").text
+                address = BeautifulSoup(str(i).split("<br/>")[1], "html.parser").text
             results.append("<b>{}</b>\n{}".format(name, address))
     if len(results) == 0:
         return await msg.reply("No results found!")
@@ -270,8 +266,7 @@ async def _raddr(msg):
             [
                 Button.url(
                     "🔎 View on Google",
-                    "https://www.google.com/search?q=foodplaces+near+" +
-                    quote(query),
+                    "https://www.google.com/search?q=foodplaces+near+" + quote(query),
                 )
             ]
         ],
@@ -404,8 +399,7 @@ async def paste_(message):
                 data=content,
                 timeout=5,
             )
-            url = "https://www.toptal.com/developers/hastebin/" + \
-                resp.json()["key"]
+            url = "https://www.toptal.com/developers/hastebin/" + resp.json()["key"]
             paste_name = "Hastebin"
         elif arg == "s":
             req = post(
@@ -565,8 +559,7 @@ async def _imdb(msg):
         + "</i></b>"
     )
     poster_url = js.get("image", None)
-    trailer_url = "https://imdb.com" + \
-        js.get("trailer", {}).get("embedUrl", "")
+    trailer_url = "https://imdb.com" + js.get("trailer", {}).get("embedUrl", "")
     buttons = [
         [
             Button.url(
@@ -589,12 +582,13 @@ async def _imdb(msg):
         file=poster_url,
     )
 
+
 @newMsg(pattern="(dog|dogfact|dogfacts)")
 async def _dog_facts(msg):
     url = "https://dog-api.kinduff.com/api/facts"
     data = get(url).json()
-    fact = f'''
+    fact = f"""
     <b>Dog Fact</b>
     <code>{data["facts"][0]}</code>
-    '''
+    """
     await msg.reply(fact, parse_mode="html")

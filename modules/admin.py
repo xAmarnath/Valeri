@@ -1,7 +1,13 @@
 from telethon import errors, functions, types
 
 from ._handler import newMsg
-from ._helpers import get_mention, get_user, has_admin_rights, parse_time, get_text_content
+from ._helpers import (
+    get_mention,
+    get_text_content,
+    get_user,
+    has_admin_rights,
+    parse_time,
+)
 
 
 @newMsg(pattern="(promote|superpromote|demote)")
@@ -239,9 +245,11 @@ async def restrict_user(msg):
         except Exception as ex:
             await msg.reply(str(ex) + str(type(ex)))
 
+
 @newMsg(pattern="chatid")
 async def chatid(msg):
-    await msg.reply('Chat ID: `{}`'.format(msg.chat_id))
+    await msg.reply("Chat ID: `{}`".format(msg.chat_id))
+
 
 @newMsg(pattern="(setgpic|setgp|setdesc|setgdesc|setgname|setgtitle)")
 async def set_group_info(msg):
@@ -274,9 +282,7 @@ async def set_group_info(msg):
             return
         try:
             await msg.client(
-                functions.messages.EditChatAboutRequest(
-                    msg.chat_id, content
-                )
+                functions.messages.EditChatAboutRequest(msg.chat_id, content)
             )
             await msg.reply("Successfully set group description!")
         except Exception as ex:
@@ -287,18 +293,17 @@ async def set_group_info(msg):
             await msg.reply("Specify a name!")
             return
         try:
-            await msg.client(
-                functions.channels.EditTitleRequest(
-                    msg.chat_id, content
-                )
-            )
+            await msg.client(functions.channels.EditTitleRequest(msg.chat_id, content))
             await msg.reply("Successfully set group name!")
         except Exception as ex:
             await msg.reply(str(ex) + str(type(ex)))
 
+
 @newMsg(pattern="adminlist")
 async def adminlist(msg):
-    admins = await msg.client.get_participants(msg.chat_id, filters=types.ChannelParticipantsAdmins)
+    admins = await msg.client.get_participants(
+        msg.chat_id, filters=types.ChannelParticipantsAdmins
+    )
     admins = [get_mention(x) for x in admins]
     await msg.reply("Admins in this chat: " + ", ".join(admins))
 
