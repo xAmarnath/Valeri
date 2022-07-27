@@ -80,16 +80,16 @@ async def _ul(e):
     if not l:
         return await _ls(e)
     thumb, attributes, streamable, chat = None, [], False, e.chat_id
-    if "-c" in l or "--chat" in l:
+    if any([re.search(x, l.lower()) for x in [" -c", "--chat"]]):
         await e.respond("Hue Hue")
         lx = l.split("-c") if "-c" in l else l.split("--chat")
         try:
-            chat = lx[1]
+            chat = lx[1].strip()
             if chat.isdigit():
                 chat = int(chat)
         except (IndexError, ValueError):
             pass
-        l = lx[0]
+        l = lx[0].strip()
     filename = l.split("\\")[-1]
     filename = filename.split("/")[-1] if filename == l else filename
     if l.endswith(("mp4", "mkv", "3gp", "flv", "webm")):
@@ -97,7 +97,6 @@ async def _ul(e):
         d, w, h = get_video_metadata(l)
         attributes = [types.DocumentAttributeVideo(w=w, h=h, duration=d)]
         streamable = True
-        await e.respond("Width: {}, Height: {}, Duration: {}".format(w, h, d))
     try:
         file = await upload_file(e.client, l)
         await e.client.send_message(
