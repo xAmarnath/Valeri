@@ -79,7 +79,7 @@ async def ip_lookup(message):
         + "\n<b>Hosting: <code>{}</code></b>".format(
             data.get("privacy", {}).get("hosting", "-")
         )
-        + "\n<b>Domains: <code>{}</code></b>".format(
+        + "\n<b>Domains: <code>{}.</code></b>".format(
             " ,".join(x for x in data.get("domains", {}).get("domains", "[]"))
         )
         + "\n\n <b>@MissValeri_Bot</b>"
