@@ -1,4 +1,4 @@
-Ynewthon
+newthon
 pymongo
 dnspython
 python-dotenv
