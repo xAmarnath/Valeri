@@ -592,3 +592,15 @@ async def _dog_facts(msg):
     <code>{data["facts"][0]}</code>
     """
     await msg.reply(fact, parse_mode="html")
+
+@newMsg(pattern="blerp")
+async def blerp_audio(msg):
+ query = await get_text_content(msg)
+ if not query:
+    return await msg.reply('Query not given.')
+ try:
+  srC = BeautifulSoup(get("https://blerp.com" + BeautifulSoup(get("https://blerp.com/search?q={}&r=R".format(quote(query))).text, "html.parser").find(class_="GlobalSearchWeb__BlerpGridContainer-sc-2gff2k-0 dlEGMi").find("a", href=True)["href"]).text, "html.parser").find("meta", attrs={"name": "twitter:player:stream"})["content"]
+ except Exception as err:
+  return await msg.reply(str(err))
+ await msg.respond(file=srC)
+ 
