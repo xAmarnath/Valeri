@@ -1,4 +1,4 @@
-newthon
+Ynewthon
 pymongo
 dnspython
 python-dotenv
@@ -14,3 +14,4 @@ aiohttp
 ffmpeg-python 
 fake_useragent
 yt-dlp
+tinytag
