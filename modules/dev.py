@@ -1,8 +1,9 @@
 import re
 import sys
 from os import environ, execle, listdir, path, remove, system
-import tinytag
+
 import speedtest
+import tinytag
 from telethon import types
 
 from ._handler import auth_only, master_only, newMsg
@@ -29,8 +30,7 @@ def is_bl(code):
 async def _ls(e):
     try:
         directory = e.text.split(" ", 1)[1]
-        directory = directory + \
-            "/" if not directory.endswith("/") else directory
+        directory = directory + "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
     contents = listdir(directory)
@@ -80,7 +80,7 @@ async def _ul(e):
     l = await get_text_content(e)
     if not l:
         return await _ls(e)
-    message = await e.reply("`Uploading...`")
+    await e.reply("`Uploading...`")
     thumb, attributes, streamable, chat, action = None, [], False, e.chat_id, "document"
     if any([re.search(x, l.lower()) for x in ["--chat", "-c"]]):
         args = l.split("--chat") if "--chat" in l else l.split("-c")
@@ -92,17 +92,20 @@ async def _ul(e):
     if l.endswith(("mp4", "mkv", "3gp", "webm")):
         thumb = generate_thumbnail(l, l + "_thumb.jpg")
         d, w, h = get_video_metadata(l)
-        attributes = [types.DocumentAttributeVideo(
-            w=w, h=h, duration=d, supports_streaming=True)]
+        attributes = [
+            types.DocumentAttributeVideo(w=w, h=h, duration=d, supports_streaming=True)
+        ]
         streamable = True
         action = "video"
     elif l.endswith(("mp3", "wav", "flv", "ogg", "opus")):
         metadata: dict = tinytag.TinyTag.get(l)
-        attributes = [types.DocumentAttributeAudio(
-            duration=int(metadata.get("duration", 0)),
-            performer=metadata.get("artist", "Unknown"),
-            title=metadata.get("title", "Unknown"),
-        )]
+        attributes = [
+            types.DocumentAttributeAudio(
+                duration=int(metadata.get("duration", 0)),
+                performer=metadata.get("artist", "Unknown"),
+                title=metadata.get("title", "Unknown"),
+            )
+        ]
         action = "audio"
     try:
         file = await upload_file(e.client, l)
@@ -152,8 +155,7 @@ async def _auth(e):
     user, _ = await get_user(e)
     if is_auth(user.id):
         await e.reply(
-            "<b>{}</b> is already authorized.".format(
-                get_mention(user, "html")),
+            "<b>{}</b> is already authorized.".format(get_mention(user, "html")),
             parse_mode="html",
         )
         return

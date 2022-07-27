@@ -5,15 +5,17 @@ stats = DB.stats
 
 def add_chat(chat_id):
     stats.update_one({"_id": "chats"}, {"$inc": {"count": 1}}, upsert=True)
-    stats.update_one({"_id": "chats"}, {"$addToSet": {
-                     "chat_ids": chat_id}}, upsert=True)
+    stats.update_one(
+        {"_id": "chats"}, {"$addToSet": {"chat_ids": chat_id}}, upsert=True
+    )
     return True
 
 
 def add_user(user_id):
     stats.update_one({"_id": "users"}, {"$inc": {"count": 1}}, upsert=True)
-    stats.update_one({"_id": "users"}, {"$addToSet": {
-                     "user_ids": user_id}}, upsert=True)
+    stats.update_one(
+        {"_id": "users"}, {"$addToSet": {"user_ids": user_id}}, upsert=True
+    )
     return True
 
 
@@ -43,6 +45,7 @@ def get_user_ids():
     if users is None:
         return []
     return users["user_ids"]
+
 
 def already_added_user(user_id):
     users = stats.find_one({"_id": "users"})

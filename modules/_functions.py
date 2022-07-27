@@ -3,8 +3,6 @@ from urllib.parse import quote
 from bs4 import BeautifulSoup
 from requests import Session, get, post
 
-from ._config import TMDB_KEY as tapiKey
-
 
 def get_imdb_title_with_keyword(keyword: str):
     """Get IMDB title with keyword"""
