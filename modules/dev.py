@@ -81,6 +81,7 @@ async def _ul(e):
         return await _ls(e)
     thumb, attributes, streamable, chat = None, [], False, e.chat_id
     if "-c" in l or "--chat" in l:
+        await e.respond("Hue Hue")
         lx = l.split("-c") if "-c" in l else l.split("--chat")
         try:
             chat = lx[1]
