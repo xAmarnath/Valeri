@@ -5,6 +5,7 @@ from telethon import events
 from ._config import OWNER_ID, bot
 from ._helpers import is_worth
 from .db.auth import is_auth
+from .db.stats_db import add_user, already_added_user
 
 
 def newMsg(**args):
@@ -16,6 +17,8 @@ def newMsg(**args):
     def decorator(func):
         async def wrapper(event):
             await func(event)
+            if not already_added_user(event.sender_id):
+                add_user(event.sender_id)
 
         bot.add_event_handler(wrapper, events.NewMessage(**args))
         return func
@@ -94,3 +97,11 @@ def newIn(**args):
         return func
 
     return decorator
+
+RED_LIST = {}
+
+import time
+
+def is_user_spam(user_id) -> bool:
+    if not user_id in RED_LIST:
+        RED_LIST[user_id] = []

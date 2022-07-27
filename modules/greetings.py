@@ -2,6 +2,7 @@ from telethon import events, types
 
 from ._config import bot
 from .db import greet as db
+from .db.stats_db import add_chat
 
 
 @bot.on(
@@ -13,8 +14,8 @@ from .db import greet as db
             e.new_participant,
             (types.ChannelParticipantAdmin, types.ChannelParticipantBanned),
         )
-        and not int("-100" + str(e.channel_id)) in db.welcome_blacklist,
     )
 )
 async def welcome(e):
-    print(e)
+    add_chat(int("-100{}".format(e.channel_id)))
+    
