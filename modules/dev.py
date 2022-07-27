@@ -79,7 +79,16 @@ async def _ul(e):
     l = await get_text_content(e)
     if not l:
         return await _ls(e)
-    thumb, attributes, streamable = None, [], False
+    thumb, attributes, streamable, chat = None, [], False, e.chat_id
+    if "-c" in l or "--chat" in l:
+        lx = l.split("-c") if "-c" in l else l.split("--chat")
+        try:
+            chat = lx[1]
+            if chat.isdigit():
+               chat = int(chat)
+            l = lx[0]
+        except (IndexError, ValueError):
+            l = lx[0]
     filename = l.split("\\")[-1]
     filename = filename.split("/")[-1] if filename == l else filename
     if l.endswith(("mp4", "mkv", "3gp", "flv", "webm")):
@@ -89,9 +98,9 @@ async def _ul(e):
         streamable = True
         await e.respond("Width: {}, Height: {}, Duration: {}".format(w, h, d))
     try:
-
         file = await upload_file(e.client, l)
-        await e.reply(
+        await e.client.send_message(
+            chat,
             f"```{filename}```",
             file=file,
             thumb=thumb,
@@ -101,8 +110,7 @@ async def _ul(e):
         if thumb:
             remove(thumb)
     except Exception as exc:
-        print(exc)
-        return await e.reply("`{}`".format(str(exc)))
+        await e.reply("`error on uploading.\n{}`".format(str(exc)))
 
 
 @newMsg(pattern="dl")
