@@ -80,9 +80,9 @@ async def _ul(e):
     if not l:
         return await _ls(e)
     thumb, attributes, streamable, chat = None, [], False, e.chat_id
-    if any([re.search(x, l.lower()) for x in [" -c", "--chat"]]):
+    if any([re.search(x, l.lower()) for x in ["--chat", "-c"]]):
         await e.respond("Hue Hue")
-        lx = l.split("-c") if "-c" in l else l.split("--chat")
+        lx = l.split("--chat") if "--chat" in l else l.split("-c")
         try:
             chat = lx[1].strip()
             if chat.isdigit():
