@@ -604,7 +604,7 @@ async def blerp_audio(msg):
             get(
                 "https://blerp.com"
                 + BeautifulSoup(
-                    get("https://blerp.com/search?q={}&r=R".format(quote(query))).text,
+                    get("https://blerp.com/search", params={"query":query, "r": "R"}).text,
                     "html.parser",
                 )
                 .find(class_="GlobalSearchWeb__BlerpGridContainer-sc-2gff2k-0 dlEGMi")
@@ -614,4 +614,5 @@ async def blerp_audio(msg):
         ).find("meta", attrs={"name": "twitter:player:stream"})["content"]
     except Exception as err:
         return await msg.reply(str(err))
-    await msg.respond(file=srC)
+    async with msg.client.action(e.chat, "audio"):
+     await msg.respond(file=srC)
