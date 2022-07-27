@@ -86,9 +86,9 @@ async def _ul(e):
             chat = lx[1]
             if chat.isdigit():
                 chat = int(chat)
-            l = lx[0]
         except (IndexError, ValueError):
-            l = lx[0]
+            pass
+        l = lx[0]
     filename = l.split("\\")[-1]
     filename = filename.split("/")[-1] if filename == l else filename
     if l.endswith(("mp4", "mkv", "3gp", "flv", "webm")):
