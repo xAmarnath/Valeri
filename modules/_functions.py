@@ -276,6 +276,9 @@ def get_weather(city: str):
 
 
 def translate(text, to_lang="en"):
+    # https://translate.google.com/translate_a/single?dj=1&q=bye&sl=en&tl=ja&hl=en-US&ie=UTF-8&oe=UTF-8&client=at&dt=t&dt=ld&dt=qca&dt=rm&dt=bd&dt=md&dt=ss&dt=ex&dt=sos&otf=2
+    # change API to above one
+    # add exampld, synonym etc
     url = "https://www.google.com/async/translate?vet=12ahUKEwiM3pvpx8z1AhV_SmwGHRb5C5MQqDh6BAgDECY..i&ei=EL_vYYyWFP-UseMPlvKvmAk&client=opera&yv=3"
     data = f"async=translate,sl:auto,tl:{to_lang},st:{quote(text)},id:1643102010421,qc:true,ac:true,_id:tw-async-translate,_pms:s,_fmt:pc"
     headers = {
