@@ -84,24 +84,24 @@ async def _ul(e):
     thumb, attributes, streamable, chat, action = None, [], False, e.chat_id, "document"
     if any([re.search(x, l.lower()) for x in ["--chat", "-c"]]):
         if "--chat" in l.lower():
-           args = l.split("--chat")
-           l = re.sub("--chat (.*) -", "-", l).strip()
+            args = l.split("--chat")
+            l = re.sub("--chat (.*) -", "-", l).strip()
         else:
-           args = l.split("-c")
-           l = re.sub("-c (.*) -", "-", l).strip()
+            args = l.split("-c")
+            l = re.sub("-c (.*) -", "-", l).strip()
         chat = args[1].strip() if len(args) > 1 else e.chat_id
         chat = int(chat) if chat.isdigit() else chat
-        
+
     if any([re.search(x, l.lower()) for x in ["--caption", "-t"]]):
         if "--text" in l.lower():
-           args = l.split("--text")
-           l = re.sub("--text (.*) -", "-", l).strip()
+            args = l.split("--text")
+            l = re.sub("--text (.*) -", "-", l).strip()
         else:
-           args = l.split("-t")
-           l = re.sub("-t (.*) -", "-", l).strip()
+            args = l.split("-t")
+            l = re.sub("-t (.*) -", "-", l).strip()
         caption = args[1].split("-")[0] if len(args) > 1 else ""
     filename = l.split("\\")[-1]
-    caption= caption or filename
+    caption = caption or filename
     filename = filename.split("/")[-1] if filename == l else filename
     if l.endswith(("mp4", "mkv", "3gp", "webm")):
         thumb = generate_thumbnail(l, l + "_thumb.jpg")
