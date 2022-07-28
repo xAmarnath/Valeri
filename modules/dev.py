@@ -81,7 +81,14 @@ async def _ul(e):
     if not l:
         return await _ls(e)
     await e.reply("`Uploading...`")
-    thumb, attributes, streamable, chat, action, caption = None, [], False, e.chat_id, "document", ""
+    thumb, attributes, streamable, chat, action, caption = (
+        None,
+        [],
+        False,
+        e.chat_id,
+        "document",
+        "",
+    )
     if any([re.search(x, l.lower()) for x in ["--chat", "-c"]]):
         if "--chat" in l.lower():
             args = l.split("--chat")
