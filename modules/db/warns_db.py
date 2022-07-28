@@ -1,22 +1,37 @@
-from .db import DB
 from datetime import datetime
+
+from .db import DB
 
 warns = DB.warns
 warn_settings = DB.warn_settings
 
 CHAT_WARN_SETTINGS = {}
-DEFAULT_WARN_SETTINGS = {"max_warnings": 3,
-                         "warn_mode": "kick", "warn_time": 1, "action_time": 0}
+DEFAULT_WARN_SETTINGS = {
+    "max_warnings": 3,
+    "warn_mode": "kick",
+    "warn_time": 1,
+    "action_time": 0,
+}
 
 
 def warn_user(user_id, chat_id, reason, warn_by):
     """
     Warns a user in a chat.
     """
-    warns.update_one({"user_id": user_id, "chat_id": chat_id},
-                     {"$addToSet": {"warnings": {"reason": reason,
-                                                 "warned_by": warn_by, "date": datetime.now()}}},
-                     {"$inc": {"warn_count": 1}}, upsert=True)
+    warns.update_one(
+        {"user_id": user_id, "chat_id": chat_id},
+        {
+            "$addToSet": {
+                "warnings": {
+                    "reason": reason,
+                    "warned_by": warn_by,
+                    "date": datetime.now(),
+                }
+            }
+        },
+        {"$inc": {"warn_count": 1}},
+        upsert=True,
+    )
 
 
 def remove_last_warn(user_id, chat_id):
@@ -25,8 +40,9 @@ def remove_last_warn(user_id, chat_id):
     """
     if get_warn_count(user_id, chat_id) == 0:
         return False
-    warns.update_one({"user_id": user_id, "chat_id": chat_id},
-                     {"$pop": {"warnings": -1}})
+    warns.update_one(
+        {"user_id": user_id, "chat_id": chat_id}, {"$pop": {"warnings": -1}}
+    )
     return True
 
 
@@ -84,16 +100,24 @@ def set_warn_setting(chat_id, max_warnings, warn_mode, warn_time, action_time):
     """
     Sets the warning settings for a chat.
     """
-    warn_settings.update_one({"chat_id": chat_id},
-                             {"$set": {"max_warnings": max_warnings,
-                                       "warn_mode": warn_mode,
-                                       "warn_time": warn_time,
-                                       "action_time": action_time}},
-                             upsert=True)
-    CHAT_WARN_SETTINGS[chat_id] = {"max_warnings": max_warnings,
-                                   "warn_mode": warn_mode,
-                                   "warn_time": warn_time,
-                                   "action_time": action_time}
+    warn_settings.update_one(
+        {"chat_id": chat_id},
+        {
+            "$set": {
+                "max_warnings": max_warnings,
+                "warn_mode": warn_mode,
+                "warn_time": warn_time,
+                "action_time": action_time,
+            }
+        },
+        upsert=True,
+    )
+    CHAT_WARN_SETTINGS[chat_id] = {
+        "max_warnings": max_warnings,
+        "warn_mode": warn_mode,
+        "warn_time": warn_time,
+        "action_time": action_time,
+    }
     return True
 
 
@@ -117,6 +141,7 @@ def get_chat_warn_settings(chat_id):
     CHAT_WARN_SETTINGS[chat_id] = warn_setting
     return warn_setting
 
+
 def get_all_warn_settings():
     """
     Returns all warning settings.
@@ -126,6 +151,7 @@ def get_all_warn_settings():
         return []
     return list(settings)
 
+
 def cache_warn_settings():
     """
     Caches all warning settings.
@@ -133,5 +159,6 @@ def cache_warn_settings():
     settings = get_all_warn_settings()
     for setting in settings:
         CHAT_WARN_SETTINGS[setting["chat_id"]] = setting
-    
+
+
 cache_warn_settings()

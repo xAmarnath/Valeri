@@ -1,7 +1,7 @@
 from urllib.parse import quote
 
 from bs4 import BeautifulSoup
-from requests import Session, get, post
+from requests import get, post
 
 
 def get_imdb_title_with_keyword(keyword: str):
@@ -38,8 +38,7 @@ def get_weather(city: str):
     data = weather.find_all("p")
     stat = data[0].text
     info = str(data[1]).split("<br/>")
-    details = [x.text for x in soup.find(
-        class_="bk-focus__info").find_all("td")]
+    details = [x.text for x in soup.find(class_="bk-focus__info").find_all("td")]
     result = (
         "<b>Weather in <code>{}</code></b>\n\n".format(city)
         + "<b>Temperature:</b> <code>{}</code>\n".format(
@@ -74,4 +73,3 @@ def translate(text, to_lang="en"):
     soup = BeautifulSoup(request.text, "html.parser")
     result = soup.find("span", {"id": "tw-answ-target-text"})
     return result.text.capitalize() if result else "vision.google.api returned err."
-
