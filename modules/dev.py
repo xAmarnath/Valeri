@@ -118,12 +118,12 @@ async def _ul(e):
         streamable = True
         action = "video"
     elif l.endswith(("mp3", "wav", "flv", "ogg", "opus")):
-        metadata: dict = tinytag.TinyTag.get(l)
+        metadata = tinytag.TinyTag.get(l)
         attributes = [
             types.DocumentAttributeAudio(
-                duration=int(metadata.get("duration", 0)),
-                performer=metadata.get("artist", "Unknown"),
-                title=metadata.get("title", "Unknown"),
+                duration=int(metadata.duration or "0"),
+                performer=metadata.artist or "Me",
+                title=metadata.title or "Unknown",
             )
         ]
         action = "audio"
