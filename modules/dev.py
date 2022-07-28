@@ -100,8 +100,8 @@ async def _ul(e):
             l = re.sub("-c (.*) -", "-", l).strip()
             if "-c" in l.lower():
                 l = re.sub("-c (.*)", "", l).strip()
-        chat = args[1].strip() if len(args) > 1 else e.chat_id
-        chat = int(chat) if chat.isdigit() else chat
+        chat = args[1].split("-")[0].strip() if len(args) > 1 else e.chat_id
+        chat = int(chat) if str(chat).isdigit() else chat
     if any([re.search(x, l.lower()) for x in ["--text", "-t"]]):
         if "--text" in l.lower():
             args = l.split("--text")
