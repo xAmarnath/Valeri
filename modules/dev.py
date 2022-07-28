@@ -105,7 +105,7 @@ async def _ul(e):
     if any([re.search(x, l.lower()) for x in ["--text", "-t"]]):
         args = l.split("--text") if "--text" in l else l.split("-t")
         caption = args[1] if len(args) > 1 else ""
-        l = args[0]
+        l = args[0].strip()
     filename = l.split("\\")[-1]
     caption = caption or filename
     filename = filename.split("/")[-1] if filename == l else filename
