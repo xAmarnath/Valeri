@@ -83,11 +83,25 @@ async def _ul(e):
     await e.reply("`Uploading...`")
     thumb, attributes, streamable, chat, action = None, [], False, e.chat_id, "document"
     if any([re.search(x, l.lower()) for x in ["--chat", "-c"]]):
-        args = l.split("--chat") if "--chat" in l else l.split("-c")
+        if "--chat" in l.lower():
+           args = l.split("--chat")
+           l = re.sub("--chat (.*) -", "-", l).strip()
+        else:
+           args = l.split("-c"):
+           l = re.sub("-c (.*) -", "-", l).strip()
         chat = args[1].strip() if len(args) > 1 else e.chat_id
         chat = int(chat) if chat.isdigit() else chat
-        l = args[0].strip()
+        
+    if any([re.search(x, l.lower()) for x in ["--caption", "-t"]]):
+        if "--text" in l.lower():
+           args = l.split("--text")
+           l = re.sub("--text (.*) -", "-", l).strip()
+        else:
+           args = l.split("-t")
+           l = re.sub("-t (.*) -", "-", l).strip()
+        caption = args[1].split("-")[0] if len(args) > 1 else ""
     filename = l.split("\\")[-1]
+    caption= caption or filename
     filename = filename.split("/")[-1] if filename == l else filename
     if l.endswith(("mp4", "mkv", "3gp", "webm")):
         thumb = generate_thumbnail(l, l + "_thumb.jpg")
@@ -112,7 +126,7 @@ async def _ul(e):
         async with e.client.action(chat, action):
             await e.client.send_message(
                 chat,
-                f"```{filename}```",
+                caption,
                 file=file,
                 thumb=thumb,
                 attributes=attributes,
