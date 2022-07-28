@@ -87,7 +87,7 @@ async def _ul(e):
            args = l.split("--chat")
            l = re.sub("--chat (.*) -", "-", l).strip()
         else:
-           args = l.split("-c"):
+           args = l.split("-c")
            l = re.sub("-c (.*) -", "-", l).strip()
         chat = args[1].strip() if len(args) > 1 else e.chat_id
         chat = int(chat) if chat.isdigit() else chat
