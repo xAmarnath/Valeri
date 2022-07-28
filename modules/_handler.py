@@ -98,9 +98,9 @@ def newIn(**args):
 
     return decorator
 
+
 RED_LIST = {}
 
-import time
 
 def is_user_spam(user_id) -> bool:
     if not user_id in RED_LIST:
