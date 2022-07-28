@@ -103,17 +103,9 @@ async def _ul(e):
         chat = args[1].split("-")[0].strip() if len(args) > 1 else e.chat_id
         chat = int(chat) if str(chat).isdigit() else chat
     if any([re.search(x, l.lower()) for x in ["--text", "-t"]]):
-        if "--text" in l.lower():
-            args = l.split("--text")
-            l = re.sub("--text (.*) -", "-", l).strip()
-            if "--text" in l.lower():
-                l = re.sub("--text (.*)", "", l).strip()
-        else:
-            args = l.split("-t")
-            l = re.sub("-t (.*) -", "-", l).strip()
-            if "-t" in l.lower():
-                l = re.sub("-t (.*)", "", l).strip()
-        caption = args[1].split("-")[0] if len(args) > 1 else ""
+        args = l.split("--text") if "--text" in l else l.split("-t")
+        caption = args[1] if len(args) > 1 else ""
+        l = args[0]
     filename = l.split("\\")[-1]
     caption = caption or filename
     filename = filename.split("/")[-1] if filename == l else filename
