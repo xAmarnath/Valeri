@@ -57,7 +57,9 @@ def get_ig_download_url(url: str):
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", "-"),
-                item.get("caption", {}).get("text", "-") if item.get("caption") else "-",
+                item.get("caption", {}).get("text", "-")
+                if item.get("caption")
+                else "-",
                 item.get("media_type", 0),
                 False,
             )
@@ -69,7 +71,9 @@ def get_ig_download_url(url: str):
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", "-"),
-                item.get("caption", {}).get("text", "-") if item.get("caption") else "-",
+                item.get("caption", {}).get("text", "-")
+                if item.get("caption")
+                else "-",
                 item.get("media_type", 0),
                 False,
             )
