@@ -80,31 +80,39 @@ async def _ul(e):
     l = await get_text_content(e)
     if not l:
         return await _ls(e)
-    await e.reply("`Uploading...`")
-    thumb, attributes, streamable, chat, action, caption = (
+    msg = await e.reply("`Uploading...`")
+    caption= ''
+    thumb, attributes, streamable, chat, action= (
         None,
         [],
         False,
         e.chat_id,
         "document",
-        "",
     )
     if any([re.search(x, l.lower()) for x in ["--chat", "-c"]]):
         if "--chat" in l.lower():
             args = l.split("--chat")
             l = re.sub("--chat (.*) -", "-", l).strip()
+            if "--chat" in l.lower():
+              l = re.sub("--chat (.*)", "", l).strip()
         else:
             args = l.split("-c")
             l = re.sub("-c (.*) -", "-", l).strip()
+            if "-c" in l.lower():
+              l = re.sub("-c (.*)", "", l).strip()
         chat = args[1].strip() if len(args) > 1 else e.chat_id
         chat = int(chat) if chat.isdigit() else chat
     if any([re.search(x, l.lower()) for x in ["--text", "-t"]]):
         if "--text" in l.lower():
             args = l.split("--text")
             l = re.sub("--text (.*) -", "-", l).strip()
+            if "--text" in l.lower():
+              l = re.sub("--text (.*)", "", l).strip()
         else:
             args = l.split("-t")
             l = re.sub("-t (.*) -", "-", l).strip()
+            if "-t" in l.lower():
+              l = re.sub("-t (.*)", "", l).strip()
         caption = args[1].split("-")[0] if len(args) > 1 else ""
     filename = l.split("\\")[-1]
     caption = caption or filename
@@ -138,10 +146,11 @@ async def _ul(e):
                 attributes=attributes,
                 supports_streaming=streamable,
             )
+        await msg.delete()
         if thumb:
             remove(thumb)
     except Exception as exc:
-        await e.reply("`error on uploading.\n{}`".format(str(exc)))
+        await msg.edit("`error on uploading.\n{}`".format(str(exc)))
 
 
 @newMsg(pattern="dl")
