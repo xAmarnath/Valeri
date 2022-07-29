@@ -128,12 +128,12 @@ def get_real_address(query, country):
     }
 
     data = {
-        'query': '\n  query predictions($query: String, $countryCode: AutocompleteSupportedCountry!, $locale: String!, $location: LocationInput, $sessionToken: String!) {\n    predictions(query: $query, countryCode: $countryCode, locale: $locale, location: $location, sessionToken: $sessionToken) {\n      addressId\n      description\n      matchedSubstrings {\n        length\n        offset\n      }\n    }\n  }\n',
-        'variables': {
-            'query': query,
-            'countryCode': country,
-            'locale': 'en-GB',
-            'sessionToken': '1ebc539da44b9c4c591bd548b1f7075d-1659094115528',
+        "query": "\n  query predictions($query: String, $countryCode: AutocompleteSupportedCountry!, $locale: String!, $location: LocationInput, $sessionToken: String!) {\n    predictions(query: $query, countryCode: $countryCode, locale: $locale, location: $location, sessionToken: $sessionToken) {\n      addressId\n      description\n      matchedSubstrings {\n        length\n        offset\n      }\n    }\n  }\n",
+        "variables": {
+            "query": query,
+            "countryCode": country,
+            "locale": "en-GB",
+            "sessionToken": "1ebc539da44b9c4c591bd548b1f7075d-1659094115528",
         },
     }
 
