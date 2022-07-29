@@ -1,14 +1,14 @@
-from requests import get, patch, post
+from requests import patch, post
+from datetime import datetime
 
 from ._handler import newMsg
 
 B3_MESSAGE = """
 **B3/Auth** {emoji}
-**Credit Card Number:** `{card_number}`
-**CVC:** `{cvc}`
-**Expiration:** `{exp_mo}/{exp_year}`
+**CC:** `{cc}|{exp_mo}|{exp_year}|{cvc}`
 **Status:** __**{status}**__
 **Message:** `{message}`
+**TimeTaken:** `{time}`
 """
 
 
@@ -21,6 +21,7 @@ async def _stripe(e):
         return
     message = await e.reply("`Processing...`")
     cc, exp_mo, exp_year, cvv = arg.split("|", 3)
+    start_time = datetime.now()
     token = tokenize_card(cc.strip(), cvv.strip(), exp_mo.strip(), exp_year.strip())
     if token is None:
         await message.edit("`Invalid card details.`")
@@ -34,7 +35,8 @@ async def _stripe(e):
         exp_mo=exp_mo,
         exp_year=exp_year,
         status=status,
-        message=msg
+        message=msg,
+        time=str((datetime.now() - start_time).total_seconds() * 1000) + "ms"
     ))
 
 
