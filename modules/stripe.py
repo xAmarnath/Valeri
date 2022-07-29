@@ -502,3 +502,5 @@ def stripe_charge_gate(card_number, cvv, exp_month, exp_year):
         data=data,
     )
     return response.json()
+    # oki
+    # on halt
