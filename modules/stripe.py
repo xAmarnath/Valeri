@@ -1,4 +1,4 @@
-from requests import get
+from requests import get, patch
 from telethon import Button
 
 from ._handler import newMsg
@@ -87,3 +87,28 @@ async def _stripe(e):
             e.sender_id,
         )
     await message.edit(msg, buttons=buttons)
+
+
+def b3_auth_heroku():
+ headers = { 
+    'authority': 'api.heroku.com', 
+    'accept': 'application/vnd.heroku+json; version=3',  
+    'authorization': 'Bearer cf0ff874-b73c-4732-a7c5-9524acb07d36',  
+} 
+ 
+ data = { 
+    'address_1': '401 AK St.', 
+    'address_2': None, 
+    'city': 'Chicago', 
+    'country': 'US', 
+    'first_name': 'Jenna M ', 
+    'last_name': 'Ortega', 
+    'postal_code': '10800', 
+    'state': 'IL', 
+    'other': None, 
+    'nonce': 'tokencc_bh_q2spv3_8rhkvk_cpyv8s_7s2q4r_pzz', 
+    'device_data': '{"device_session_id":"1f5d4e42701386875b8fe252e96bab97","fraud_merchant_id":"604019","correlation_id":"c1769c09ffdd118cdbc763507964b026"}', 
+} 
+ 
+ response = patch('https://api.heroku.com/account/payment-method', headers=headers, json=data)
+ return response.json()
