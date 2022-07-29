@@ -27,7 +27,8 @@ async def _stripe(e):
     message = await e.reply("`Processing...`")
     cc, exp_mo, exp_year, cvv = arg.split("|", 3)
     start_time = datetime.now()
-    token = tokenize_card(cc.strip(), cvv.strip(), exp_mo.strip(), exp_year.strip())
+    token = tokenize_card(cc.strip(), cvv.strip(),
+                          exp_mo.strip(), exp_year.strip())
     if token is None:
         await message.edit("`Invalid card details.`")
         return
@@ -425,3 +426,32 @@ async def addr(msg):
         await msg.reply(ADDR)
     else:
         await msg.reply("No address found")
+
+
+def get_full_address(address_id):
+    headers = {
+        'authority': 'atlas.shopifycloud.com',
+        'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
+        'sec-ch-ua-mobile': '?0',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
+        'accept': '*/*',
+        'origin': 'https://checkout.shopify.com',
+        'sec-fetch-site': 'cross-site',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-dest': 'empty',
+        'referer': 'https://checkout.shopify.com/',
+        'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+    }
+
+    data = {
+        'query': '\n  query address($addressId: String!, $locale: String!, $sessionToken: String!) {\n    address(id: $addressId, locale: $locale, sessionToken: $sessionToken) {\n      address1\n      address2\n      city\n      country\n      countryCode\n      province\n      provinceCode\n      zip\n      latitude\n      longitude\n    }\n  }\n',
+        'variables': {
+            'addressId': 'Q2hJSm84S0R2UkFXS1RvUmhnNFotVFYtQklJfHsicXVlcnkiOiI0OTEiLCJwbGFjZXMiOlt7ImlkIjoiQ2hJSm84S0R2UkFXS1RvUmhnNFotVFYtQklJIiwibmFtZSI6IjQ5MTAwMSJ9LHsiaWQiOiJDaElKd2NldjQxOUVLVG9SR0ZEVXdDMlN3b2ciLCJuYW1lIjoiNDkxNDQxIn0seyJpZCI6IkNoSUo0YkFMQVptVUtUb1JFZ1dJc2JUODNUQSIsIm5hbWUiOiI0OTE5OTUifSx7ImlkIjoiQ2hJSmwwZTFoaU56Q0RzUm5GemNxWTZuTDJJIiwibmFtZSI6IjQ5MTYyMWIsIENodXJjaCBSb2FkIn0seyJpZCI6IkNoSUpSMTN3czJkVEtEb1Juc1BTaGFfV19BbyIsIm5hbWUiOiI0OTEzMzUifV0sImNvdW50cnlfY29kZSI6IklOIn0=',
+            'locale': 'en-GB',
+            'sessionToken': '1ebc539da44b9c4c591bd548b1f7075d-1659094115528',
+        },
+    }
+
+    response = post(
+        'https://atlas.shopifycloud.com/graphql', headers=headers, json=data)
+    return response.json()
