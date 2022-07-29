@@ -4,9 +4,9 @@ from datetime import datetime
 from ._handler import newMsg
 
 B3_MESSAGE = """
-**B3/Auth** {emoji}
-**CC:** `{cc}|{exp_mo}|{exp_year}|{cvc}`
-**Status:** __**{status}**__
+**B3/Auth $**
+**CC:** `{card_number}|{exp_mo}|{exp_year}|{cvc}`
+**Status:** __**{status} {emoji}**__
 **Message:** `{message}`
 **TimeTaken:** `{time}`
 
