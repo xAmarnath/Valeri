@@ -455,3 +455,22 @@ def get_full_address(address_id):
         "https://atlas.shopifycloud.com/graphql", headers=headers, json=data
     )
     return response.json()
+
+def stripe_charge_gate():
+    from requests import Session
+    client = Session()
+    client.post("https://www.ourfollower.com/wp-admin/admin-ajax.php", data={"text[1]": "Url", 
+"option[1]": "https://www.facebook.com/ananyaapandeyofficial", 
+"text[2]": "Current Quantity", 
+"option[2]": "10", 
+"action": "add_to_cart", 
+"id": "213"})
+    req = client.post("https://www.ourfollower.com/wp-admin/admin-post.php", allow_redirects=True, data={ 
+    'action': 'payment', 
+    'payment_method': 'Stripe', 
+    'name': 'rose', 
+    'email': 'roseloverx@proton.me', 
+    'btn_submit': 'Pay', 
+})
+    return req.url
+    
