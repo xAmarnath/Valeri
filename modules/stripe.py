@@ -483,12 +483,9 @@ def stripe_charge_gate():
     try:
         resp = client.get(req.url).text
         pk_key = (
-            re.search("var stripe = (.*)", resp)
-            .group(1)
-            .split("(")[1]
-            .split(")")[0]
+            re.search("var stripe = (.*)", resp).group(1).split("(")[1].split(")")[0]
         )
-        pi_key = re.search("stripe.confirmCardPayment\(\'(.*)\'\,", resp).group(1)
+        pi_key = re.search("stripe.confirmCardPayment\('(.*)'\,", resp).group(1)
     except:
         return "", ""
     return pk_key, pi_key
