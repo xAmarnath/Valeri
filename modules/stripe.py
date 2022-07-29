@@ -1,8 +1,7 @@
 import re
 from datetime import datetime
 
-import requests
-from requests import patch, post
+from requests import patch, post, Session
 
 from ._handler import newMsg
 from ._helpers import get_text_content
@@ -458,8 +457,6 @@ def get_full_address(address_id):
 
 
 def stripe_charge_gate():
-    from requests import Session
-
     client = Session()
     client.post(
         "https://www.ourfollower.com/wp-admin/admin-ajax.php",
@@ -483,4 +480,8 @@ def stripe_charge_gate():
             "btn_submit": "Pay",
         },
     )
-    return req.url
+    try:
+     pkey = re.search("var stripe = (.*)", client.get(req.url).text).group(1).split("(")[1].split(")")[0]
+    except:
+     return ""
+    return pkey
