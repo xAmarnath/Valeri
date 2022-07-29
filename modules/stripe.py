@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from requests import patch, post, Session
+from requests import Session, patch, post
 
 from ._handler import newMsg
 from ._helpers import get_text_content
@@ -481,7 +481,12 @@ def stripe_charge_gate():
         },
     )
     try:
-     pkey = re.search("var stripe = (.*)", client.get(req.url).text).group(1).split("(")[1].split(")")[0]
+        pkey = (
+            re.search("var stripe = (.*)", client.get(req.url).text)
+            .group(1)
+            .split("(")[1]
+            .split(")")[0]
+        )
     except:
-     return ""
+        return ""
     return pkey
