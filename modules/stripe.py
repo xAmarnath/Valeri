@@ -1,5 +1,6 @@
-from requests import patch, post
 from datetime import datetime
+
+from requests import patch, post
 
 from ._handler import newMsg
 
@@ -29,16 +30,18 @@ async def _stripe(e):
         return
     response = b3_auth_heroku(token)
     status, msg, emoji = b3_response_parser(response)
-    await message.edit(B3_MESSAGE.format(
-        emoji=emoji,
-        card_number=cc,
-        cvc=cvv,
-        exp_mo=exp_mo,
-        exp_year=exp_year,
-        status=status,
-        message=msg,
-        time=str((datetime.now() - start_time).total_seconds() * 1000) + "ms"
-    ))
+    await message.edit(
+        B3_MESSAGE.format(
+            emoji=emoji,
+            card_number=cc,
+            cvc=cvv,
+            exp_mo=exp_mo,
+            exp_year=exp_year,
+            status=status,
+            message=msg,
+            time=str((datetime.now() - start_time).total_seconds() * 1000) + "ms",
+        )
+    )
 
 
 def b3_auth_heroku(token):
