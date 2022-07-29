@@ -419,7 +419,9 @@ async def addr(msg):
         content = content.lower().replace(country.lower(), "")
     address = get_real_address(content, country)
     if address:
-        ADDR = "Address in " + country + ": " + "\n".join(address)
+        ADDR = "Address in " + country + ":\n"
+        for x in address:
+            ADDR += "• `" + x + "`\n"
         await msg.reply(ADDR)
     else:
         await msg.reply("No address found")
