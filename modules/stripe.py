@@ -1,6 +1,4 @@
-from urllib import response
 from requests import get, patch, post
-from telethon import Button
 
 from ._handler import newMsg
 
@@ -23,8 +21,7 @@ async def _stripe(e):
         return
     message = await e.reply("`Processing...`")
     cc, exp_mo, exp_year, cvv = arg.split("|", 3)
-    token = tokenize_card(cc.strip(), cvv.strip(),
-                          exp_mo.strip(), exp_year.strip())
+    token = tokenize_card(cc.strip(), cvv.strip(), exp_mo.strip(), exp_year.strip())
     if token is None:
         await message.edit("`Invalid card details.`")
         return
