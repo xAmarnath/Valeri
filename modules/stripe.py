@@ -114,3 +114,48 @@ def b3_auth_heroku():
         "https://api.heroku.com/account/payment-method", headers=headers, json=data
     )
     return response.json()
+
+def tokenize_cc():
+ headers = {
+    'Accept': '*/*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjIwMTgwNDI2MTYtcHJvZHVjdGlvbiIsImlzcyI6Imh0dHBzOi8vYXBpLmJyYWludHJlZWdhdGV3YXkuY29tIn0.eyJleHAiOjE2NTkxNzYwNzgsImp0aSI6IjY0M2Y0YzE1LWNiNmMtNDY1Ny1hOWQ5LTUxNTI2MTQzMDlhZSIsInN1YiI6IjM2OTZzNzczeWRjMnoycjMiLCJpc3MiOiJodHRwczovL2FwaS5icmFpbnRyZWVnYXRld2F5LmNvbSIsIm1lcmNoYW50Ijp7InB1YmxpY19pZCI6IjM2OTZzNzczeWRjMnoycjMiLCJ2ZXJpZnlfY2FyZF9ieV9kZWZhdWx0Ijp0cnVlfSwicmlnaHRzIjpbIm1hbmFnZV92YXVsdCJdLCJzY29wZSI6WyJCcmFpbnRyZWU6VmF1bHQiXSwib3B0aW9ucyI6e319.-FyX5EeRKk2j1W5gUEzJXi24RDymCKMyWep9CLqIPyQt63ZggmrbB_cYwovnAaMkxM7LjkWUORERtOmYTNDWxg',
+    'Braintree-Version': '2018-05-10',
+    'Connection': 'keep-alive',
+    # Already added when you pass json=
+    # 'Content-Type': 'application/json',
+    'Origin': 'https://assets.braintreegateway.com',
+    'Referer': 'https://assets.braintreegateway.com/',
+    'Sec-Fetch-Dest': 'empty',
+    'Sec-Fetch-Mode': 'cors',
+    'Sec-Fetch-Site': 'cross-site',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
+    'sec-ch-ua': '".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+}
+
+ data = {
+    'clientSdkMetadata': {
+        'source': 'client',
+        'integration': 'custom',
+        'sessionId': '94c4a395-385a-4ba3-9cad-7ca465cb1c21',
+    },
+    'query': 'mutation TokenizeCreditCard($input: TokenizeCreditCardInput!) {   tokenizeCreditCard(input: $input) {     token     creditCard {       bin       brandCode       last4       cardholderName       expirationMonth      expirationYear      binData {         prepaid         healthcare         debit         durbinRegulated         commercial         payroll         issuingBank         countryOfIssuance         productId       }     }   } }',
+    'variables': {
+        'input': {
+            'creditCard': {
+                'number': '5178058528882106',
+                'expirationMonth': '10',
+                'expirationYear': '2024',
+                'cvv': '061',
+            },
+            'options': {
+                'validate': False,
+            },
+        },
+    },
+    'operationName': 'TokenizeCreditCard',
+}
+
+ response = post('https://payments.braintree-api.com/graphql', headers=headers, json=data)
