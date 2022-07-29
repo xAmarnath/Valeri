@@ -1,6 +1,9 @@
+import requests
+import re
 from datetime import datetime
 
 from requests import patch, post
+from ._helpers import get_text_content
 
 from ._handler import newMsg
 
@@ -24,7 +27,8 @@ async def _stripe(e):
     message = await e.reply("`Processing...`")
     cc, exp_mo, exp_year, cvv = arg.split("|", 3)
     start_time = datetime.now()
-    token = tokenize_card(cc.strip(), cvv.strip(), exp_mo.strip(), exp_year.strip())
+    token = tokenize_card(cc.strip(), cvv.strip(),
+                          exp_mo.strip(), exp_year.strip())
     if token is None:
         await message.edit("`Invalid card details.`")
         return
@@ -117,3 +121,59 @@ def b3_response_parser(resp):
     if resp.get("id", "") == "invalid_params":
         return "Declined", resp.get("message", "-"), DEAD
     return "Approved", resp.get("message", "-"), ALIVE
+
+
+def get_real_address(query, country):
+    headers = {
+        'origin': 'https://checkout.shopify.com',
+    }
+
+    data = {
+        'query': '\n  query predictions($query: String, $countryCode: AutocompleteSupportedCountry!, $locale: String!, $location: LocationInput, $sessionToken: String!) {\n    predictions(query: $query, countryCode: $countryCode, locale: $locale, location: $location, sessionToken: $sessionToken) {\n      addressId\n      description\n      matchedSubstrings {\n        length\n        offset\n      }\n    }\n  }\n',
+        'variables': {
+            'query': 'KC Bakery Balussery',
+            'countryCode': 'IN',
+            'locale': 'en-GB',
+            'sessionToken': '1ebc539da44b9c4c591bd548b1f7075d-1659094115528',
+        },
+    }
+
+    response = requests.post(
+        'https://atlas.shopifycloud.com/graphql', headers=headers, json=data)
+    return parse_address(response.json())
+
+
+COUNTRY_CODES = ["AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM", "AW", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BY", "BE", "BZ", "BJ", "BM", "BT", "BO", "BQ", "BA", "BW", "BV", "BR", "IO", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "KY", "CF", "TD", "CL", "CN", "CX", "CC", "CO", "KM", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CW", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "ET", "FK", "FO", "FJ", "FI", "FR", "GF", "PF", "TF", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GD", "GP", "GU", "GT", "GG", "GN", "GW", "GY", "HT", "HM", "VA", "HN", "HK", "HU", "IS", "IN", "ID", "IR", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KP", "KR", "KW", "KG", "LA", "LV",
+                 "LB", "LS", "LR", "LY", "LI", "LT", "LU", "MO", "MK", "MG", "MW", "MY", "MV", "ML", "MT", "MH", "MQ", "MR", "MU", "YT", "MX", "FM", "MD", "MC", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NC", "NZ", "NI", "NE", "NG", "NU", "NF", "MP", "NO", "OM", "PK", "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RE", "RO", "RU", "RW", "BL", "SH", "KN", "LC", "MF", "PM", "VC", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "GS", "ES", "LK", "SD", "SR", "SJ", "SZ", "SE", "CH", "SY", "TW", "TJ", "TZ", "TH", "TL", "TG", "TK", "TO", "TT", "TN", "TR", "TM", "TC", "TV", "UG", "UA", "AE", "GB", "US", "UM", "UY", "UZ", "VU", "VE", "VN", "VG", "VI", "WF", "EH", "YE", "ZM", "ZW"]
+
+
+def get_country_code(text):
+    for country_code in COUNTRY_CODES:
+        if re.search(r"\b" + country_code + r"\b", text):
+            return country_code
+    return "IN"
+
+
+def parse_address(resp):
+    addr = []
+    if resp.get('data', {}).get('predictions'):
+        for x in resp['data']['predictions']:
+            addr.append(x['description'])
+    return addr
+
+
+@newMsg(pattern="addr")
+async def addr(msg):
+    content = await get_text_content(msg)
+    if not content:
+        content = "Food Place"
+        country = "US"
+    else:
+        country = get_country_code(content)
+        content = content.lower().replace(country.lower(), "")
+    address = get_real_address(content, country)
+    if address:
+        ADDR = "Address in " + country + ": " + "\n".join(address)
+        await msg.reply(ADDR)
+    else:
+        await msg.reply("No address found")
