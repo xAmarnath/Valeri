@@ -624,5 +624,6 @@ async def voucherpub(e):
             time=str((datetime.now() - start_time).total_seconds() * 1000) + "ms",
             checked_by=get_mention(e.sender, "html"),
             emoji=emoji or "-",
-        ),parse_mode="html"
+        ),
+        parse_mode="html",
     )
