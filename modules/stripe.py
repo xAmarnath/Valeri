@@ -521,16 +521,22 @@ async def voucher_pub(card_number, cvv, exp_mo, exp_year):
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
         }
-        req = await session.post("https://api.stripe.com/v1/sources",
-                                 headers=headers, data=f"type=card&owner[name]=Jenna++Oretega&owner[address][line1]=431&owner[address][state]=CA&owner[address][city]=Kozhikode&owner[address][postal_code]=10800&owner[address][country]=US&owner[email]=roseloverx%40proton.me&card[number]={card_number}&card[cvc]={cvv}&card[exp_month]={exp_mo}&card[exp_year]={exp_year}&guid=2502e27c-c4db-4af8-a601-f1d6983af82ef33d6c&muid=2cb9fdb4-d524-45a3-9b0b-ce2578e22030103b84&sid=080260f5-7cbe-4bf4-9f47-b0da61ed0ff40e6908&payment_user_agent=stripe.js%2F70a10e913%3B+stripe-js-v3%2F70a10e913&time_on_page=274979&key=pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi"
-                                 )
+        req = await session.post(
+            "https://api.stripe.com/v1/sources",
+            headers=headers,
+            data=f"type=card&owner[name]=Jenna++Oretega&owner[address][line1]=431&owner[address][state]=CA&owner[address][city]=Kozhikode&owner[address][postal_code]=10800&owner[address][country]=US&owner[email]=roseloverx%40proton.me&card[number]={card_number}&card[cvc]={cvv}&card[exp_month]={exp_mo}&card[exp_year]={exp_year}&guid=2502e27c-c4db-4af8-a601-f1d6983af82ef33d6c&muid=2cb9fdb4-d524-45a3-9b0b-ce2578e22030103b84&sid=080260f5-7cbe-4bf4-9f47-b0da61ed0ff40e6908&payment_user_agent=stripe.js%2F70a10e913%3B+stripe-js-v3%2F70a10e913&time_on_page=274979&key=pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi",
+        )
         stripe_source = (await req.json())["id"]
-        req = await session.post("https://voucherpub.com?wc-ajax=checkout",
-                                 data="billing_email=roseloverx%40proton.me&billing_first_name=Jenna+&billing_last_name=Oretega&billing_country=US&billing_address_1=431&billing_city=Kozhikode&billing_state=CA&billing_postcode=10800&metorik_source_type=organic&metorik_source_url=https%3A%2F%2Fwww.google.com%2F&metorik_source_mtke=(none)&metorik_source_utm_campaign=(none)&metorik_source_utm_source=google&metorik_source_utm_medium=organic&metorik_source_utm_content=(none)&metorik_source_utm_id=(none)&metorik_source_utm_term=(none)&metorik_source_session_entry=https%3A%2F%2Fvoucherpub.com%2F&metorik_source_session_start_time=2022-07-30+06%3A02%3A03&metorik_source_session_pages=6&metorik_source_session_count=1&thwcfe_price_data=&thwcfe_disabled_fields=&thwcfe_disabled_sections=&thwcfe_repeat_fields=&thwcfe_repeat_sections=&shipping_method%5B0%5D=free_shipping%3A1&payment_method=stripe&bwfan_user_consent=1&woocommerce-process-checkout-nonce=2c5472f4b9&_wp_http_referer=%2F%3Fwc-ajax%3Dupdate_order_review&stripe_source={}".format(
-                                     stripe_source
-                                 ), cookies={
-                                     "wp_woocommerce_session_6c39cd94485f6fb17cd9987e4c455fa3": "t_7a63fe491748b6ab04fd74535c0952%7C%7C1659335599%7C%7C1659331999%7C%7C59eb1f171f1b91820074316346bff97d",
-                                 }, headers=headers)
+        req = await session.post(
+            "https://voucherpub.com?wc-ajax=checkout",
+            data="billing_email=roseloverx%40proton.me&billing_first_name=Jenna+&billing_last_name=Oretega&billing_country=US&billing_address_1=431&billing_city=Kozhikode&billing_state=CA&billing_postcode=10800&metorik_source_type=organic&metorik_source_url=https%3A%2F%2Fwww.google.com%2F&metorik_source_mtke=(none)&metorik_source_utm_campaign=(none)&metorik_source_utm_source=google&metorik_source_utm_medium=organic&metorik_source_utm_content=(none)&metorik_source_utm_id=(none)&metorik_source_utm_term=(none)&metorik_source_session_entry=https%3A%2F%2Fvoucherpub.com%2F&metorik_source_session_start_time=2022-07-30+06%3A02%3A03&metorik_source_session_pages=6&metorik_source_session_count=1&thwcfe_price_data=&thwcfe_disabled_fields=&thwcfe_disabled_sections=&thwcfe_repeat_fields=&thwcfe_repeat_sections=&shipping_method%5B0%5D=free_shipping%3A1&payment_method=stripe&bwfan_user_consent=1&woocommerce-process-checkout-nonce=2c5472f4b9&_wp_http_referer=%2F%3Fwc-ajax%3Dupdate_order_review&stripe_source={}".format(
+                stripe_source
+            ),
+            cookies={
+                "wp_woocommerce_session_6c39cd94485f6fb17cd9987e4c455fa3": "t_7a63fe491748b6ab04fd74535c0952%7C%7C1659335599%7C%7C1659331999%7C%7C59eb1f171f1b91820074316346bff97d",
+            },
+            headers=headers,
+        )
         response = await req.json()
         intent = response["redirect"].split("_secret")[0].split("pi-")[1]
         client_secret = response["redirect"].split(":")[0].split("pi-")[1]
