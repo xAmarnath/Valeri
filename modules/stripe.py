@@ -598,6 +598,8 @@ async def voucher_pub(card_number, cvv, exp_mo, exp_year):
     except Exception as e:
         return "Error", "-", str(e), "❌"
 
+        #ttps://voucherpub.com/order-received/thank-you/?key=wc_order_USBJnnErxXlkx&order_id=56752&utm_nooverride=1
+
 
 VOUCHER_PUB = """
 <b>$ CHARGE-STRIPE_3$</b>
