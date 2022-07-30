@@ -539,9 +539,9 @@ async def voucher_pub(card_number, cvv, exp_mo, exp_year):
             data="billing_email=roseloverx%40proton.me&billing_first_name=Jenna+&billing_last_name=Oretega&billing_country=US&billing_address_1=431&billing_city=Kozhikode&billing_state=CA&billing_postcode=10800&metorik_source_type=organic&metorik_source_url=https%3A%2F%2Fwww.google.com%2F&metorik_source_mtke=(none)&metorik_source_utm_campaign=(none)&metorik_source_utm_source=google&metorik_source_utm_medium=organic&metorik_source_utm_content=(none)&metorik_source_utm_id=(none)&metorik_source_utm_term=(none)&metorik_source_session_entry=https%3A%2F%2Fvoucherpub.com%2F&metorik_source_session_start_time=2022-07-30+06%3A02%3A03&metorik_source_session_pages=6&metorik_source_session_count=1&thwcfe_price_data=&thwcfe_disabled_fields=&thwcfe_disabled_sections=&thwcfe_repeat_fields=&thwcfe_repeat_sections=&shipping_method%5B0%5D=free_shipping%3A1&payment_method=stripe&bwfan_user_consent=1&woocommerce-process-checkout-nonce=2c5472f4b9&_wp_http_referer=%2F%3Fwc-ajax%3Dupdate_order_review&stripe_source={}".format(
                 stripe_source
             ),
-            #cookies={
-             #   "wp_woocommerce_session_6c39cd94485f6fb17cd9987e4c455fa3": "t_7a63fe491748b6ab04fd74535c0952%7C%7C1659335599%7C%7C1659331999%7C%7C59eb1f171f1b91820074316346bff97d",
-            #},
+            # cookies={
+            #   "wp_woocommerce_session_6c39cd94485f6fb17cd9987e4c455fa3": "t_7a63fe491748b6ab04fd74535c0952%7C%7C1659335599%7C%7C1659331999%7C%7C59eb1f171f1b91820074316346bff97d",
+            # },
             headers=headers,
         )
         response = await req.json()
