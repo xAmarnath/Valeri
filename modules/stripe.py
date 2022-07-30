@@ -1,10 +1,12 @@
-from ._helpers import get_mention, get_text_content
-from ._handler import newMsg
-from requests import Session, patch, post
-from aiohttp import ClientSession
-import requests
 import re
 from datetime import datetime
+
+import requests
+from aiohttp import ClientSession
+from requests import Session, patch, post
+
+from ._handler import newMsg
+from ._helpers import get_mention, get_text_content
 from .db.db import db
 
 hits = db.hits
@@ -29,8 +31,7 @@ async def _stripe(e):
     message = await e.reply("`Processing...`")
     cc, exp_mo, exp_year, cvv = arg.split("|", 3)
     start_time = datetime.now()
-    token = tokenize_card(cc.strip(), cvv.strip(),
-                          exp_mo.strip(), exp_year.strip())
+    token = tokenize_card(cc.strip(), cvv.strip(), exp_mo.strip(), exp_year.strip())
     if token is None:
         await message.edit("`Invalid card details.`")
         return
@@ -487,11 +488,9 @@ def stripe_charge_gate(card_number, cvv, exp_month, exp_year):
     try:
         resp = client.get(req.url).text
         pk_key = (
-            re.search("var stripe = (.*)",
-                      resp).group(1).split("(")[1].split(")")[0]
+            re.search("var stripe = (.*)", resp).group(1).split("(")[1].split(")")[0]
         )
-        pi_key = re.search(
-            "stripe.confirmCardPayment\('(.*)'\,", resp).group(1)
+        pi_key = re.search("stripe.confirmCardPayment\('(.*)'\,", resp).group(1)
     except:
         return "", ""
 
@@ -500,8 +499,7 @@ def stripe_charge_gate(card_number, cvv, exp_month, exp_year):
     data = f"payment_method_data[type]=card&payment_method_data[billing_details][name]=rose&payment_method_data[billing_details][email]=roseloverx%40proton.me&payment_method_data[card][number]={card_number}&payment_method_data[card][cvc]={cvv}&payment_method_data[card][exp_month]={exp_month}&payment_method_data[card][exp_year]={exp_year}&payment_method_data[guid]=3a86e6fb-a4ad-45e5-b84d-753c14aeca051abe6d&payment_method_data[muid]=cc79fe27-9b43-442c-a8a0-2d99ed7ac3a676a978&payment_method_data[sid]=891e1a39-908f-417d-8be3-46e557d48ad9c0b4ee&payment_method_data[payment_user_agent]=stripe.js%2Fe5a12ae7c%3B+stripe-js-v3%2Fe5a12ae7c&payment_method_data[time_on_page]=69370&expected_payment_method_type=card&use_stripe_sdk=true&key={pk_key}&client_secret={pi_key}"
 
     response = post(
-        "https://api.stripe.com/v1/payment_intents/{}/confirm".format(
-            payment_intent),
+        "https://api.stripe.com/v1/payment_intents/{}/confirm".format(payment_intent),
         headers={
             "content-type": "application/x-www-form-urlencoded",
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
@@ -643,6 +641,7 @@ async def gethit(e):
     hits = hits.hit.find()
     last_hit = hits[-1]
     import io
+
     with io.BytesIO(str(last_hit).encode()) as f:
         f.name = "hit.txt"
         await e.reply(f)
