@@ -1,15 +1,14 @@
-from os import getenv
+from requests import get, post
+r = post(
+            "https://voucherpub.com/wp-admin/admin-ajax.php",
+            data={
+                "attribute_package": "12 Months",
+                "quantity": "1",
+                "add-to-cart": "1514",
+                "product_id": "1514",
+                "variation_id": "1517",
+                "action": "basel_ajax_add_to_cart",
+            },
+        )
 
-from aiohttp.web import Application, HTTPFound, run_app
-
-app = Application()
-app.router.add_static("/files/", ".", show_index=True)
-
-
-async def root_handler(request):
-    return HTTPFound("https://google.com")
-
-
-app.router.add_route("*", "/", root_handler)
-
-run_app(app, port=int(getenv("PORT", "80")))
+print(r.headers)
