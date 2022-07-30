@@ -522,7 +522,7 @@ async def voucher_pub(card_number, cvv, exp_mo, exp_year):
                 "action": "basel_ajax_add_to_cart",
             },
         )
-        cookies = (await req.headers.get("Set-Cookie")).split(";")
+        cookies = req.headers.get("Set-Cookie").split(";")
         await session.cookie_jar.update_cookies(cookies)
 
         headers = {
