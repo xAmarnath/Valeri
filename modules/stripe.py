@@ -598,7 +598,7 @@ async def voucherpub(e):
     message = await e.reply("`Processing...`")
     cc, exp_mo, exp_year, cvv = arg.split("|", 3)
     start_time = datetime.now()
-    result, dcode, message = voucher_pub(cc, cvv, exp_mo, exp_year)
+    result, dcode, msg = voucher_pub(cc, cvv, exp_mo, exp_year)
     await message.edit(
         VOUCHER_PUB.format(
             cc=cc,
@@ -607,7 +607,7 @@ async def voucherpub(e):
             cvv=cvv,
             result=result,
             dcode=dcode,
-            message=message,
+            message=msg,
             time=str((datetime.now() - start_time).total_seconds() * 1000) + "ms",
         )
     )
