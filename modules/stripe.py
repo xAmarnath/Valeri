@@ -568,13 +568,14 @@ def voucher_pub(card_number, cvv, exp_mo, exp_year):
     )
     if response.json().get("next_action") is not None:
         return "Declined", "3ds_vbv", "Your card requires additional authentication"
-    if "last_payment_error" in response.json():
+    if response.json().get("last_payment_error") is not None:
         return (
             "Declined",
             response.json()["last_payment_error"]["decline_code"],
             response.json()["last_payment_error"]["message"],
         )
     else:
+        print(response.json())  
         return "Charged", "-", "Voucher has been sent to your email"
 
 
