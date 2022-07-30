@@ -609,11 +609,11 @@ async def voucherpub(e):
             exp_mo=exp_mo,
             exp_year=exp_year,
             cvv=cvv,
-            result=result,
-            decline_code=dcode,
-            message=msg,
+            result=result or "-",
+            decline_code=dcode or "-",
+            message=msg or "-",
             time=str((datetime.now() - start_time).total_seconds() * 1000) + "ms",
             checked_by=get_mention(e.sender),
-            emoji=emoji,
+            emoji=emoji or "-",
         )
     )
