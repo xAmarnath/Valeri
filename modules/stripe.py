@@ -523,6 +523,8 @@ async def voucher_pub(card_number, cvv, exp_mo, exp_year):
             },
         )
         cookies = req.headers.get("Set-Cookie").split(";")
+        cookies = [{k: v} for k, v in [c.split("=") for c in cookies]]
+        cookies = {c["name"]: c["value"] for c in cookies}
         await session.cookie_jar.update_cookies(cookies)
 
         headers = {
