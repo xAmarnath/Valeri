@@ -576,7 +576,7 @@ def voucher_pub(card_number, cvv, exp_mo, exp_year):
             response.json()["last_payment_error"].get("message", "-"),
         )
     else:
-        print(response.json())  
+        print(response.json())
         return "Charged", "-", "Voucher has been sent to your email"
 
 
