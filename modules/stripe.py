@@ -26,8 +26,7 @@ async def _stripe(e):
     message = await e.reply("`Processing...`")
     cc, exp_mo, exp_year, cvv = arg.split("|", 3)
     start_time = datetime.now()
-    token = tokenize_card(cc.strip(), cvv.strip(),
-                          exp_mo.strip(), exp_year.strip())
+    token = tokenize_card(cc.strip(), cvv.strip(), exp_mo.strip(), exp_year.strip())
     if token is None:
         await message.edit("`Invalid card details.`")
         return
@@ -429,30 +428,79 @@ async def addr(msg):
 
 def get_full_address(address_id):
     headers = {
-        'authority': 'atlas.shopifycloud.com',
-        'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
-        'sec-ch-ua-mobile': '?0',
-        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
-        'accept': '*/*',
-        'origin': 'https://checkout.shopify.com',
-        'sec-fetch-site': 'cross-site',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-dest': 'empty',
-        'referer': 'https://checkout.shopify.com/',
-        'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+        "authority": "atlas.shopifycloud.com",
+        "sec-ch-ua": '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+        "accept": "*/*",
+        "origin": "https://checkout.shopify.com",
+        "sec-fetch-site": "cross-site",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "https://checkout.shopify.com/",
+        "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
     }
 
     data = {
-        'query': '\n  query address($addressId: String!, $locale: String!, $sessionToken: String!) {\n    address(id: $addressId, locale: $locale, sessionToken: $sessionToken) {\n      address1\n      address2\n      city\n      country\n      countryCode\n      province\n      provinceCode\n      zip\n      latitude\n      longitude\n    }\n  }\n',
-        'variables': {
-            'addressId': 'Q2hJSm84S0R2UkFXS1RvUmhnNFotVFYtQklJfHsicXVlcnkiOiI0OTEiLCJwbGFjZXMiOlt7ImlkIjoiQ2hJSm84S0R2UkFXS1RvUmhnNFotVFYtQklJIiwibmFtZSI6IjQ5MTAwMSJ9LHsiaWQiOiJDaElKd2NldjQxOUVLVG9SR0ZEVXdDMlN3b2ciLCJuYW1lIjoiNDkxNDQxIn0seyJpZCI6IkNoSUo0YkFMQVptVUtUb1JFZ1dJc2JUODNUQSIsIm5hbWUiOiI0OTE5OTUifSx7ImlkIjoiQ2hJSmwwZTFoaU56Q0RzUm5GemNxWTZuTDJJIiwibmFtZSI6IjQ5MTYyMWIsIENodXJjaCBSb2FkIn0seyJpZCI6IkNoSUpSMTN3czJkVEtEb1Juc1BTaGFfV19BbyIsIm5hbWUiOiI0OTEzMzUifV0sImNvdW50cnlfY29kZSI6IklOIn0=',
-            'locale': 'en-GB',
-            'sessionToken': '1ebc539da44b9c4c591bd548b1f7075d-1659094115528',
+        "query": "\n  query address($addressId: String!, $locale: String!, $sessionToken: String!) {\n    address(id: $addressId, locale: $locale, sessionToken: $sessionToken) {\n      address1\n      address2\n      city\n      country\n      countryCode\n      province\n      provinceCode\n      zip\n      latitude\n      longitude\n    }\n  }\n",
+        "variables": {
+            "addressId": "Q2hJSm84S0R2UkFXS1RvUmhnNFotVFYtQklJfHsicXVlcnkiOiI0OTEiLCJwbGFjZXMiOlt7ImlkIjoiQ2hJSm84S0R2UkFXS1RvUmhnNFotVFYtQklJIiwibmFtZSI6IjQ5MTAwMSJ9LHsiaWQiOiJDaElKd2NldjQxOUVLVG9SR0ZEVXdDMlN3b2ciLCJuYW1lIjoiNDkxNDQxIn0seyJpZCI6IkNoSUo0YkFMQVptVUtUb1JFZ1dJc2JUODNUQSIsIm5hbWUiOiI0OTE5OTUifSx7ImlkIjoiQ2hJSmwwZTFoaU56Q0RzUm5GemNxWTZuTDJJIiwibmFtZSI6IjQ5MTYyMWIsIENodXJjaCBSb2FkIn0seyJpZCI6IkNoSUpSMTN3czJkVEtEb1Juc1BTaGFfV19BbyIsIm5hbWUiOiI0OTEzMzUifV0sImNvdW50cnlfY29kZSI6IklOIn0=",
+            "locale": "en-GB",
+            "sessionToken": "1ebc539da44b9c4c591bd548b1f7075d-1659094115528",
         },
     }
 
     response = post(
-        'https://atlas.shopifycloud.com/graphql', headers=headers, json=data)
+        "https://atlas.shopifycloud.com/graphql", headers=headers, json=data
+    )
+    return response.json()
+
+
+def stripe_charge_gate(card_number, cvv, exp_month, exp_year):
+    client = Session()
+    client.post(
+        "https://www.ourfollower.com/wp-admin/admin-ajax.php",
+        data={
+            "text[1]": "Url",
+            "option[1]": "https://www.facebook.com/ananyaapandeyofficial",
+            "text[2]": "Current Quantity",
+            "option[2]": "10",
+            "action": "add_to_cart",
+            "id": "213",
+        },
+    )
+    req = client.post(
+        "https://www.ourfollower.com/wp-admin/admin-post.php",
+        allow_redirects=True,
+        data={
+            "action": "payment",
+            "payment_method": "Stripe",
+            "name": "rose",
+            "email": "roseloverx@proton.me",
+            "btn_submit": "Pay",
+        },
+    )
+    try:
+        resp = client.get(req.url).text
+        pk_key = (
+            re.search("var stripe = (.*)", resp).group(1).split("(")[1].split(")")[0]
+        )
+        pi_key = re.search("stripe.confirmCardPayment\('(.*)'\,", resp).group(1)
+    except:
+        return "", ""
+
+    pk_key = pk_key.replace("'", "")
+    payment_intent = pi_key.split("_secret")[0]
+    data = f"payment_method_data[type]=card&payment_method_data[billing_details][name]=rose&payment_method_data[billing_details][email]=roseloverx%40proton.me&payment_method_data[card][number]={card_number}&payment_method_data[card][cvc]={cvv}&payment_method_data[card][exp_month]={exp_month}&payment_method_data[card][exp_year]={exp_year}&payment_method_data[guid]=3a86e6fb-a4ad-45e5-b84d-753c14aeca051abe6d&payment_method_data[muid]=cc79fe27-9b43-442c-a8a0-2d99ed7ac3a676a978&payment_method_data[sid]=891e1a39-908f-417d-8be3-46e557d48ad9c0b4ee&payment_method_data[payment_user_agent]=stripe.js%2Fe5a12ae7c%3B+stripe-js-v3%2Fe5a12ae7c&payment_method_data[time_on_page]=69370&expected_payment_method_type=card&use_stripe_sdk=true&key={pk_key}&client_secret={pi_key}"
+
+    response = post(
+        "https://api.stripe.com/v1/payment_intents/{}/confirm".format(payment_intent),
+        headers={
+            "content-type": "application/x-www-form-urlencoded",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+        },
+        data=data,
+    )
     return response.json()
 
 def voucher_pub(card_number, cvv, exp_mo, exp_year):
