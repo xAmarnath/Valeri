@@ -549,8 +549,7 @@ async def voucher_pub(card_number, cvv, exp_mo, exp_year):
         intent = response["redirect"].split("_secret")[0].split("pi-")[1]
         client_secret = response["redirect"].split(":")[0].split("pi-")[1]
         req = await session.post(
-            "https://api.stripe.com/v1/payment_intents/{}/confirm".format(
-                intent),
+            "https://api.stripe.com/v1/payment_intents/{}/confirm".format(intent),
             headers=headers,
             data={
                 "expected_payment_method_type": "card",
@@ -594,8 +593,7 @@ async def voucher_pub(card_number, cvv, exp_mo, exp_year):
             )
         else:
             print(response)
-            hits.hit.insert_one(
-                {"date": datetime.now(), "response": response})
+            hits.hit.insert_one({"date": datetime.now(), "response": response})
             return "Charged", "-", "Voucher has been sent to your email", "✅"
 
     # ttps://voucherpub.com/order-received/thank-you/?key=wc_order_USBJnnErxXlkx&order_id=56752&utm_nooverride=1
