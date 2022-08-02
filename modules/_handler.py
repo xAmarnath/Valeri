@@ -55,6 +55,23 @@ def master_only(func):
     return sed
 
 
+from functools import wraps
+
+CHANNEL_ID = -100
+
+
+def join_check(func):
+    @wraps(func)
+    async def check(e):
+        try:
+            await e.client.get_permissions(CHANNEL_ID, e.sender_id)
+            await func(e)
+        except:
+            await e.reply("You have not joined my channel!")
+
+    return check
+
+
 def auth_only(func):
     """
     Decorator for handling messages from authenticated users.
