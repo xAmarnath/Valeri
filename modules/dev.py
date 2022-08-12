@@ -126,7 +126,7 @@ async def _ul(e):
 
 
 async def upload_decorator(e, files, chat, caption: str, directory: str):
-    thumb, attributes, action, streamable= None,[],"document", False
+    thumb, attributes, action, streamable = None, [], "document", False
     if len(files) > 1:
         msg = await e.reply("`Uploading...`")
     else:
