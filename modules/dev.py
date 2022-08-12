@@ -82,15 +82,13 @@ async def _ul(e):
     l = await get_text_content(e)
     if not l:
         return await _ls(e)
-
     caption = ""
-    thumb, attributes, streamable, chat, action = (
+    thumb, attributes, action = (
         None,
         [],
-        False,
-        e.chat_id,
         "document",
     )
+    streamble, chat = False, e.chat_id
     if any([re.search(x, l.lower()) for x in ["--chat", "-c"]]):
         if "--chat" in l.lower():
             args = l.split("--chat")
@@ -123,8 +121,8 @@ async def _ul(e):
                     files.append(f)
             if len(files) == 0:
                 return await e.reply("No files with that extension in Dir.")
-        except:
-            return await e.reply("OSError")
+        except Exception as o:
+            return await e.reply(f"OSError: {o}")
     else:
         files = [l]
         directory = ""
