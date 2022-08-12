@@ -82,7 +82,7 @@ async def _ul(e):
     l = await get_text_content(e)
     if not l:
         return await _ls(e)
-    
+
     caption = ""
     thumb, attributes, streamable, chat, action = (
         None,
@@ -112,76 +112,80 @@ async def _ul(e):
         args = l.split("--folder") if "--folder" in l else l.split("-f")
         ext = args[1] if len(args) > 1 else ""
         l = args[0].strip()
-        directory= l
+        directory = l
         try:
-           files = []
-           for f in os.listdir(l):
-              if ext:
-               if f.endswith(ext):
-                  files.append(f)
-              else:
-                   files.append(f)
-           if len(files) == 0:
-              return await e.reply("No files with that extension in Dir.")
+            files = []
+            for f in os.listdir(l):
+                if ext:
+                    if f.endswith(ext):
+                        files.append(f)
+                else:
+                    files.append(f)
+            if len(files) == 0:
+                return await e.reply("No files with that extension in Dir.")
         except:
-           return await e.reply("OSError")
+            return await e.reply("OSError")
     else:
         files = [l]
-        directory= ""
+        directory = ""
     await upload_decorator(e, files, chat, caption, directory)
-    
-        
 
-async def upload_decorator(e, files,chat,caption: str, directory: str):
+
+async def upload_decorator(e, files, chat, caption: str, directory: str):
     if len(files) > 1:
-       msg = await e.reply("`Uploading...`")
+        msg = await e.reply("`Uploading...`")
     else:
-       msg = await e.reply("`Uploading...` {}/{} {} from {}.")
+        msg = await e.reply("`Uploading...` {}/{} {} from {}.")
     done = 0
     for l in files:
-     l = directory + l
-     filename = l.split("\\")[-1]
-     caption = caption or filename
-     filename = filename.split("/")[-1] if filename == l else filename
-     if l.endswith(("mp4", "mkv", "3gp", "webm")):
-        thumb = (
-            generate_thumbnail(l, l + "_thumb.jpg") if len(thumbs) == 0 else thumbs[0]
-        )
-        d, w, h = get_video_metadata(l)
-        attributes = [
-            types.DocumentAttributeVideo(w=w, h=h, duration=d, supports_streaming=True)
-        ]
-        streamable = True
-        action = "video"
-     elif l.endswith(("mp3", "wav", "flv", "ogg", "opus")):
-        metadata = tinytag.TinyTag.get(l)
-        attributes = [
-            types.DocumentAttributeAudio(
-                duration=int(metadata.duration or "0"),
-                performer=metadata.artist or "Me",
-                title=metadata.title or "Unknown",
+        l = directory + l
+        filename = l.split("\\")[-1]
+        caption = caption or filename
+        filename = filename.split("/")[-1] if filename == l else filename
+        if l.endswith(("mp4", "mkv", "3gp", "webm")):
+            thumb = (
+                generate_thumbnail(l, l + "_thumb.jpg")
+                if len(thumbs) == 0
+                else thumbs[0]
             )
-        ]
-        action = "audio"
-     try:
-        file = await upload_file(e.client, l)
-        async with e.client.action(chat, action):
-            await e.client.send_message(
-                chat,
-                caption,
-                file=file,
-                thumb=thumb,
-                attributes=attributes,
-                supports_streaming=streamable,
-            )
-        await msg.delete()
-        if thumb and thumb != "thumb.jpg":
-            remove(thumb)
-        done += 1
-     except Exception as exc:
-        await msg.edit("`error on uploading.\n{}`".format(str(exc)))
-     if done > 1:
-        msg = await msg.edit("`Uploading...` {}+1/{} {} from {}.")
+            d, w, h = get_video_metadata(l)
+            attributes = [
+                types.DocumentAttributeVideo(
+                    w=w, h=h, duration=d, supports_streaming=True
+                )
+            ]
+            streamable = True
+            action = "video"
+        elif l.endswith(("mp3", "wav", "flv", "ogg", "opus")):
+            metadata = tinytag.TinyTag.get(l)
+            attributes = [
+                types.DocumentAttributeAudio(
+                    duration=int(metadata.duration or "0"),
+                    performer=metadata.artist or "Me",
+                    title=metadata.title or "Unknown",
+                )
+            ]
+            action = "audio"
+        try:
+            file = await upload_file(e.client, l)
+            async with e.client.action(chat, action):
+                await e.client.send_message(
+                    chat,
+                    caption,
+                    file=file,
+                    thumb=thumb,
+                    attributes=attributes,
+                    supports_streaming=streamable,
+                )
+            await msg.delete()
+            if thumb and thumb != "thumb.jpg":
+                remove(thumb)
+            done += 1
+        except Exception as exc:
+            await msg.edit("`error on uploading.\n{}`".format(str(exc)))
+        if done > 1:
+            msg = await msg.edit("`Uploading...` {}+1/{} {} from {}.")
+
 
 @newMsg(pattern="setthumb")
 @auth_only
