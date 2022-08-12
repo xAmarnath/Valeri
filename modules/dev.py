@@ -130,12 +130,12 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
     if len(files) > 1:
         msg = await e.reply("`Uploading...`")
     else:
-        msg = await e.reply("`Uploading...` {}/{} {} from {}.")
+        msg = await e.reply(f"`Uploading...` 0/{len(files)} from `{directory}`.")
     done = 0
     for l in files:
         l = directory + l
         filename = l.split("\\")[-1]
-        caption = caption or filename
+        caption = filename
         filename = filename.split("/")[-1] if filename == l else filename
         if l.endswith(("mp4", "mkv", "3gp", "webm")):
             thumb = (
@@ -172,15 +172,14 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
                     attributes=attributes,
                     supports_streaming=streamable,
                 )
-            await msg.delete()
             if thumb and thumb != "thumb.jpg":
                 remove(thumb)
             done += 1
         except Exception as exc:
             await msg.edit("`error on uploading.\n{}`".format(str(exc)))
         if done > 1:
-            msg = await msg.edit("`Uploading...` {}+1/{} {} from {}.")
-
+            msg = await msg.edit(f"`Uploading...` {done}/{len(files)} from `{directory}`.")
+        await msg.delete()
 
 @newMsg(pattern="setthumb")
 @auth_only
