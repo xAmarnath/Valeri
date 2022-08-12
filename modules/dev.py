@@ -84,12 +84,7 @@ async def _ul(e):
     if not l:
         return await _ls(e)
     caption = ""
-    thumb, attributes, action = (
-        None,
-        [],
-        "document",
-    )
-    streamble, chat = False, e.chat_id
+    chat = e.chat_id
     if any([re.search(x, l.lower()) for x in ["--chat", "-c"]]):
         if "--chat" in l.lower():
             args = l.split("--chat")
@@ -111,7 +106,7 @@ async def _ul(e):
         args = l.split("--folder") if "--folder" in l else l.split("-f")
         ext = args[1] if len(args) > 1 else ""
         l = args[0].strip()
-        directory = l + "\\" if not l.endswith("\\") else l
+        directory = l + "/" if not l.endswith("/") else l
         try:
             files = []
             for f in os.listdir(l):
@@ -131,6 +126,7 @@ async def _ul(e):
 
 
 async def upload_decorator(e, files, chat, caption: str, directory: str):
+    thumb, attributes, action, streamable= None,[],"document", False
     if len(files) > 1:
         msg = await e.reply("`Uploading...`")
     else:
