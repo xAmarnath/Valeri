@@ -111,7 +111,7 @@ async def _ul(e):
         args = l.split("--folder") if "--folder" in l else l.split("-f")
         ext = args[1] if len(args) > 1 else ""
         l = args[0].strip()
-        directory = l
+        directory = l + "\\" if not l.endswith("\\") else l
         try:
             files = []
             for f in os.listdir(l):
