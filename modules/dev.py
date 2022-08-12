@@ -112,7 +112,9 @@ async def _ul(e):
     caption = caption or filename
     filename = filename.split("/")[-1] if filename == l else filename
     if l.endswith(("mp4", "mkv", "3gp", "webm")):
-        thumb = generate_thumbnail(l, l + "_thumb.jpg") if len(thumbs) == 0 else thumbs[0]
+        thumb = (
+            generate_thumbnail(l, l + "_thumb.jpg") if len(thumbs) == 0 else thumbs[0]
+        )
         d, w, h = get_video_metadata(l)
         attributes = [
             types.DocumentAttributeVideo(w=w, h=h, duration=d, supports_streaming=True)
@@ -156,6 +158,7 @@ async def set_t(e):
     t = await f.download_media("thumb.jpg")
     await e.reply("`Sucessfully set custom thumb!`")
     thumbs.append(t)
+
 
 @newMsg(pattern="resetthumb")
 @auth_only
