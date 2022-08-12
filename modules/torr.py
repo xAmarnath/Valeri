@@ -2,13 +2,15 @@ import subprocess
 from asyncio import sleep
 
 import aria2p
+from requests import get 
 
 from ._handler import auth_only, newMsg
 from ._helpers import human_readable_size
 
 
 def aria_start():
-    cmd = f"aria2c --enable-rpc --rpc-listen-all=false --rpc-listen-port=6800 --max-connection-per-server=10 --rpc-max-request-size=1024M --check-certificate=false --follow-torrent=mem --seed-time=600 --max-upload-limit=0 --max-concurrent-downloads=10 --min-split-size=10M --follow-torrent=mem --split=10 --daemon=true --allow-overwrite=true"
+    trackers = f'[{get("https://raw.githubusercontent.com/pexcn/daily/gh-pages/trackerlist/trackerlist-aria2.txt").text}]'
+    cmd = f"aria2c --enable-rpc --rpc-listen-all=false --rpc-listen-port=6800 --max-connection-per-server=10 --rpc-max-request-size=1024M --check-certificate=false --follow-torrent=mem --seed-time=600 --max-upload-limit=0 --max-concurrent-downloads=10 --min-split-size=10M --follow-torrent=mem --split=10 --daemon=true --allow-overwrite=true --bt-tracker={trackers}"
     subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     aria2 = aria2p.API(aria2p.Client(host="http://localhost", port=6800, secret=""))
     return aria2
