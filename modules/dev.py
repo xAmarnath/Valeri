@@ -18,6 +18,7 @@ from ._helpers import (
 from ._transfers import upload_file
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
+thumbn = ""
 
 def is_bl(code):
     if any([re.search(x, code.lower()) for x in ["net", "bat", "chmod"]]):
@@ -110,7 +111,7 @@ async def _ul(e):
     caption = caption or filename
     filename = filename.split("/")[-1] if filename == l else filename
     if l.endswith(("mp4", "mkv", "3gp", "webm")):
-        thumb = generate_thumbnail(l, l + "_thumb.jpg")
+        thumb = generate_thumbnail(l, l + "_thumb.jpg") if not thumbn else thumbn
         d, w, h = get_video_metadata(l)
         attributes = [
             types.DocumentAttributeVideo(w=w, h=h, duration=d, supports_streaming=True)
@@ -139,11 +140,26 @@ async def _ul(e):
                 supports_streaming=streamable,
             )
         await msg.delete()
-        if thumb:
+        if thumb and thumb != "thumb.jpg":
             remove(thumb)
     except Exception as exc:
         await msg.edit("`error on uploading.\n{}`".format(str(exc)))
 
+@newMsg(pattern="setthumb")
+async def set_t(e):
+ global thumn
+ f = await e.get_reply_message()
+ if not f and not f.media:
+   return await e.reply("Reply to any image to set custom video thumbnail.")
+ await f.download_media("thumb.jpg")
+ await e.reply("`Sucessfully set custom thumb!`")
+ thumbn = "thumb.jpg"
+
+@newMsg(pattern="resetthumb")
+async def _rsy_t(e):
+ global thumbn
+ await e.reply("Resetted thumb to FFMPEG Gen!")
+ thumbn = ""
 
 @newMsg(pattern="dl")
 @auth_only
