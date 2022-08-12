@@ -20,6 +20,7 @@ from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
 thumbn = ""
 
+
 def is_bl(code):
     if any([re.search(x, code.lower()) for x in ["net", "bat", "chmod"]]):
         return True
@@ -145,21 +146,23 @@ async def _ul(e):
     except Exception as exc:
         await msg.edit("`error on uploading.\n{}`".format(str(exc)))
 
+
 @newMsg(pattern="setthumb")
 async def set_t(e):
- global thumn
- f = await e.get_reply_message()
- if not f and not f.media:
-   return await e.reply("Reply to any image to set custom video thumbnail.")
- await f.download_media("thumb.jpg")
- await e.reply("`Sucessfully set custom thumb!`")
- thumbn = "thumb.jpg"
+    global thumn
+    f = await e.get_reply_message()
+    if not f and not f.media:
+        return await e.reply("Reply to any image to set custom video thumbnail.")
+    await f.download_media("thumb.jpg")
+    await e.reply("`Sucessfully set custom thumb!`")
+
 
 @newMsg(pattern="resetthumb")
 async def _rsy_t(e):
- global thumbn
- await e.reply("Resetted thumb to FFMPEG Gen!")
- thumbn = ""
+    global thumbn
+    await e.reply("Resetted thumb to FFMPEG Gen!")
+    thumbn = ""
+
 
 @newMsg(pattern="dl")
 @auth_only
