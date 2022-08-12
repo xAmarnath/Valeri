@@ -1,7 +1,8 @@
+import os
 import re
 import sys
 from os import environ, execle, listdir, path, remove, system
-import os
+
 import speedtest
 import tinytag
 from telethon import types
