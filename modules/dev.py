@@ -127,7 +127,7 @@ async def _ul(e):
 
 async def upload_decorator(e, files, chat, caption: str, directory: str):
     thumb, attributes, action, streamable = None, [], "document", False
-    if len(files) > 1:
+    if len(files) == 1:
         msg = await e.reply("`Uploading...`")
     else:
         msg = await e.reply(f"`Uploading...` 0/{len(files)} from `{directory}`.")
@@ -176,12 +176,12 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
                 remove(thumb)
             done += 1
         except Exception as exc:
-            await msg.edit("`error on uploading.\n{}`".format(str(exc)))
+            msg = await msg.edit("`error on uploading.\n{}`".format(str(exc)))
         if done > 1:
             msg = await msg.edit(
                 f"`Uploading...` {done}/{len(files)} from `{directory}`."
             )
-        await msg.delete()
+    await msg.delete()
 
 
 @newMsg(pattern="setthumb")
