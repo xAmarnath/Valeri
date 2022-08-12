@@ -178,8 +178,11 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
         except Exception as exc:
             await msg.edit("`error on uploading.\n{}`".format(str(exc)))
         if done > 1:
-            msg = await msg.edit(f"`Uploading...` {done}/{len(files)} from `{directory}`.")
+            msg = await msg.edit(
+                f"`Uploading...` {done}/{len(files)} from `{directory}`."
+            )
         await msg.delete()
+
 
 @newMsg(pattern="setthumb")
 @auth_only
