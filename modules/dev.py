@@ -115,9 +115,8 @@ async def _ul(e):
         try:
             files = []
             for f in os.listdir(l):
-                print(f)
                 if ext:
-                    if f.endswith(ext):
+                    if f.endswith(ext.strip()):
                         files.append(f)
                 else:
                     files.append(f)
