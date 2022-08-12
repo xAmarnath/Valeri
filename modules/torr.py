@@ -2,7 +2,7 @@ import subprocess
 from asyncio import sleep
 
 import aria2p
-from requests import get 
+from requests import get
 
 from ._handler import auth_only, newMsg
 from ._helpers import human_readable_size
