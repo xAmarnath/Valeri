@@ -2,7 +2,7 @@ import datetime
 from urllib.parse import quote
 
 from requests import get
-from telethon import Button, events
+from telethon import Button, events, types
 
 from ._handler import newIn
 from ._helpers import human_readable_size
@@ -84,7 +84,7 @@ async def geo_search_(e):
     q = e.pattern_match.group(1)
     if not q:
         return
-    thumb = InputWebDocument(
+    thumb = types.InputWebDocument(
         url="https://telegra.ph/file/da565819d3f99e43fecec.jpg",
         size=1423,
         mime_type="image/jpeg",
