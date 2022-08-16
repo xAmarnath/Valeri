@@ -1,18 +1,21 @@
 import importlib
+import math
 import os
 import random
 import string
-from os import listdir, path
 import sys
-import time, math
+import time
+import math
 import textwrap
-
+import time
+from os import listdir, path
 import ffmpeg
 import telethon
-from PIL import Image, ImageDraw, ImageFont, ImageColor
+from PIL import Image, ImageColor, ImageDraw, ImageFont
 from telethon import errors
 
 from ._config import OWNER_ID, bot, help_dict, log
+
 
 def human_readable_size(size, speed=False):
     # Convert a size in bytes to a human readable string
@@ -37,6 +40,7 @@ def time_formatter(seconds: int) -> str:
         + ((str(seconds) + " second(s), ") if seconds else "")
     )
     return tmp[:-2]
+
 
 async def progress(
     current, total, gdrive, start, prog_type, file_name=None, is_cancelled=False
@@ -78,6 +82,7 @@ async def progress(
         else:
             await gdrive.edit(f"**{prog_type}**\n\n" f"**Status**\n{tmp}")
 
+
 def load_modules():
     # Load all modules in the modules folder
     for module in listdir(path.dirname(__file__)):
@@ -100,6 +105,7 @@ def human_readable_size(size, speed=False):
         size /= 1024.0
     return "%3.1f %s" % (size, "EB")
 
+
 async def is_worth(right, chat, user, admin_check=True):
     # Check if a user has a certain right in a chat
     if user == OWNER_ID:
@@ -121,13 +127,13 @@ async def is_worth(right, chat, user, admin_check=True):
     return False
 
 
-
 async def get_user(e):
     """get user from event.Object"""
     args = e.text.split(maxsplit=2)
     if e.is_reply:
         user = (await e.get_reply_message()).sender
-        arg = (args[1] + (args[2] if len(args) > 2 else "")) if len(args) > 1 else ""
+        arg = (args[1] + (args[2] if len(args) > 2 else "")
+               ) if len(args) > 1 else ""
     else:
         if len(args) == 1:
             await e.reply("No user specified")
@@ -149,7 +155,6 @@ def get_mention(user: telethon.tl.types.User, mode: str = "md"):
         return '<a href="tg://user?id=' + str(user.id) + '">' + user.first_name + "</a>"
 
 
-
 async def has_admin_rights(chat_id, user_id, RIGHT):
     """Check if a user has admin rights in a chat"""
     if user_id == OWNER_ID:
@@ -169,7 +174,8 @@ async def has_admin_rights(chat_id, user_id, RIGHT):
         else:
             return (
                 False,
-                "You are missing admin rights to use this command, {}.".format(RIGHT),
+                "You are missing admin rights to use this command, {}.".format(
+                    RIGHT),
             )
     return False, "You do not have admin rights in this chat"
 
@@ -291,6 +297,7 @@ def get_video_metadata(file):
     except (KeyError, IndexError):
         return (0, 0, 0)
 
+
 def write_on_image(image_name: str, text: str, font, color: str):
     """Write text on an image"""
     image = Image.open(image_name)
@@ -302,7 +309,7 @@ def write_on_image(image_name: str, text: str, font, color: str):
     draw = ImageDraw.Draw(image)
     width, height = image.size
     text_size = draw.textsize(text, font=font)
-    text_x = (width - text_size[0]) // 2 
+    text_x = (width - text_size[0]) // 2
     text_y = (height - text_size[1]) // 2 - 100
     text = textwrap.wrap(text, width=width - 2)
     text = "\n".join(text)

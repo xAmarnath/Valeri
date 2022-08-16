@@ -34,9 +34,7 @@ async def promote_demote(e):
                     rank=arg if arg else "Admin",
                 )
             )
-            await e.reply(
-                get_mention(user) + " has been promoted!"
-            )
+            await e.reply(get_mention(user) + " has been promoted!")
         elif action == "superpromote":
             await e.client(
                 functions.channels.EditAdminRequest(
