@@ -325,8 +325,8 @@ def write_on_image(image_name: str, text: str, font, color: str):
     text_y = (height - text_size[1]) // 2 - 100
     text = textwrap.fill(text, 12) if len(text) > 12 else text
     if not is_em:
-      draw.text((text_x, text_y), text, font=font, fill=color)
+        draw.text((text_x, text_y), text, font=font, fill=color)
     else:
-      draw.text((text_x, text_y), text, font=font)
+        draw.text((text_x, text_y), text, font=font)
     image.save(image_name + "xd_text.webp")
     return image_name + "xd_text.webp"
