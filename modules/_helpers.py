@@ -327,6 +327,6 @@ def write_on_image(image_name: str, text: str, font, color: str):
     if not is_em:
         draw.text((text_x, text_y), text, font=font, fill=color)
     else:
-        draw.text((text_x, text_y), text, font=font)
+        draw.text((text_x, text_y), text, font=font, fill="yellow")
     image.save(image_name + "xd_text.webp")
     return image_name + "xd_text.webp"
