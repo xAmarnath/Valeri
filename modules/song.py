@@ -5,12 +5,12 @@ import io
 from requests import get
 from telethon import types
 
-from ._handler import newMsg
+from ._handler import new_cmd
 
 HOST = "https://api.roseloverx.tk"
 
 
-@newMsg(pattern="song")
+@new_cmd(pattern="song")
 async def _song(message):
     try:
         query = message.text.split(None, maxsplit=1)[1]
@@ -40,7 +40,7 @@ async def _song(message):
                 )
 
 
-@newMsg(pattern="video")
+@new_cmd(pattern="video")
 async def _video_dl_youtube(message):
     try:
         query = message.text.split(None, maxsplit=1)[1]

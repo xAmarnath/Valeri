@@ -1,9 +1,9 @@
 from telethon import Button
 
-from ._handler import newMsg
+from ._handler import new_cmd
 
 
-@newMsg(pattern="start")
+@new_cmd(pattern="start")
 async def _start(msg):
     if not msg.is_private:
         return await msg.reply("Hi, I'm alive ~>_<~")
@@ -26,6 +26,6 @@ async def _start(msg):
     )
 
 
-@newMsg(pattern="help")
+@new_cmd(pattern="help")
 async def _help(msg):
     await msg.reply("""Help is on the way!""")

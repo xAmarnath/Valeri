@@ -1,14 +1,14 @@
 from seedrcc import Login, Seedr
 from telethon import Button
 
-from ._handler import newCall, newMsg
+from ._handler import newCall, new_cmd
 from ._helpers import human_readable_size
 from .db.seedr_db import get_seedr, update_seedr
 
 cache = {}
 
 
-@newMsg(pattern="account", func=lambda msg: msg.is_private)
+@new_cmd(pattern="account", func=lambda msg: msg.is_private)
 async def _seedr_account(msg):
     user = msg.sender_id
     token = get_seedr(user)
@@ -99,7 +99,7 @@ def getUserSeedr(user_id):
     return client
 
 
-@newMsg(pattern="addtorrent")
+@new_cmd(pattern="addtorrent")
 async def _seedr_addtorrent(msg):
     seedr = getUserSeedr(msg.sender_id)
     if seedr is None:
@@ -134,7 +134,7 @@ async def _seedr_addtorrent(msg):
     )
 
 
-@newMsg(pattern="seedrusage")
+@new_cmd(pattern="seedrusage")
 async def _seedr_usage(msg):
     seedr = getUserSeedr(msg.sender_id)
     if seedr is None:
@@ -153,7 +153,7 @@ async def _seedr_usage(msg):
     await msg.reply(usage_caption, parse_mode="HTML")
 
 
-@newMsg(pattern="files")
+@new_cmd(pattern="files")
 async def _seedr_files(msg):
     seedr = getUserSeedr(msg.sender_id)
     if seedr is None:
@@ -173,7 +173,7 @@ async def _seedr_files(msg):
         await msg.reply("⚠️ You don't have any files.")
 
 
-@newMsg(pattern="getfiles_(.*)")
+@new_cmd(pattern="getfiles_(.*)")
 async def _seedr_getfiles(msg):
     seedr = getUserSeedr(msg.sender_id)
     if seedr is None:
@@ -207,7 +207,7 @@ async def _seedr_getfiles(msg):
         await msg.reply(response["error"])
 
 
-@newMsg(pattern="filelink_(.*)")
+@new_cmd(pattern="filelink_(.*)")
 async def _seedr_filelink(msg):
     seedr = getUserSeedr(msg.sender_id)
     if seedr is None:
@@ -228,7 +228,7 @@ async def _seedr_filelink(msg):
         await new_msg.edit(response["error"])
 
 
-@newMsg(pattern="remove_(.*)")
+@new_cmd(pattern="remove_(.*)")
 async def _seedr_remove(msg):
     seedr = getUserSeedr(msg.sender_id)
     if seedr is None:
@@ -242,7 +242,7 @@ async def _seedr_remove(msg):
         await msg.reply(response["error"])
 
 
-@newMsg(pattern="delete_(.*)")
+@new_cmd(pattern="delete_(.*)")
 async def _seedr_delete(msg):
     seedr = getUserSeedr(msg.sender_id)
     if seedr is None:
@@ -302,6 +302,6 @@ async def _seedr_filelink_call(call):
 # balance soon
 
 
-@newMsg(pattern="sfiles")
+@new_cmd(pattern="sfiles")
 async def _seedr_dir(e):
     print("soon")

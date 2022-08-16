@@ -6,7 +6,7 @@ import speedtest
 import tinytag
 from telethon import types
 
-from ._handler import auth_only, master_only, newMsg
+from ._handler import auth_only, master_only, new_cmd
 from ._helpers import (
     generate_thumbnail,
     get_mention,
@@ -25,7 +25,7 @@ def is_bl(code):
     return False
 
 
-@newMsg(pattern="ls")
+@new_cmd(pattern="ls")
 @auth_only
 async def _ls(e):
     try:
@@ -74,7 +74,7 @@ async def _ls(e):
     await e.reply(caption, parse_mode="html")
 
 
-@newMsg(pattern="ul")
+@new_cmd(pattern="ul")
 @auth_only
 async def _ul(e):
     l = await get_text_content(e)
@@ -145,7 +145,7 @@ async def _ul(e):
         await msg.edit("`error on uploading.\n{}`".format(str(exc)))
 
 
-@newMsg(pattern="dl")
+@new_cmd(pattern="dl")
 @auth_only
 async def _dl(e):
     r = await e.get_reply_message()
@@ -158,7 +158,7 @@ async def _dl(e):
     await msg.edit("`Downloaded successfully.`")
 
 
-@newMsg(pattern="auth")
+@new_cmd(pattern="auth")
 @master_only
 async def _auth(e):
     if not e.reply_to and not len(e.text.split(None)) > 1:
@@ -187,7 +187,7 @@ async def _auth(e):
     )
 
 
-@newMsg(pattern="(unauth|rmauth)")
+@new_cmd(pattern="(unauth|rmauth)")
 @master_only
 async def _unauth(e):
     user, _ = await get_user(e)
@@ -206,7 +206,7 @@ async def _unauth(e):
     )
 
 
-@newMsg(pattern="update")
+@new_cmd(pattern="update")
 @master_only
 async def update_origin(e):
     msg = await e.reply("`Updating...`")
@@ -216,7 +216,7 @@ async def update_origin(e):
     execle(sys.executable, *args, environ)
 
 
-@newMsg(pattern="restart")
+@new_cmd(pattern="restart")
 @master_only
 async def restart_process(e):
     await e.reply("`Restarting...`")
@@ -224,7 +224,7 @@ async def restart_process(e):
     execle(sys.executable, *args, environ)
 
 
-@newMsg(pattern="speedtest")
+@new_cmd(pattern="speedtest")
 @auth_only
 async def _speedtest(e):
     msg = await e.reply("Testing internet speed...")

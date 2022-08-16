@@ -8,7 +8,7 @@ from .db.auth import is_auth
 from .db.stats_db import add_user, already_added_user
 
 
-def newMsg(**args):
+def new_cmd(**args):
     """
     Decorator for handling new messages.
     """

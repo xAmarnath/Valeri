@@ -1,6 +1,6 @@
 from telethon import errors, functions, types
 
-from ._handler import newMsg
+from ._handler import new_cmd
 from ._helpers import (
     get_mention,
     get_text_content,
@@ -10,7 +10,7 @@ from ._helpers import (
 )
 
 
-@newMsg(pattern="(promote|superpromote|demote)")
+@new_cmd(pattern="(promote|superpromote|demote)")
 async def promote_demote(e):
     action = e.text.split(" ")[0][1:].lower()
     r, arg = await has_admin_rights(e.chat_id, e.sender_id, "add_admins")
@@ -92,7 +92,7 @@ async def promote_demote(e):
         await e.reply(str(ex) + str(type(ex)))
 
 
-@newMsg(pattern="(ban|kick|unban|tban|sban|mute|tmute|smute|skick|unmute|kickme)")
+@new_cmd(pattern="(ban|kick|unban|tban|sban|mute|tmute|smute|skick|unmute|kickme)")
 async def restrict_user(msg):
     action = msg.text.split(" ")[0][1:].lower()
     if action == "kickme":
@@ -246,12 +246,12 @@ async def restrict_user(msg):
             await msg.reply(str(ex) + str(type(ex)))
 
 
-@newMsg(pattern="chatid")
+@new_cmd(pattern="chatid")
 async def chatid(msg):
     await msg.reply("Chat ID: `{}`".format(msg.chat_id))
 
 
-@newMsg(pattern="(setgpic|setgp|setdesc|setgdesc|setgname|setgtitle)")
+@new_cmd(pattern="(setgpic|setgp|setdesc|setgdesc|setgname|setgtitle)")
 async def set_group_info(msg):
     command = msg.text.split(" ")[0][1:].lower()
     if command in ["setgpic", "setgp"]:
@@ -299,7 +299,7 @@ async def set_group_info(msg):
             await msg.reply(str(ex) + str(type(ex)))
 
 
-@newMsg(pattern="adminlist")
+@new_cmd(pattern="adminlist")
 async def adminlist(msg):
     admins = await msg.client.get_participants(
         msg.chat_id, filters=types.ChannelParticipantsAdmins

@@ -1,11 +1,11 @@
 import telethon
 
-from ._handler import newMsg
+from ._handler import new_cmd
 from ._helpers import get_mention, get_user, has_admin_rights
 from .db.warns_db import get_warn_count, get_warn_setting, remove_all_warns, warn_user
 
 
-@newMsg(pattern="warn")
+@new_cmd(pattern="warn")
 async def warn(e):
     if not e.is_group:
         await e.reply("`Warns can only be used in groups!`")

@@ -6,7 +6,7 @@ import time
 from telethon import events, types
 
 from ._config import bot
-from ._handler import newMsg
+from ._handler import new_cmd
 from ._helpers import human_readable_time
 from .db import afk as db
 
@@ -152,7 +152,7 @@ def seperate_sed(sed_string):
         return replace, replace_with, flags.lower()
 
 
-@newMsg(pattern=r"^s([/:|_]).*?\1.*")
+@new_cmd(pattern=r"^s([/:|_]).*?\1.*")
 async def reg_x__se_dd(e):
     if not e.text:
         return

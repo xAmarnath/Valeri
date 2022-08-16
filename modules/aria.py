@@ -5,7 +5,7 @@ import aria2p
 from bs4 import BeautifulSoup
 from requests import get
 
-from ._handler import auth_only, newMsg
+from ._handler import auth_only, new_cmd
 from ._helpers import human_readable_size
 
 
@@ -92,7 +92,7 @@ async def check_progress_for_dl(gid, message, previous):
                     await message.edit(msg)
                     previous = msg
             else:
-                print("lada")
+                pass
             await sleep(5)
         except Exception as e:
             if "not found" in str(e) or "'file'" in str(e):
@@ -105,7 +105,7 @@ async def check_progress_for_dl(gid, message, previous):
                 )
 
 
-@newMsg(pattern="ariadl")
+@new_cmd(pattern="ariadl")
 @auth_only
 async def t_url_download(message):
     is_url, is_mag = False, False
@@ -116,7 +116,7 @@ async def t_url_download(message):
         tor = await message.client.download_media(reply)
         try:
             download = aria2p_client.add_torrent(
-                tor, uris=None, options=None, position=None
+                tor, uris=None, position=None, options=None
             )
         except Exception as e:
             return await message.edit(f"**ERROR:**  `{e}`")
@@ -149,7 +149,7 @@ async def t_url_download(message):
         await check_progress_for_dl(gid=new_gid, message=message, previous="")
 
 
-@newMsg(pattern="ariadelall")
+@new_cmd(pattern="ariadelall")
 @auth_only
 async def clr_aria(message):
     removed = False
@@ -164,20 +164,20 @@ async def clr_aria(message):
     await message.reply("`Successfully cleared all downloads.`")
 
 
-@newMsg(pattern="cancel")
+@new_cmd(pattern="cancel")
+@auth_only
 async def remove_a_download(message):
     g_id = message.pattern_match.group(1)
     try:
         downloads = aria2p_client.get_download(g_id)
     except:
-        await message.reply("GID not found ....")
-        return
+        return await message.reply("GID not found ....")
     file_name = downloads.name
     await message.reply(f"**Successfully cancelled download.** \n`{file_name}`")
     aria2p_client.remove(downloads=[downloads], force=True, files=True, clean=True)
 
 
-@newMsg(pattern="ariastatus$")
+@new_cmd(pattern="ariastatus$")
 async def show_all(message):
     downloads = aria2p_client.get_downloads()
     msg = "**On Going Downloads**\n\n"
@@ -204,13 +204,15 @@ async def show_all(message):
     await message.reply(msg)
 
 
-@newMsg(pattern="ariapause")
+@new_cmd(pattern="ariapause")
+@auth_only
 async def pause_all(message):
     await message.reply("`Pausing downloads...`")
     aria2p_client.pause_all()
 
 
-@newMsg(pattern="ariaresume")
+@new_cmd(pattern="ariaresume")
+@auth_only
 async def resume_all(message):
     await message.reply("`Resuming downloads...`")
     aria2p_client.resume_all()

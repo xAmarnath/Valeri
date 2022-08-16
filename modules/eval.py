@@ -8,7 +8,7 @@ import requests
 from telethon import events, types
 
 from ._config import OWNER_ID, bot
-from ._handler import auth_only, newMsg
+from ._handler import auth_only, new_cmd
 from ._helpers import get_user
 
 
@@ -31,7 +31,7 @@ def is_bl(code):
     return False
 
 
-@newMsg(pattern="eval")
+@new_cmd(pattern="eval")
 @bot.on(events.MessageEdited(pattern="^(?i)[!?.]eval (.*?)"))
 @auth_only
 async def _eval(e):
@@ -85,7 +85,7 @@ async def aexec(code, event):
     return await locals()["__aexec"](event, event.client)
 
 
-@newMsg(pattern="(bash|exec)")
+@new_cmd(pattern="(bash|exec)")
 @auth_only
 async def _exec(e):
     try:
@@ -111,7 +111,7 @@ async def _exec(e):
         await p.edit(f)
 
 
-@newMsg(pattern="request")
+@new_cmd(pattern="request")
 async def _request(e):
     METHODS = ("get", "post", "put", "delete", "patch", "head")
     args = e.text.split()
@@ -167,7 +167,7 @@ async def _request(e):
         await e.reply(resp)
 
 
-@newMsg(pattern="ext")
+@new_cmd(pattern="ext")
 async def _ext(e):
     try:
         ext = e.text.split(" ", 1)[1]
@@ -188,7 +188,7 @@ async def _ext(e):
         await e.reply("No extension found.")
 
 
-@newMsg(pattern="info")
+@new_cmd(pattern="info")
 async def _info(e):
     if not e.is_reply and len(e.text.split()) == 1:
         user = e.sender

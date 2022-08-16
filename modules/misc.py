@@ -9,11 +9,11 @@ from requests import get, post
 from telethon import Button, types
 
 from ._functions import get_imdb_soup, get_weather, translate
-from ._handler import newMsg
+from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
 
 
-@newMsg(pattern="math")
+@new_cmd(pattern="math")
 async def math(message):
     exp = await get_text_content(message)
     if exp is None:
@@ -32,7 +32,7 @@ async def math(message):
     await message.reply(result)
 
 
-@newMsg(pattern="ip")
+@new_cmd(pattern="ip")
 async def ip_lookup(message):
     ip = await get_text_content(message)
     if ip is None:
@@ -87,7 +87,7 @@ async def ip_lookup(message):
     await message.reply(ip_info, parse_mode="html")
 
 
-@newMsg(pattern="(weather|w)")
+@new_cmd(pattern="(weather|w)")
 async def weather(message):
     city = await get_text_content(message)
     if city is None:
@@ -96,7 +96,7 @@ async def weather(message):
     await message.reply(response, parse_mode="html")
 
 
-@newMsg(pattern="ud")
+@new_cmd(pattern="ud")
 async def urban_dictionary(message):
     word = await get_text_content(message)
     if word is None:
@@ -142,7 +142,7 @@ async def urban_dictionary(message):
     )
 
 
-@newMsg(pattern="pinterest")
+@new_cmd(pattern="pinterest")
 async def pinterest(message):
     query = await get_text_content(message)
     if query is None:
@@ -190,7 +190,7 @@ async def pinterest(message):
     await message.reply(file=urls)
 
 
-@newMsg(pattern="(fake|faker)")
+@new_cmd(pattern="(fake|faker)")
 async def fake(message):
     country = await get_text_content(message)
     if country is None:
@@ -240,7 +240,7 @@ async def fake(message):
     )
 
 
-@newMsg(pattern="realaddr")
+@new_cmd(pattern="realaddr")
 async def _raddr(msg):
     query = await get_text_content(msg)
     if query is None:
@@ -274,7 +274,7 @@ async def _raddr(msg):
     )
 
 
-@newMsg(pattern="(w|wiki)")
+@new_cmd(pattern="(w|wiki)")
 async def wiki_(message):
     query = await get_text_content(message=message)
     if query is None:
@@ -317,7 +317,7 @@ async def wiki_(message):
     )
 
 
-@newMsg(pattern="carbon")
+@new_cmd(pattern="carbon")
 async def _carbon(message):
     text = await get_text_content(message)
     if text is None:
@@ -354,7 +354,7 @@ async def _carbon(message):
         await message.reply(file=file)
 
 
-@newMsg(pattern="id")
+@new_cmd(pattern="id")
 async def id_(message):
     if not message.reply or not len(message.text.split(None)) > 1:
         user = message.sender
@@ -369,7 +369,7 @@ async def id_(message):
     )
 
 
-@newMsg(pattern="paste")
+@new_cmd(pattern="paste")
 async def paste_(message):
     content = await get_text_content(message)
     if content is None:
@@ -452,7 +452,7 @@ def paste_mode(args, content: str):
     return "n", content
 
 
-@newMsg(pattern="(tl|tr|translate)")
+@new_cmd(pattern="(tl|tr|translate)")
 async def _tl(msg):
     text = await get_text_content(message=msg)
     if text is None:
@@ -475,7 +475,7 @@ async def _tl(msg):
     )
 
 
-@newMsg(pattern="(gif|giphy)")
+@new_cmd(pattern="(gif|giphy)")
 async def _gif(msg):
     text = await get_text_content(message=msg)
     if text is None:
@@ -503,7 +503,7 @@ async def _gif(msg):
     )
 
 
-@newMsg(pattern="(imdb|movie)")
+@new_cmd(pattern="(imdb|movie)")
 async def _imdb(msg):
     text = await get_text_content(message=msg)
     if text is None:
@@ -583,7 +583,7 @@ async def _imdb(msg):
     )
 
 
-@newMsg(pattern="(dog|dogfact|dogfacts)")
+@new_cmd(pattern="(dog|dogfact|dogfacts)")
 async def _dog_facts(msg):
     url = "https://dog-api.kinduff.com/api/facts"
     data = get(url).json()
@@ -594,7 +594,7 @@ async def _dog_facts(msg):
     await msg.reply(fact, parse_mode="html")
 
 
-@newMsg(pattern="blerp")
+@new_cmd(pattern="blerp")
 async def blerp_audio(msg):
     query = await get_text_content(msg)
     if not query:

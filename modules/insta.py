@@ -4,7 +4,7 @@ from os import getenv
 
 from requests import JSONDecodeError, get
 
-from ._handler import newMsg
+from ._handler import new_cmd
 from ._helpers import get_text_content
 
 IG_SESSION = getenv("IG_SESSION", "")
@@ -100,7 +100,7 @@ def get_ig_download_url(url: str):
         return "", 0, 0, "", "", 0
 
 
-@newMsg(pattern="(insta|instagram|instadl|instadownload)")
+@new_cmd(pattern="(insta|instagram|instadl|instadownload)")
 async def _insta(message):
     # if check_if_spam(message.sender_id):
     # return await message.reply("You are spamming.")

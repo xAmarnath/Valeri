@@ -6,7 +6,7 @@ from requests import get, post
 from telethon.tl.functions import stickers
 
 from ._config import bot
-from ._handler import newMsg
+from ._handler import new_cmd
 
 print(stickers.SuggestShortNameRequest)
 
@@ -46,7 +46,7 @@ def similarize_image(image):
 FFMPEG_COMMAND = 'ffmpeg -loop 1 -framerate 30 -t 0.16 -i {}  -loop 1 -framerate 30 -t 0.16 -i {} -loop 1 -framerate 30 -t 0.16 -i {} -loop 1 -framerate 30 -t 0.16 -i {} -filter_complex "[0][1][2][3]concat=n=4:v=1:a=0[v1],[v1]loop=20:32767:0" {}'
 
 
-@newMsg(pattern="animate")
+@new_cmd(pattern="animate")
 async def _animate(msg):
     if not msg.reply_to:
         return await msg.reply("Reply to sticker/photo to animate it")
@@ -66,7 +66,7 @@ async def _animate(msg):
     await mg.delete()
 
 
-@newMsg(pattern="color")
+@new_cmd(pattern="color")
 async def _animate(msg):
     if not msg.reply_to:
         return await msg.reply("Reply to sticker/photo to animate it")
@@ -82,7 +82,7 @@ async def _animate(msg):
     await mg.delete()
 
 
-@newMsg(pattern="(stoi|itos)")
+@new_cmd(pattern="(stoi|itos)")
 async def _stoi(message):
     if not message.reply_to:
         return await message.reply("Reply to a media to convert it to sticker.")
@@ -108,6 +108,6 @@ async def get_shortname(title: str):
     return r.short_name
 
 
-@newMsg(pattern="kang")
+@new_cmd(pattern="kang")
 async def _kang(message):
     await message.reply("Kang is not implemented yet.")
