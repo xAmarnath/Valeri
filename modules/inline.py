@@ -145,7 +145,7 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
     result = []
     doge_f = write_on_image("doge_write.webp", tex, "doge.ttf", "black")
     sticker_result = await e.builder.document(
-        doge_f, title="doge_write.webp", description="xd"
+        doge_f, title="doge_write.webp", description="xd", buttons=Button.switch_inline("Again 🃏", "doge ", True),
     )
     result.append(sticker_result)
     await e.answer(result, gallery=True)
