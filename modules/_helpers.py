@@ -308,9 +308,10 @@ def is_emoji(s):
 def write_on_image(image_name: str, text: str, font, color: str):
     """Write text on an image"""
     image = Image.open(image_name)
+    is_em = is_emoji(text)
     font = (
         ImageFont.truetype(font, size=99)
-        if not is_emoji(text)
+        if not is_em
         else ImageFont.truetype("emoji.ttf", size=109)
     )
     try:
@@ -323,6 +324,9 @@ def write_on_image(image_name: str, text: str, font, color: str):
     text_x = (width - text_size[0]) // 2
     text_y = (height - text_size[1]) // 2 - 100
     text = textwrap.fill(text, 12) if len(text) > 12 else text
-    draw.text((text_x, text_y), text, font=font, fill=color)
+    if not is_em:
+      draw.text((text_x, text_y), text, font=font, fill=color)
+    else:
+      draw.text((text_x, text_y), text, font=font)
     image.save(image_name + "xd_text.webp")
     return image_name + "xd_text.webp"
