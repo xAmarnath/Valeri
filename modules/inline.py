@@ -2,7 +2,7 @@ import datetime
 from urllib.parse import quote
 
 from requests import get
-from telethon import Button, events
+from telethon import Button, events, types
 
 from ._handler import newIn
 from ._helpers import human_readable_size
@@ -77,3 +77,50 @@ Num Files: {}
             )
         )
     await message.answer(results)
+
+
+@newIn(pattern="geo ?(.*)")
+async def geo_search_(e):
+    q = e.pattern_match.group(1)
+    if not q:
+        return
+    thumb = types.InputWebDocument(
+        url="https://telegra.ph/file/da565819d3f99e43fecec.jpg",
+        size=1423,
+        mime_type="image/jpeg",
+        attributes=[],
+    )
+    url = f"http://dev.virtualearth.net/REST/v1/Autosuggest?query={q}&key=AsVuFq5LexGs3arw0czJopBSoYAdCuJroMLXnAa7SugcRjR1ulFGikBR-DYOcxs2"
+    r = get(url)
+    try:
+        r = r.json().get("resourceSets")[0].get("resources")[0].get("value")
+    except (IndexError, KeyError):
+        return
+    c = ["1", "2", "3", "4", "5"]
+    pop_list = []
+    for x in r:
+        if len(pop_list) == 5:
+            break
+        pic_link = f"https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{quote(q)}?mapSize=500,500&key=AsVuFq5LexGs3arw0czJopBSoYAdCuJroMLXnAa7SugcRjR1ulFGikBR-DYOcxs2"
+        a = x.get("address")
+        title = a.get("locality")
+        description = a.get("formattedAddress")
+        text = f"**[{description}]**({pic_link})\n**Locality:** {title}\n**State:** {a.get('adminDistrict')}\n**Country:** {a.get('countryRegion')}, {a.get('countryRegionIso2')}"
+        pop_list.append(
+            await e.builder.article(
+                title=str(c[len(pop_list)]) + ". " + str(title),
+                description=str(description),
+                text=text,
+                thumb=thumb,
+                link_preview=True,
+                buttons=[
+                    [Button.inline(title or "Map", data=f"geo_{description[:30]}")],
+                    [
+                        Button.switch_inline(
+                            "Search Again", query="geo ", same_peer=True
+                        )
+                    ],
+                ],
+            )
+        )
+    await e.answer(pop_list)

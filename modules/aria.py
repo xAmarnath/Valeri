@@ -2,7 +2,6 @@ import subprocess
 from asyncio import sleep
 
 import aria2p
-from bs4 import BeautifulSoup
 from requests import get
 
 from ._handler import auth_only, new_cmd
@@ -10,19 +9,8 @@ from ._helpers import human_readable_size
 
 
 def aria_start():
-    try:
-        trackers = (
-            BeautifulSoup(
-                get("https://www.torrenttrackerlist.com/torrent-tracker-list/").text,
-                "html.parser",
-            )
-            .find(class_="customcodewords")
-            .text.replace("\n\n", ",")
-        )
-    except:
-        trackers = ""
-    trackers = f"[{trackers}]"
-    cmd = f"aria2c --enable-rpc --rpc-listen-all=false --rpc-listen-port=6800 --max-connection-per-server=10 --rpc-max-request-size=1024M --check-certificate=false --follow-torrent=mem --seed-time=600 --max-upload-limit=0 --max-concurrent-downloads=10 --min-split-size=10M --follow-torrent=mem --split=10 --bt-tracker={trackers} --daemon=true --allow-overwrite=true"
+    trackers = f'[{get("https://raw.githubusercontent.com/pexcn/daily/gh-pages/trackerlist/trackerlist-aria2.txt").text}]'
+    cmd = f"aria2c --enable-rpc --rpc-listen-all=false --rpc-listen-port=6800 --max-connection-per-server=10 --rpc-max-request-size=1024M --check-certificate=false --follow-torrent=mem --seed-time=600 --max-upload-limit=0 --max-concurrent-downloads=10 --min-split-size=10M --follow-torrent=mem --split=10 --daemon=true --allow-overwrite=true --bt-tracker={trackers}"
     subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     aria2 = aria2p.API(aria2p.Client(host="http://localhost", port=6800, secret=""))
     return aria2

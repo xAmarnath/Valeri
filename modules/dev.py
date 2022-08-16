@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 from os import environ, execle, listdir, path, remove, system
@@ -17,6 +18,8 @@ from ._helpers import (
 )
 from ._transfers import upload_file
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
+
+thumbs = []
 
 
 def is_bl(code):
@@ -80,15 +83,8 @@ async def _ul(e):
     l = await get_text_content(e)
     if not l:
         return await _ls(e)
-    msg = await e.reply("`Uploading...`")
     caption = ""
-    thumb, attributes, streamable, chat, action = (
-        None,
-        [],
-        False,
-        e.chat_id,
-        "document",
-    )
+    chat = e.chat_id
     if any([re.search(x, l.lower()) for x in ["--chat", "-c"]]):
         if "--chat" in l.lower():
             args = l.split("--chat")
@@ -106,43 +102,104 @@ async def _ul(e):
         args = l.split("--text") if "--text" in l else l.split("-t")
         caption = args[1] if len(args) > 1 else ""
         l = args[0].strip()
-    filename = l.split("\\")[-1]
-    caption = caption or filename
-    filename = filename.split("/")[-1] if filename == l else filename
-    if l.endswith(("mp4", "mkv", "3gp", "webm")):
-        thumb = generate_thumbnail(l, l + "_thumb.jpg")
-        d, w, h = get_video_metadata(l)
-        attributes = [
-            types.DocumentAttributeVideo(w=w, h=h, duration=d, supports_streaming=True)
-        ]
-        streamable = True
-        action = "video"
-    elif l.endswith(("mp3", "wav", "flv", "ogg", "opus")):
-        metadata = tinytag.TinyTag.get(l)
-        attributes = [
-            types.DocumentAttributeAudio(
-                duration=int(metadata.duration or "0"),
-                performer=metadata.artist or "Me",
-                title=metadata.title or "Unknown",
+    if any([re.search(x, l.lower()) for x in ["--folder", "-f"]]):
+        args = l.split("--folder") if "--folder" in l else l.split("-f")
+        ext = args[1] if len(args) > 1 else ""
+        l = args[0].strip()
+        directory = l + "/" if not l.endswith("/") else l
+        try:
+            files = []
+            for f in os.listdir(l):
+                if ext:
+                    if f.endswith(ext.strip()):
+                        files.append(f)
+                else:
+                    files.append(f)
+            if len(files) == 0:
+                return await e.reply("No files with that extension in Dir.")
+        except Exception as o:
+            return await e.reply(f"OSError: {o}")
+    else:
+        files = [l]
+        directory = ""
+    await upload_decorator(e, files, chat, caption, directory)
+
+
+async def upload_decorator(e, files, chat, caption: str, directory: str):
+    thumb, attributes, action, streamable = None, [], "document", False
+    if len(files) == 1:
+        msg = await e.reply("`Uploading...`")
+    else:
+        msg = await e.reply(f"`Uploading...` 0/{len(files)} from `{directory}`.")
+    done = 0
+    for l in files:
+        l = directory + l
+        filename = l.split("\\")[-1]
+        caption = filename
+        filename = filename.split("/")[-1] if filename == l else filename
+        if l.endswith(("mp4", "mkv", "3gp", "webm")):
+            thumb = (
+                generate_thumbnail(l, l + "_thumb.jpg")
+                if len(thumbs) == 0
+                else thumbs[0]
             )
-        ]
-        action = "audio"
-    try:
-        file = await upload_file(e.client, l)
-        async with e.client.action(chat, action):
-            await e.client.send_message(
-                chat,
-                caption,
-                file=file,
-                thumb=thumb,
-                attributes=attributes,
-                supports_streaming=streamable,
+            d, w, h = get_video_metadata(l)
+            attributes = [
+                types.DocumentAttributeVideo(
+                    w=w, h=h, duration=d, supports_streaming=True
+                )
+            ]
+            streamable = True
+            action = "video"
+        elif l.endswith(("mp3", "wav", "flv", "ogg", "opus")):
+            metadata = tinytag.TinyTag.get(l)
+            attributes = [
+                types.DocumentAttributeAudio(
+                    duration=int(metadata.duration or "0"),
+                    performer=metadata.artist or "Me",
+                    title=metadata.title or "Unknown",
+                )
+            ]
+            action = "audio"
+        try:
+            file = await upload_file(e.client, l)
+            async with e.client.action(chat, action):
+                await e.client.send_message(
+                    chat,
+                    caption,
+                    file=file,
+                    thumb=thumb,
+                    attributes=attributes,
+                    supports_streaming=streamable,
+                )
+            if thumb and thumb != "thumb.jpg":
+                remove(thumb)
+            done += 1
+        except Exception as exc:
+            msg = await msg.edit("`error on uploading.\n{}`".format(str(exc)))
+        if done > 1:
+            msg = await msg.edit(
+                f"`Uploading...` {done}/{len(files)} from `{directory}`."
             )
-        await msg.delete()
-        if thumb:
-            remove(thumb)
-    except Exception as exc:
-        await msg.edit("`error on uploading.\n{}`".format(str(exc)))
+    await msg.delete()
+
+
+@newMsg(pattern="setthumb")
+@auth_only
+async def set_t(e):
+    f = await e.get_reply_message()
+    if not f or not f.media:
+        return await e.reply("Reply to any image to set custom video thumbnail.")
+    t = await f.download_media("thumb.jpg")
+    await e.reply("`Sucessfully set custom thumb!`")
+    thumbs.append(t)
+
+
+@newMsg(pattern="resetthumb")
+@auth_only
+async def _rsy_t(e):
+    await e.reply("Resetted thumb to FFMPEG Gen!")
+    thumbs.clear()
 
 
 @new_cmd(pattern="dl")
