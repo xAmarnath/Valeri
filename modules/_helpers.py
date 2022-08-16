@@ -295,12 +295,12 @@ def get_video_metadata(file):
         return (0, 0, 0)
 
 
-from emoji import UNICODE_EMOJI
+from emoji import is_emoji as is_emo
 
 
 def is_emoji(s):
     for x in s:
-        if x in UNICODE_EMOJI["en"]:
+        if is_emo(x):
             return True
     return False
 
