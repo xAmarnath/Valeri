@@ -1,7 +1,7 @@
 from seedrcc import Login, Seedr
 from telethon import Button
 
-from ._handler import newCall, new_cmd
+from ._handler import new_cmd, newCall
 from ._helpers import human_readable_size
 from .db.seedr_db import get_seedr, update_seedr
 
