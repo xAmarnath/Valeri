@@ -311,7 +311,7 @@ def write_on_image(image_name: str, text: str, font, color: str):
     font = (
         ImageFont.truetype(font, size=99)
         if not is_emoji(text)
-        else ImageFont.truetype("emoji.ttf", size=99)
+        else ImageFont.truetype("emoji.ttf", size=109)
     )
     try:
         color = ImageColor.getrgb(color)
