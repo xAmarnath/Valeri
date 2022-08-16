@@ -294,11 +294,19 @@ def get_video_metadata(file):
     except (KeyError, IndexError):
         return (0, 0, 0)
 
+from emoji import UNICODE_EMOJI
+
+def is_emoji(s):
+    for x in s:
+     if x in UNICODE_EMOJI["en"]:
+       return True
+    return False
+
 
 def write_on_image(image_name: str, text: str, font, color: str):
     """Write text on an image"""
     image = Image.open(image_name)
-    font = ImageFont.truetype(font, size=99)
+    font = ImageFont.truetype(font, size=99) if not is_emoji(text) else ImageFont.truetype("emoji.ttf", size=99)
     try:
         color = ImageColor.getrgb(color)
     except ValueError:
@@ -308,8 +316,7 @@ def write_on_image(image_name: str, text: str, font, color: str):
     text_size = draw.textsize(text, font=font)
     text_x = (width - text_size[0]) // 2
     text_y = (height - text_size[1]) // 2 - 100
-    text = textwrap.wrap(text, width=width - 2)
-    text = "\n".join(text)
+    text = textwrap.fill(text, 12) if len(text) > 12 else text
     draw.text((text_x, text_y), text, font=font, fill=color)
     image.save(image_name + "xd_text.webp")
     return image_name + "xd_text.webp"
