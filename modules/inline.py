@@ -148,7 +148,6 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
         doge_f,
         title="doge_write.webp",
         description="xd",
-        buttons=Button.switch_inline("Again 🃏", "doge ", True),
     )
     result.append(sticker_result)
     await e.answer(result, gallery=True)
