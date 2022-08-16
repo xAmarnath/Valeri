@@ -294,19 +294,25 @@ def get_video_metadata(file):
     except (KeyError, IndexError):
         return (0, 0, 0)
 
+
 from emoji import UNICODE_EMOJI
+
 
 def is_emoji(s):
     for x in s:
-     if x in UNICODE_EMOJI["en"]:
-       return True
+        if x in UNICODE_EMOJI["en"]:
+            return True
     return False
 
 
 def write_on_image(image_name: str, text: str, font, color: str):
     """Write text on an image"""
     image = Image.open(image_name)
-    font = ImageFont.truetype(font, size=99) if not is_emoji(text) else ImageFont.truetype("emoji.ttf", size=99)
+    font = (
+        ImageFont.truetype(font, size=99)
+        if not is_emoji(text)
+        else ImageFont.truetype("emoji.ttf", size=99)
+    )
     try:
         color = ImageColor.getrgb(color)
     except ValueError:
