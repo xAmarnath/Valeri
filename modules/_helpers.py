@@ -1,17 +1,19 @@
 import importlib
+import math
 import os
 import random
 import string
-from os import listdir, path
 import sys
-import time, math
+import time
+from os import listdir, path
 
 import ffmpeg
 import telethon
-from PIL import Image, ImageDraw, ImageFont, ImageColor
+from PIL import Image, ImageColor, ImageDraw, ImageFont
 from telethon import errors
 
 from ._config import OWNER_ID, bot, help_dict, log
+
 
 def human_readable_size(size, speed=False):
     # Convert a size in bytes to a human readable string
@@ -36,6 +38,7 @@ def time_formatter(seconds: int) -> str:
         + ((str(seconds) + " second(s), ") if seconds else "")
     )
     return tmp[:-2]
+
 
 async def progress(
     current, total, gdrive, start, prog_type, file_name=None, is_cancelled=False
@@ -76,6 +79,7 @@ async def progress(
             )
         else:
             await gdrive.edit(f"**{prog_type}**\n\n" f"**Status**\n{tmp}")
+
 
 def load_modules():
     # Load all modules in the modules folder
@@ -125,7 +129,6 @@ def get_mention(user: telethon.tl.types.User, mode: str = "md"):
         return "[" + user.first_name + "](tg://user?id=" + str(user.id) + ")"
     elif mode == "html":
         return '<a href="tg://user?id=' + str(user.id) + '">' + user.first_name + "</a>"
-
 
 
 async def has_admin_rights(chat_id, user_id, RIGHT):
@@ -268,6 +271,7 @@ def get_video_metadata(file):
         )
     except (KeyError, IndexError):
         return (0, 0, 0)
+
 
 def write_on_image(image, text: str, font, color: str):
     """Write text on an image"""

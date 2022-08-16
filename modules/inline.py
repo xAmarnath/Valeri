@@ -125,21 +125,26 @@ async def geo_search_(e):
         )
     await e.answer(pop_list)
 
+
 @newIn(pattern="doge ?(.*)")
 async def doge_write_on_sticker(e: events.InlineQuery.Event):
     try:
         tex = e.pattern_match.group(1)
     except IndexError:
-        result = [e.builder.article(
-            "Query missing",
-            "Please add a query to search for a doge.",
-            link_preview=False,
-            text="Doge search query missing." + "\n" + "Usage: `doge <query>`",
-            )]
+        result = [
+            e.builder.article(
+                "Query missing",
+                "Please add a query to search for a doge.",
+                link_preview=False,
+                text="Doge search query missing." + "\n" + "Usage: `doge <query>`",
+            )
+        ]
         return await e.answer(result)
     if not tex:
         return
-    result =[]
-    sticker_result = await e.builder.document("doge_write.webp", title="doge_write.webp", description="xd")
+    result = []
+    sticker_result = await e.builder.document(
+        "doge_write.webp", title="doge_write.webp", description="xd"
+    )
     result.append(sticker_result)
     await e.answer(result, gallery=True)

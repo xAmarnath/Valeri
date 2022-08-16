@@ -13,11 +13,11 @@ from ._helpers import (
     get_mention,
     get_text_content,
     get_user,
-    progress,
     get_video_metadata,
     human_readable_size,
+    progress,
 )
-from ._transfers import upload_file, download_file
+from ._transfers import download_file, upload_file
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
 thumbs = []
@@ -211,9 +211,9 @@ async def _dl(e):
         return await e.reply("`Reply to a file.`")
     if not r.media:
         return await e.reply("`Reply to a file.`")
-    msg = await e.reply("`Downloading...`")
+    await e.reply("`Downloading...`")
     with open(r, "wb") as f:
-     dl = await download_file(e.client, r.name, r, progress_callback=progress)
+        dl = await download_file(e.client, r.name, r, progress_callback=progress)
 
 
 @new_cmd(pattern="auth")
