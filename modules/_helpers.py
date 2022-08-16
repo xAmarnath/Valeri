@@ -5,6 +5,7 @@ import string
 from os import listdir, path
 import sys
 import time, math
+import textwrap
 
 import ffmpeg
 import telethon
@@ -98,6 +99,27 @@ def human_readable_size(size, speed=False):
             return "%3.1f %s" % (size, x)
         size /= 1024.0
     return "%3.1f %s" % (size, "EB")
+
+async def is_worth(right, chat, user, admin_check=True):
+    # Check if a user has a certain right in a chat
+    if user == OWNER_ID:
+        return True
+    try:
+        p = await bot(telethon.functions.channels.GetParticipantRequest(chat, user))
+    except telethon.errors.rpcerrorlist.UserNotParticipantError:
+        return False
+    if not p:
+        return False
+    if not admin_check:
+        return True
+    p: telethon.tl.types.ChannelParticipant = p.participant
+    if isinstance(p, telethon.tl.types.ChannelParticipantCreator):
+        return True
+    if isinstance(p, telethon.tl.types.ChannelParticipantAdmin):
+        if p.admin_rights.to_dict()[right]:
+            return True
+    return False
+
 
 
 async def get_user(e):
@@ -269,18 +291,21 @@ def get_video_metadata(file):
     except (KeyError, IndexError):
         return (0, 0, 0)
 
-def write_on_image(image, text: str, font, color: str):
+def write_on_image(image_name: str, text: str, font, color: str):
     """Write text on an image"""
-    image = Image.open(image)
-    font = ImageFont.truetype(font, size=20)
+    image = Image.open(image_name)
+    font = ImageFont.truetype(font, size=99)
     try:
         color = ImageColor.getrgb(color)
     except ValueError:
         color = (255, 255, 255)
     draw = ImageDraw.Draw(image)
     width, height = image.size
-    text_size = draw.textsize(text, font=font, stroke_width=2)
-    text_x = (width - text_size[0]) // 2
-    text_y = (height - text_size[1]) // 2
+    text_size = draw.textsize(text, font=font)
+    text_x = (width - text_size[0]) // 2 
+    text_y = (height - text_size[1]) // 2 - 100
+    text = textwrap.wrap(text, width=width - 2)
+    text = "\n".join(text)
     draw.text((text_x, text_y), text, font=font, fill=color)
-    return image
+    image.save(image_name + "xd_text.webp")
+    return image_name + "xd_text.webp"
