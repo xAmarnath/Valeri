@@ -321,14 +321,14 @@ def write_on_image(image_name: str, text: str, font, color: str):
     draw = ImageDraw.Draw(image)
     width, height = image.size
     if len(text) > 12:
-      text = textwrap.fill(text, 12)
-      draw_box = draw.textbox((0,0), text=text, font=font)
-      text_x = (width - (draw_box[2] - draw_box[0])) // 2
-      text_y = ((height - (draw_box[3] - draw_box[1])) // 2) -100
+        text = textwrap.fill(text, 12)
+        draw_box = draw.textbox((0, 0), text=text, font=font)
+        text_x = (width - (draw_box[2] - draw_box[0])) // 2
+        text_y = ((height - (draw_box[3] - draw_box[1])) // 2) - 100
     else:
-      text_size = draw.textsize(text, font=font)
-      text_x = (width - text_size[0]) // 2
-      text_y = (height - text_size[1]) // 2 - 100
+        text_size = draw.textsize(text, font=font)
+        text_x = (width - text_size[0]) // 2
+        text_y = (height - text_size[1]) // 2 - 100
     if not is_em:
         draw.text((text_x, text_y), text, font=font, fill=color)
     else:
