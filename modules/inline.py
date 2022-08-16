@@ -26,8 +26,7 @@ async def _torrent(message: events.InlineQuery.Event):
     for result in request:
         if len(results) >= 10:
             break
-        magnet = "magnet:?xt=urn:btih:" + \
-            result["info_hash"] + "&dn=" + result["name"]
+        magnet = "magnet:?xt=urn:btih:" + result["info_hash"] + "&dn=" + result["name"]
         buttons = [
             [
                 Button.inline("🌟", data="star_torrent"),
@@ -35,8 +34,7 @@ async def _torrent(message: events.InlineQuery.Event):
             [
                 Button.url(
                     "Add to Seedr",
-                    url="t.me/missvaleri_bot?start=addtorrent&magnet=" +
-                        quote(magnet),
+                    url="t.me/missvaleri_bot?start=addtorrent&magnet=" + quote(magnet),
                 ),
             ],
         ]
@@ -116,8 +114,7 @@ async def geo_search_(e):
                 thumb=thumb,
                 link_preview=True,
                 buttons=[
-                    [Button.inline(
-                        title or "Map", data=f"geo_{description[:30]}")],
+                    [Button.inline(title or "Map", data=f"geo_{description[:30]}")],
                     [
                         Button.switch_inline(
                             "Search Again", query="geo ", same_peer=True
@@ -134,17 +131,21 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
     try:
         tex = e.text.split("doge ")[1]
     except IndexError:
-        result = [e.builder.article(
-            "Query missing",
-            "Please add a query to search for a doge.",
-            link_preview=False,
-            text="Doge search query missing." + "\n" + "Usage: `doge <query>`",
-        )]
+        result = [
+            e.builder.article(
+                "Query missing",
+                "Please add a query to search for a doge.",
+                link_preview=False,
+                text="Doge search query missing." + "\n" + "Usage: `doge <query>`",
+            )
+        ]
         return await e.answer(result)
     if not tex:
         return
     result = []
     doge_f = write_on_image("doge_write.webp", tex, "doge.ttf", "black")
-    sticker_result = await e.builder.document(doge_f, title="doge_write.webp", description="xd")
+    sticker_result = await e.builder.document(
+        doge_f, title="doge_write.webp", description="xd"
+    )
     result.append(sticker_result)
     await e.answer(result, gallery=True)

@@ -4,11 +4,10 @@ import os
 import random
 import string
 import sys
-import time
-import math
 import textwrap
 import time
 from os import listdir, path
+
 import ffmpeg
 import telethon
 from PIL import Image, ImageColor, ImageDraw, ImageFont
@@ -132,8 +131,7 @@ async def get_user(e):
     args = e.text.split(maxsplit=2)
     if e.is_reply:
         user = (await e.get_reply_message()).sender
-        arg = (args[1] + (args[2] if len(args) > 2 else "")
-               ) if len(args) > 1 else ""
+        arg = (args[1] + (args[2] if len(args) > 2 else "")) if len(args) > 1 else ""
     else:
         if len(args) == 1:
             await e.reply("No user specified")
@@ -174,8 +172,7 @@ async def has_admin_rights(chat_id, user_id, RIGHT):
         else:
             return (
                 False,
-                "You are missing admin rights to use this command, {}.".format(
-                    RIGHT),
+                "You are missing admin rights to use this command, {}.".format(RIGHT),
             )
     return False, "You do not have admin rights in this chat"
 
