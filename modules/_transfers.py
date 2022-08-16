@@ -2,6 +2,7 @@
 
 import asyncio
 import hashlib
+import inspect
 import io
 import logging
 import math
@@ -30,7 +31,8 @@ class DownloadSender:
         count,
     ):
         self.sender = sender
-        self.request = functions.upload.GetFileRequest(file, offset=offset, limit=limit)
+        self.request = functions.upload.GetFileRequest(
+            file, offset=offset, limit=limit)
         self.stride = stride
         self.remaining = count
 
@@ -72,7 +74,8 @@ class UploadSender:
                 file_id, index, part_count, b""
             )
         else:
-            self.request = functions.upload.SaveFilePartRequest(file_id, index, b"")
+            self.request = functions.upload.SaveFilePartRequest(
+                file_id, index, b"")
         self.stride = stride
         self.previous = None
         self.loop = loop
@@ -87,7 +90,8 @@ class UploadSender:
 
     async def _next(self, data: bytes) -> None:
         self.request.bytes = data
-        log.debug("Sending file part %d/%d", self.request.file_part, self.part_count)
+        log.debug("Sending file part %d/%d",
+                  self.request.file_part, self.part_count)
         await self.sender.send(self.request)
         self.request.file_part += self.stride
 
@@ -186,7 +190,8 @@ class ParallelTransferrer:
             await self._create_upload_sender(file_id, part_count, big, 0, connections),
             *await asyncio.gather(
                 *(
-                    self._create_upload_sender(file_id, part_count, big, i, connections)
+                    self._create_upload_sender(
+                        file_id, part_count, big, i, connections)
                     for i in range(1, connections)
                 )
             ),
@@ -237,10 +242,12 @@ class ParallelTransferrer:
         file_size: int = None,
         part_size_kb=None,
         connection_count=None,
-    ) -> tuple[int, int, bool]:
+    ):
         """Initialize an upload."""
-        connection_count = connection_count or self._get_connection_count(file_size)
-        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(
+            file_size)
+        part_size = (
+            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = (file_size + part_size - 1) // part_size
         is_large = file_size > 10 * 1024 * 1024
         await self._init_upload(connection_count, file_id, part_count, is_large)
@@ -263,8 +270,10 @@ class ParallelTransferrer:
         connection_count: int,
     ):
         """Download a file from Telegram."""
-        connection_count = connection_count or self._get_connection_count(file_size)
-        part_size = (part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+        connection_count = connection_count or self._get_connection_count(
+            file_size)
+        part_size = (
+            part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
         part_count = math.ceil(file_size / part_size)
         log.debug(
             "Starting parallel download: %s parts of %s bytes",
@@ -357,3 +366,60 @@ async def progress_callback(current, total, message):
     if current % 4 == 0:
         return
     await message.edit(f"Uploading... {progress}%")
+
+
+async def download(
+    self,
+    file,
+    file_size: int,
+    part_size_kb=None,
+    connection_count=None,
+):
+    connection_count = connection_count or self._get_connection_count(
+        file_size)
+    print("download count is ", connection_count)
+
+    part_size = (
+        part_size_kb or utils.get_appropriated_part_size(file_size)) * 1024
+    part_count = math.ceil(file_size / part_size)
+    log.debug(
+        "Starting parallel download: "
+        f"{connection_count} {part_size} {part_count} {file!s}"
+    )
+    await self._init_download(connection_count, file, part_count, part_size)
+
+    part = 0
+    while part < part_count:
+        tasks = []
+        for sender in self.senders:
+            tasks.append(self.loop.create_task(sender.next()))
+        for task in tasks:
+            data = await task
+            if not data:
+                break
+            yield data
+            part += 1
+            log.debug(f"Part {part} downloaded")
+
+    log.debug("Parallel download finished, cleaning up connections")
+    await self._cleanup()
+
+
+async def download_file(
+    client,
+    location,
+    out,
+    progress_callback: callable = None,
+):
+    size = location.size
+    dc_id, location = utils.get_input_location(location)
+    downloader = ParallelTransferrer(client, dc_id)
+    downloaded = downloader.download(location, size)
+    async for x in downloaded:
+        out.write(x)
+        if progress_callback:
+            r = progress_callback(out.tell(), size)
+            if inspect.isawaitable(r):
+                await r
+
+    return out

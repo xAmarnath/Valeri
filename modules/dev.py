@@ -13,10 +13,11 @@ from ._helpers import (
     get_mention,
     get_text_content,
     get_user,
+    progress,
     get_video_metadata,
     human_readable_size,
 )
-from ._transfers import upload_file
+from ._transfers import upload_file, download_file
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
 
 thumbs = []
@@ -130,7 +131,7 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
     if len(files) == 1:
         msg = await e.reply("`Uploading...`")
     else:
-        msg = await e.reply(f"`Uploading...` 0/{len(files)} from `{directory}`.")
+        msg = await e.reply(f"`Uploading...` **0/{len(files)}**.")
     done = 0
     for l in files:
         l = directory + l
@@ -184,7 +185,7 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
     await msg.delete()
 
 
-@newMsg(pattern="setthumb")
+@new_cmd(pattern="setthumb")
 @auth_only
 async def set_t(e):
     f = await e.get_reply_message()
@@ -195,10 +196,10 @@ async def set_t(e):
     thumbs.append(t)
 
 
-@newMsg(pattern="resetthumb")
+@new_cmd(pattern="resetthumb")
 @auth_only
 async def _rsy_t(e):
-    await e.reply("Resetted thumb to FFMPEG Gen!")
+    await e.reply("Set custom thumb to `None`.")
     thumbs.clear()
 
 
@@ -211,8 +212,8 @@ async def _dl(e):
     if not r.media:
         return await e.reply("`Reply to a file.`")
     msg = await e.reply("`Downloading...`")
-    await e.client.download_media(r.media, "./")
-    await msg.edit("`Downloaded successfully.`")
+    with open(r, "wb") as f:
+     dl = await download_file(e.client, r.name, r, progress_callback=progress)
 
 
 @new_cmd(pattern="auth")

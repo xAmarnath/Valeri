@@ -10,7 +10,7 @@ from ._helpers import (
 )
 
 
-@new_cmd(pattern="(promote|superpromote|demote)")
+@new_cmd(pattern="promote|superpromote|demote")
 async def promote_demote(e):
     action = e.text.split(" ")[0][1:].lower()
     r, arg = await has_admin_rights(e.chat_id, e.sender_id, "add_admins")
@@ -35,7 +35,7 @@ async def promote_demote(e):
                 )
             )
             await e.reply(
-                get_mention(user) + " has been promoted to " + (arg or "Admin") + "."
+                get_mention(user) + " has been promoted!"
             )
         elif action == "superpromote":
             await e.client(
@@ -54,7 +54,7 @@ async def promote_demote(e):
                     rank=arg if arg else "SuperAdmin",
                 )
             )
-            await e.reply("Successfully superpromoted {}".format(get_mention(user)))
+            await e.reply(get_mention(user) + " has been superpromoted!")
         elif action == "demote":
             await e.client(
                 functions.channels.EditAdminRequest(
@@ -92,7 +92,7 @@ async def promote_demote(e):
         await e.reply(str(ex) + str(type(ex)))
 
 
-@new_cmd(pattern="(ban|kick|unban|tban|sban|mute|tmute|smute|skick|unmute|kickme)")
+@new_cmd(pattern="ban|kick|unban|tban|sban|mute|tmute|smute|skick|unmute|kickme")
 async def restrict_user(msg):
     action = msg.text.split(" ")[0][1:].lower()
     if action == "kickme":
@@ -251,7 +251,7 @@ async def chatid(msg):
     await msg.reply("Chat ID: `{}`".format(msg.chat_id))
 
 
-@new_cmd(pattern="(setgpic|setgp|setdesc|setgdesc|setgname|setgtitle)")
+@new_cmd(pattern="setgpic|setgp|setdesc|setgdesc|setgname|setgtitle")
 async def set_group_info(msg):
     command = msg.text.split(" ")[0][1:].lower()
     if command in ["setgpic", "setgp"]:

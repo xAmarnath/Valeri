@@ -3,14 +3,79 @@ import os
 import random
 import string
 from os import listdir, path
+import sys
+import time, math
 
 import ffmpeg
 import telethon
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont, ImageColor
 from telethon import errors
 
 from ._config import OWNER_ID, bot, help_dict, log
 
+def human_readable_size(size, speed=False):
+    # Convert a size in bytes to a human readable string
+    variables = ["bytes", "KB", "MB", "GB", "TB", "EB"]
+    if speed:
+        variables = ["bps", "Kbps", "Mbps", "Gbps", "Tbps", "Ebps"]
+    for x in variables:
+        if size < 1024.0:
+            return "%3.1f %s" % (size, x)
+        size /= 1024.0
+    return "%3.1f %s" % (size, "EB")
+
+
+def time_formatter(seconds: int) -> str:
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+    tmp = (
+        ((str(days) + " day(s), ") if days else "")
+        + ((str(hours) + " hour(s), ") if hours else "")
+        + ((str(minutes) + " minute(s), ") if minutes else "")
+        + ((str(seconds) + " second(s), ") if seconds else "")
+    )
+    return tmp[:-2]
+
+async def progress(
+    current, total, gdrive, start, prog_type, file_name=None, is_cancelled=False
+):
+    now = time.time()
+    diff = now - start
+    if is_cancelled is True:
+        raise Exception("Cancelled")
+
+    if round(diff % 10.00) == 0 or current == total:
+        percentage = current * 100 / total
+        speed = current / diff
+        elapsed_time = round(diff)
+        eta = round((total - current) / speed)
+        if "upload" in prog_type.lower():
+            status = "Uploading"
+        elif "download" in prog_type.lower():
+            status = "Downloading"
+        else:
+            status = "Unknown"
+        progress_str = "`{0}` | [{1}{2}] `{3}%`".format(
+            status,
+            "".join(["▰" for i in range(math.floor(percentage / 10))]),
+            "".join(["▱" for i in range(10 - math.floor(percentage / 10))]),
+            round(percentage, 2),
+        )
+        tmp = (
+            f"{progress_str}\n"
+            f"`{human_readable_size(current)} of {human_readable_size(total)}"
+            f" @ {human_readable_size(speed)}`\n"
+            f"**ETA :**` {time_formatter(eta)}`\n"
+            f"**Duration :** `{time_formatter(elapsed_time)}`"
+        )
+        if file_name:
+            await gdrive.edit(
+                f"**{prog_type}**\n\n"
+                f"**File Name : **`{file_name}`**\nStatus**\n{tmp}"
+            )
+        else:
+            await gdrive.edit(f"**{prog_type}**\n\n" f"**Status**\n{tmp}")
 
 def load_modules():
     # Load all modules in the modules folder
@@ -61,26 +126,6 @@ def get_mention(user: telethon.tl.types.User, mode: str = "md"):
     elif mode == "html":
         return '<a href="tg://user?id=' + str(user.id) + '">' + user.first_name + "</a>"
 
-
-async def is_worth(right, chat, user, admin_check=True):
-    # Check if a user has a certain right in a chat
-    if user == OWNER_ID:
-        return True
-    try:
-        p = await bot(telethon.functions.channels.GetParticipantRequest(chat, user))
-    except telethon.errors.rpcerrorlist.UserNotParticipantError:
-        return False
-    if not p:
-        return False
-    if not admin_check:
-        return True
-    p: telethon.tl.types.ChannelParticipant = p.participant
-    if isinstance(p, telethon.tl.types.ChannelParticipantCreator):
-        return True
-    if isinstance(p, telethon.tl.types.ChannelParticipantAdmin):
-        if p.admin_rights.to_dict()[right]:
-            return True
-    return False
 
 
 async def has_admin_rights(chat_id, user_id, RIGHT):
@@ -223,3 +268,19 @@ def get_video_metadata(file):
         )
     except (KeyError, IndexError):
         return (0, 0, 0)
+
+def write_on_image(image, text: str, font, color: str):
+    """Write text on an image"""
+    image = Image.open(image)
+    font = ImageFont.truetype(font, size=20)
+    try:
+        color = ImageColor.getrgb(color)
+    except ValueError:
+        color = (255, 255, 255)
+    draw = ImageDraw.Draw(image)
+    width, height = image.size
+    text_size = draw.textsize(text, font=font, stroke_width=2)
+    text_x = (width - text_size[0]) // 2
+    text_y = (height - text_size[1]) // 2
+    draw.text((text_x, text_y), text, font=font, fill=color)
+    return image
