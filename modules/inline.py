@@ -148,8 +148,8 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
     a = time.time()
     images = []
     threads = [threading.Thread(target=write_on_image, args=("doge_write.webp", tex, "doge.ttf", "black", images)),
-     threading.Thread(target=write_on_image, args=("doge_3.webp", tex, "doge.ttf", "black", images),
-     threading.Thread(target=write_on_image, args=("doge_3.webp", tex, "doge.ttf", "black", images)]
+     threading.Thread(target=write_on_image, args=("doge_3.webp", tex, "doge.ttf", "black", images)),
+     threading.Thread(target=write_on_image, args=("doge_3.webp", tex, "doge.ttf", "black", images))]
     [t.start() for t in threads]
     [t.join() for t in threads]
     print("time taken to draw: ", time.time() - a)
