@@ -2,7 +2,7 @@ import datetime
 import time
 from urllib.parse import quote
 
-# import threading
+import threading
 from requests import get
 from telethon import Button, events, types
 
@@ -146,15 +146,19 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
     if not tex:
         return
     a = time.time()
-    image_1 = write_on_image("doge_write.webp", tex, "doge.ttf", "black", True)
-    image_2 = write_on_image("doge_3.webp", tex, "doge.ttf", "black", True)
-    image_3 = write_on_image("doge_3.webp", tex, "doge.ttf", "black", True)
+    images = []
+    threads = [threading.Thread(target=write_on_image, args=("doge_write.webp", tex, "doge.ttf", "black", images)),
+     threading.Thread(target=write_on_image, args=("doge_3.webp", tex, "doge.ttf", "black", images),
+     threading.Thread(target=write_on_image, args=("doge_3.webp", tex, "doge.ttf", "black", images)]
+    [t.start() for t in threads]
+    [t.join() for t in threads]
     print("time taken to draw: ", time.time() - a)
-    file_1 = await upload_file(e.client, image_1)
+    print(len(images))
+    return 
     await e.answer(
         [
             await e.builder.document(
-                file_1,
+                image_1,
                 title="doge_write.webp",
                 description="xd",
             ),
