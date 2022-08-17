@@ -142,14 +142,19 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
         return await e.answer(result)
     if not tex:
         return
-    result_1 = await e.builder.document(
+    sticker_1 = await e.builder.document(
         write_on_image("doge_write.webp", tex, "doge.ttf", "black", stickmoji=True),
         title="doge_write.webp",
         description="xd",
     )
-    result_2 = await e.builder.document(
+    sticker_2 = await e.builder.document(
         write_on_image("doge_2.webp", tex, "doge.ttf", "black", True),
         title="doge_2.webp",
         description="xd_2",
     )
-    await e.answer([result_1, result_2], gallery=True)
+    sticker_3 = await e.builder.document(
+        write_on_image("doge_3.webp", tex, "doge.ttf", "black", True),
+        title="doge_2.webp",
+        description="xd_2",
+    )
+    await e.answer([sticker_1, sticker_2, sticker_3], gallery=True)
