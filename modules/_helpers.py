@@ -335,7 +335,7 @@ def write_on_image(
         text_x = (width - text_size[0]) // 2
         text_y = (height - text_size[1]) // 2 - 100
         if text_size[0] < width:
-           text = textwrap.fill(text, 4)
+            text = textwrap.fill(text, 4)
     if not is_em:
         draw.text((text_x, text_y), text.strip(), font=font, fill=color)
     else:
