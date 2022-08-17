@@ -1,10 +1,10 @@
 import datetime
 import time
 from urllib.parse import quote
-
+# import threading 
 from requests import get
 from telethon import Button, events, types
-
+from ._transfers import upload_file
 from ._handler import newIn
 from ._helpers import human_readable_size, write_on_image
 
@@ -148,10 +148,11 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
     image_2 = write_on_image("doge_3.webp", tex, "doge.ttf", "black", True)
     image_3 = write_on_image("doge_3.webp", tex, "doge.ttf", "black", True)
     print("time taken to draw: ", time.time() - a)
+    file_1 = await upload_file(e.client, image_1)
     await e.answer(
         [
             await e.builder.document(
-                image_1,
+                file_1,
                 title="doge_write.webp",
                 description="xd",
             ),
