@@ -186,7 +186,7 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
                 description="xd_3",
                 text=str(time.time() - prevTime),
             ),
-await e.builder.document(
+            await e.builder.document(
                 images[3],
                 title="doge_4.webp",
                 description="xd_4",
