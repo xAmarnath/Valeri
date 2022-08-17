@@ -146,7 +146,7 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
     a = time.time()
     image_1 = write_on_image("doge_write.webp", tex, "doge.ttf", "black", True)
     image_2 = write_on_image("doge_3.webp", tex, "doge.ttf", "black", True)
-    image_3 = (write_on_image("doge_3.webp", tex, "doge.ttf", "black", True),)
+    image_3 = write_on_image("doge_3.webp", tex, "doge.ttf", "black", True)
     print("time taken to draw: ", time.time() - a)
     await e.answer(
         [
