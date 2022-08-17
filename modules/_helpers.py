@@ -309,7 +309,7 @@ from pilmoji import Pilmoji
 
 
 def write_on_image(
-    image_name: str, text: str, font, color: str, stickmoji: bool = False
+    image_name: str, text: str, font, color: str, im
 ):
     """Write text on an image"""
     image = Image.open(image_name)
@@ -342,4 +342,4 @@ def write_on_image(
         with Pilmoji(image) as pilmoji:
             pilmoji.text((text_x, text_y), text.strip(), (0, 0, 0), font)
     image.save(image_name + "xd_text.webp")
-    return image_name + "xd_text.webp"
+    im.append(image_name + "xd_text.webp")
