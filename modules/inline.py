@@ -1,12 +1,14 @@
 import datetime
 import time
 from urllib.parse import quote
-# import threading 
+
+# import threading
 from requests import get
 from telethon import Button, events, types
-from ._transfers import upload_file
+
 from ._handler import newIn
 from ._helpers import human_readable_size, write_on_image
+from ._transfers import upload_file
 
 
 @newIn(pattern="torrent")
