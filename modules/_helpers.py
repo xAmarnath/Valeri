@@ -313,7 +313,7 @@ def write_on_image(image_name: str, text: str, font, color: str, im):
     image = Image.open(image_name)
     is_em = is_emoji(text)
     font = (
-        ImageFont.truetype(font, size=99)
+        ImageFont.truetype(font, size=84)
         # if not is_em
         # else ImageFont.truetype("emoji.ttf", size=109)
     )
