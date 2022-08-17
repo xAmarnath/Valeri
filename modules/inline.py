@@ -1,6 +1,6 @@
 import datetime
 from urllib.parse import quote
-
+import time
 from requests import get
 from telethon import Button, events, types
 
@@ -142,6 +142,7 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
         return await e.answer(result)
     if not tex:
         return
+    a = time.time()
     sticker_1 = await e.builder.document(
         write_on_image("doge_write.webp", tex, "doge.ttf", "black", stickmoji=True),
         title="doge_write.webp",
@@ -157,4 +158,5 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
         title="doge_2.webp",
         description="xd_2",
     )
+    print("time taken to draw: ", time.time() - a)
     await e.answer([sticker_1, sticker_2, sticker_3], gallery=True)
