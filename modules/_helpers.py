@@ -304,8 +304,13 @@ def is_emoji(s):
             return True
     return False
 
+
 from pilmoji import Pilmoji
-def write_on_image(image_name: str, text: str, font, color: str, stickmoji: bool = False):
+
+
+def write_on_image(
+    image_name: str, text: str, font, color: str, stickmoji: bool = False
+):
     """Write text on an image"""
     image = Image.open(image_name)
     is_em = is_emoji(text)
@@ -333,6 +338,6 @@ def write_on_image(image_name: str, text: str, font, color: str, stickmoji: bool
         draw.text((text_x, text_y), text, font=font, fill=color)
     else:
         with Pilmoji(image) as pilmoji:
-             pilmoji.text((text_x, text_y), text.strip(), (0, 0, 0), font)
+            pilmoji.text((text_x, text_y), text.strip(), (0, 0, 0), font)
     image.save(image_name + "xd_text.webp")
     return image_name + "xd_text.webp"
