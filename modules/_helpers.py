@@ -334,8 +334,10 @@ def write_on_image(
         text_size = draw.textsize(text, font=font)
         text_x = (width - text_size[0]) // 2
         text_y = (height - text_size[1]) // 2 - 100
+        if text_size.[0] < width:
+           text = textwrap.fill(text, 4)
     if not is_em:
-        draw.text((text_x, text_y), text, font=font, fill=color)
+        draw.text((text_x, text_y), text.strip(), font=font, fill=color)
     else:
         with Pilmoji(image) as pilmoji:
             pilmoji.text((text_x, text_y), text.strip(), (0, 0, 0), font)
