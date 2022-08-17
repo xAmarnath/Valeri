@@ -144,7 +144,6 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
         return await e.answer(result)
     if not tex:
         return
-    a = time.time()
     images = []
     threads = [
         threading.Thread(
@@ -162,23 +161,20 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
     ]
     [t.start() for t in threads]
     [t.join() for t in threads]
-    print("time taken to draw: ", time.time() - a)
-    print(len(images))
-    return
     await e.answer(
         [
             await e.builder.document(
-                image_1,
+                images[0],
                 title="doge_write.webp",
                 description="xd",
             ),
             await e.builder.document(
-                image_2,
+                images[1],
                 title="doge_2.webp",
                 description="xd_2",
             ),
             await e.builder.document(
-                image_3,
+                images[2],
                 title="doge_2.webp",
                 description="xd_2",
             ),
