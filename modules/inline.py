@@ -159,6 +159,10 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
             target=write_on_image,
             args=("doge_3.webp", tex, "doge.ttf", "black", images),
         ),
+        threading.Thread(
+            target=write_on_image,
+            args=("doge_4.webp", tex, "doge.ttf", "black", images),
+        ),
     ]
     [t.start() for t in threads]
     [t.join() for t in threads]
@@ -167,7 +171,7 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
             await e.builder.document(
                 images[0],
                 title="doge_write.webp",
-                description="xd",
+                description="xd_1",
                 text=str(time.time() - prevTime),
             ),
             await e.builder.document(
@@ -178,8 +182,14 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
             ),
             await e.builder.document(
                 images[2],
-                title="doge_2.webp",
-                description="xd_2",
+                title="doge_3.webp",
+                description="xd_3",
+                text=str(time.time() - prevTime),
+            ),
+await e.builder.document(
+                images[3],
+                title="doge_4.webp",
+                description="xd_4",
                 text=str(time.time() - prevTime),
             ),
         ],
