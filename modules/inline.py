@@ -144,6 +144,7 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
     if not tex:
         return
     images = []
+    prevTime = time.time()
     threads = [
         threading.Thread(
             target=write_on_image,
@@ -151,7 +152,7 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
         ),
         threading.Thread(
             target=write_on_image,
-            args=("doge_3.webp", tex, "doge.ttf", "black", images),
+            args=("doge_2.webp", tex, "doge.ttf", "black", images),
         ),
         threading.Thread(
             target=write_on_image,
@@ -166,16 +167,19 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
                 images[0],
                 title="doge_write.webp",
                 description="xd",
+                text=str(time.time() - prevTime),
             ),
             await e.builder.document(
                 images[1],
                 title="doge_2.webp",
                 description="xd_2",
+                text=str(time.time() - prevTime),
             ),
             await e.builder.document(
                 images[2],
                 title="doge_2.webp",
                 description="xd_2",
+                text=str(time.time() - prevTime),
             ),
         ],
         gallery=True,
