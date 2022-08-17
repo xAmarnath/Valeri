@@ -308,9 +308,7 @@ def is_emoji(s):
 from pilmoji import Pilmoji
 
 
-def write_on_image(
-    image_name: str, text: str, font, color: str, im
-):
+def write_on_image(image_name: str, text: str, font, color: str, im):
     """Write text on an image"""
     image = Image.open(image_name)
     is_em = is_emoji(text)
