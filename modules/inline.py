@@ -6,7 +6,7 @@ from urllib.parse import quote
 from requests import get
 from telethon import Button, events, types
 
-from ._handler import newIn, newCall
+from ._handler import newCall, newIn
 from ._helpers import human_readable_size, write_on_image
 
 
@@ -225,7 +225,8 @@ async def imdb_inline_query(e):
         ) if title.get("poster") else None
     await e.answer(results)
 
+
 @newCall(pattern="vimdb_(.*)")
 async def vimdb_cb(e):
- await e.respond("dd")
- await e.edit(file="a.jpg")
+    await e.respond("dd")
+    await e.edit(file="a.jpg")
