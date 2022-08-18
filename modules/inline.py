@@ -129,11 +129,15 @@ async def geo_search_(e):
 
 
 @newIn(pattern="doge ?(.*)")
+@newIn(pattern="(.*)")
 async def doge_write_on_sticker(e: events.InlineQuery.Event):
     try:
         tex = e.text.split("doge ")[1]
     except IndexError:
-        result = [
+        try:
+          text = e.text
+        except IndexError:
+          result = [
             e.builder.article(
                 "Query missing",
                 "Please add a query to search for a doge.",
