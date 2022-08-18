@@ -6,7 +6,7 @@ from urllib.parse import quote
 from requests import get
 from telethon import Button, events, types
 
-from ._handler import newIn
+from ._handler import newIn, newCall
 from ._helpers import human_readable_size, write_on_image
 
 
@@ -215,11 +215,17 @@ async def imdb_inline_query(e):
             e.builder.document(
                 file=title.get("poster"),
                 force_document=True,
-                title=f"{title.get('title', '-')} ({title.get('year')}",
-                text=f"{title.get('title', '-')} ({title.get('year')}",
+                title=f"{title.get('title', '-')} ({title.get('year')})",
+                description=f"Actors: {title.get('actors')}",
+                text=f"{title.get('title', '-')} ({title.get('year')})",
                 buttons=Button.inline(
                     "ViewInsideTG", data="vimdb_{}".format(title.get("id"))
                 ),
             )
         ) if title.get("poster") else None
     await e.answer(results)
+
+@newCall(pattern="vimdb_(.*)")
+async def vimdb_cb(e):
+ await e.respond("dd")
+ await e.edit(file="a.jpg")
