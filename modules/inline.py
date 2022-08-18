@@ -201,3 +201,16 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
         ],
         gallery=True,
     )
+
+@newIn(pattern="imdb ?(.*)")
+async def imdb_inline_query(e):
+ try:
+    query = e.text.split(None, maxsplit=1)[1]
+ except:
+    return
+ url = "https://watch-series-go.vercel.app/api/imdb"
+ req = get(url, params={"query": query}).json()
+ results = []
+ for title in req:
+     result.append(e.builder.document(file=title.get("poster"), title=f"{title.get("title", "-")} ({title.get("year")}", description=f"Actors: {title.get("actors")}", text="ok"))
+ await e.answer(results)
