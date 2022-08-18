@@ -2,7 +2,7 @@ import datetime
 import threading
 import time
 from urllib.parse import quote
-
+from ._config import bot
 from requests import get
 from telethon import Button, events, types
 
@@ -128,14 +128,14 @@ async def geo_search_(e):
     await e.answer(pop_list)
 
 
-@newIn(pattern=r"?(.*)")
+@bot.on(events.InlineQuery(pattern=None))
 @newIn(pattern="doge ?(.*)")
 async def doge_write_on_sticker(e: events.InlineQuery.Event):
     try:
         tex = e.text.split("doge ")[1]
     except IndexError:
         try:
-            e.text
+            tex = e.text
         except IndexError:
             result = [
                 e.builder.article(
