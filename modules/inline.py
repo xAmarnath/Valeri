@@ -219,5 +219,6 @@ async def imdb_inline_query(e):
                 text="ok",
                 force_document=True,
             )
-        )
+        ) if title.get("poster") else None
+        
     await e.answer(results)
