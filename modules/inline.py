@@ -1,3 +1,4 @@
+
 import datetime
 import threading
 import time
@@ -217,6 +218,7 @@ async def imdb_inline_query(e):
                 title=f"{title.get('title', '-')} ({title.get('year')}",
                 description=f"Actors: {title.get('actors')}",
                 text="ok",
+                force_document=True,
             )
         )
     await e.answer(results)
