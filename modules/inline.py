@@ -212,5 +212,5 @@ async def imdb_inline_query(e):
  req = get(url, params={"query": query}).json()
  results = []
  for title in req:
-     result.append(e.builder.document(file=title.get("poster"), title=f"{title.get("title", "-")} ({title.get("year")}", description=f"Actors: {title.get("actors")}", text="ok"))
+     results.append(e.builder.document(file=title.get("poster"), title=f"{title.get('title', '-')} ({title.get('year')}", description=f"Actors: {title.get('actors')}", text="ok"))
  await e.answer(results)
