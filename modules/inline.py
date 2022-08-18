@@ -145,7 +145,7 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
     if not tex:
         return
     images = []
-    prevTime = time.time()
+    time.time()
     threads = [
         threading.Thread(
             target=write_on_image,
