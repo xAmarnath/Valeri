@@ -217,7 +217,8 @@ async def imdb_inline_query(e):
                 title=f"{title.get('title', '-')} ({title.get('year')}",
                 description=f"Actors: {title.get('actors')}",
                 text="ok",
-                force_document=True,
+                force_document=False,
+                type="photo",
             )
         ) if title.get("poster") else None
 
