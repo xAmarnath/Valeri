@@ -212,13 +212,9 @@ async def imdb_inline_query(e):
     results = []
     for title in req:
         results.append(
-            e.builder.document(
+            e.builder.photo(
                 file=title.get("poster"),
-                title=f"{title.get('title', '-')} ({title.get('year')}",
-                description=f"Actors: {title.get('actors')}",
-                text="ok",
-                force_document=False,
-                type="photo",
+                text=f"{title.get('title', '-')} ({title.get('year')}",
             )
         ) if title.get("poster") else None
 
