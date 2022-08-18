@@ -325,7 +325,7 @@ def write_on_image(image_name: str, text: str, font, color: str, im):
     width, height = image.size
     if len(text) > 0:
         text = textwrap.fill(text, 20)
-        draw_box = draw.textbbox((0, 0), text=text, font=font)
+        draw_box = draw.textbbox((5, 5), text=text, font=font)
         text_x = (width - (draw_box[2] - draw_box[0])) // 2
         text_y = ((height - (draw_box[3] - draw_box[1])) // 2) - 125
     else:
