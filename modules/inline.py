@@ -127,9 +127,8 @@ async def geo_search_(e):
         )
     await e.answer(pop_list)
 
-
+@newIn(pattern=r"?(.*)")
 @newIn(pattern="doge ?(.*)")
-@newIn(pattern="(.*)")
 async def doge_write_on_sticker(e: events.InlineQuery.Event):
     try:
         tex = e.text.split("doge ")[1]
@@ -182,19 +181,19 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
                 images[1],
                 title="doge_2.webp",
                 description="xd_2",
-                text="🥵",
+                text="😭",
             ),
             await e.builder.document(
                 images[2],
                 title="doge_3.webp",
                 description="xd_3",
-                text="🥵",
+                text="🤧",
             ),
             await e.builder.document(
                 images[3],
                 title="doge_4.webp",
                 description="xd_4",
-                text="🥵",
+                text="🙂",
             ),
         ],
         gallery=True,
