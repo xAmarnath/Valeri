@@ -313,7 +313,7 @@ def write_on_image(image_name: str, text: str, font, color: str, im):
     image = Image.open(image_name)
     is_em = is_emoji(text)
     font = (
-        ImageFont.truetype(font, size=70)
+        ImageFont.truetype(font, size=67)
         # if not is_em
         # else ImageFont.truetype("emoji.ttf", size=109)
     )
@@ -324,7 +324,7 @@ def write_on_image(image_name: str, text: str, font, color: str, im):
     draw = ImageDraw.Draw(image)
     width, height = image.size
     if len(text) > 0:
-        text = textwrap.fill(text, 18)
+        text = textwrap.fill(text, 22)
         draw_box = draw.textbbox((0, 0), text=text, font=font)
         text_x = (width - (draw_box[2] - draw_box[0])) // 2
         text_y = ((height - (draw_box[3] - draw_box[1])) // 2) - 125
