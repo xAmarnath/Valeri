@@ -2,11 +2,10 @@ import datetime
 import threading
 import time
 from urllib.parse import quote
-
+from ._config import bot
 from requests import get
 from telethon import Button, events, types
 
-from ._config import bot
 from ._handler import newIn
 from ._helpers import human_readable_size, write_on_image
 
@@ -133,11 +132,11 @@ async def geo_search_(e):
 @newIn(pattern="doge ?(.*)")
 async def doge_write_on_sticker(e: events.InlineQuery.Event):
     try:
-        tex = e.text.split("doge ")[1]
+        if "doge" in e.text:
+         tex = e.text.split("doge ")[1]
+        else:
+         tex = e.text
     except IndexError:
-        try:
-            tex = e.text
-        except IndexError:
             result = [
                 e.builder.article(
                     "Query missing",
