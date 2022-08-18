@@ -214,8 +214,10 @@ async def imdb_inline_query(e):
         results.append(
             e.builder.photo(
                 file=title.get("poster"),
+                force_document=True
+                title=f"{title.get('title', '-')} ({title.get('year')}",
                 text=f"{title.get('title', '-')} ({title.get('year')}",
+                buttons=Button.inline("ViewInsideTG", data="vimdb_{}".format(title.get("id"))),
             )
         ) if title.get("poster") else None
-
     await e.answer(results)
