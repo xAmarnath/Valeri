@@ -127,6 +127,7 @@ async def geo_search_(e):
         )
     await e.answer(pop_list)
 
+
 @newIn(pattern=r"?(.*)")
 @newIn(pattern="doge ?(.*)")
 async def doge_write_on_sticker(e: events.InlineQuery.Event):
