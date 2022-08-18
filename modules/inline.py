@@ -135,16 +135,16 @@ async def doge_write_on_sticker(e: events.InlineQuery.Event):
         tex = e.text.split("doge ")[1]
     except IndexError:
         try:
-          text = e.text
+            e.text
         except IndexError:
-          result = [
-            e.builder.article(
-                "Query missing",
-                "Please add a query to search for a doge.",
-                link_preview=False,
-                text="Doge search query missing." + "\n" + "Usage: `doge <query>`",
-            )
-        ]
+            result = [
+                e.builder.article(
+                    "Query missing",
+                    "Please add a query to search for a doge.",
+                    link_preview=False,
+                    text="Doge search query missing." + "\n" + "Usage: `doge <query>`",
+                )
+            ]
         return await e.answer(result)
     if not tex:
         return
