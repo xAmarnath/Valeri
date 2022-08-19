@@ -265,7 +265,7 @@ async def on_choose_imdb(e):
         + req.get("Description", "-")
         + "</u>"
         + "\n<b>Creators:</b> <code>"
-        + ", ".join(x.get("FullName", "-") for x in req.get("Writers", []))
+        + ", ".join([x.get("FullName", "-") for x in req.get("Writers", [])])
         + "</code>"
         + "\n<b>Languages:</b> "
         + req.get("Languages", "")
