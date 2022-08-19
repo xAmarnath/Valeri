@@ -249,28 +249,6 @@ async def on_choose_imdb(e):
         + str(req.get("Year"))
         + ")"
         + "</b>"
-        + "\n<b>Rating:</b> <code>"
-        + str(req.get("Rating", "-"))
-        + "/10</code>"
-        + "\n<b>Genres:</b> "
-        + ", ".join(["#" + x for x in req.get("Genres", [])])
-        + ""
-        + "\n<b>Cast:</b> "
-        + ", ".join([x.get("FullName", "-") for x in req.get("Actors", [])])
-        + ""
-        + "\n<b>Type:</b> <code>"
-        + req.get("type", "-")
-        + "</code>"
-        + "\n<b>Description:</b> <u>"
-        + req.get("Description", "-")
-        + "</u>"
-        + "\n<b>Creators:</b> <code>"
-        + ", ".join([x.get("FullName", "-") for x in req.get("Writers", [])])
-        + "</code>"
-        + "\n<b>Languages:</b> "
-        + req.get("Languages", "")
-        + "\n<b>Aka:</b> <b><i>"
-        + req.get("AKA", "-")[0]
-        + "</i></b>"
+        
     )
     await e.edit(imdb_title)
