@@ -228,7 +228,6 @@ async def imdb_inline_query(e):
     await e.answer(results)
 
 
-
 @newCall(pattern="vimdb_(.*)")
 async def vimdb_cb(e):
     media = await e.client.send_message("roseloverx", file="a.jpg")
