@@ -4,7 +4,7 @@ import time
 from urllib.parse import quote
 
 from requests import get
-from telethon import Button, events, types, functions 
+from telethon import Button, events, functions, types
 
 from ._config import bot
 from ._handler import newIn
@@ -243,7 +243,12 @@ async def on_choose_imdb(e):
     url = "https://watch-series-go.vercel.app/api/imdb"
     req = get(url, params={"id": imdb_id}).json()
     imdb_title = (
-        "<b>" + req.get("Name", "No title") + " (" + str(req.get("Year")) + ")" + "</b>"
+        "<b>"
+        + req.get("Name", "No title")
+        + " ("
+        + str(req.get("Year"))
+        + ")"
+        + "</b>"
         + "\n<b>Rating:</b> <code>"
         + str(req.get("Rating", "-"))
         + "/10</code>"
@@ -263,7 +268,7 @@ async def on_choose_imdb(e):
         + ", ".join([x.get("FullName", "-") for x in req.get("Writers", [])])
         + "</code>"
         + "\n<b>Languages:</b> "
-        + ' ,'.join(req.get("Languages", ""))
+        + " ,".join(req.get("Languages", ""))
         + "\n<b>Aka:</b> <b><i>"
         + req.get("AKA", ["-"])[0]
         + "</i></b>"
