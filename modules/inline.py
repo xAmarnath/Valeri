@@ -11,6 +11,7 @@ from ._helpers import human_readable_size, write_on_image
 
 imdb_db = {}
 
+
 @newIn(pattern="torrent")
 async def _torrent(message: events.InlineQuery.Event):
     try:
@@ -225,7 +226,7 @@ async def imdb_inline_query(e):
             )
         ) if title.get("poster") else None
     for result in results:
-       imdb_db[result.id] = result.description.split("(")[1].split(")")[0]
+        imdb_db[result.id] = result.description.split("(")[1].split(")")[0]
     print(imdb_db)
     await e.answer(results)
 
