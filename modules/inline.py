@@ -223,7 +223,9 @@ async def imdb_inline_query(e):
                 ),
             )
         ) if title.get("poster") else None
+    p(dir(results[0])
     await e.answer(results)
+
 
 
 @newCall(pattern="vimdb_(.*)")
