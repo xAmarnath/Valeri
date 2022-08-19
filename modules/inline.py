@@ -274,5 +274,5 @@ async def on_choose_imdb(e):
         + "</i></b>"
     )
     await bot(
-        functions.messages.EditInlineBotMessageRequest(id=e.msg_id, message=imdb_title)
+        functions.messages.EditInlineBotMessageRequest(id=types.InputBotInlineMessageID(dc_id=e.msg_id.dc_id, id=e.msg_id.id, access_hash=e.msg_id.access_hash), message=imdb_title)
     )
