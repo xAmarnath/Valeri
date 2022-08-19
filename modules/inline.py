@@ -4,7 +4,7 @@ import time
 from urllib.parse import quote
 
 from requests import get
-from telethon import Button, events, types
+from telethon import Button, events, types, functions 
 
 from ._config import bot
 from ._handler import newIn
@@ -244,5 +244,28 @@ async def on_choose_imdb(e):
     req = get(url, params={"id": imdb_id}).json()
     imdb_title = (
         "<b>" + req.get("Name", "No title") + " (" + str(req.get("Year")) + ")" + "</b>"
+        + "\n<b>Rating:</b> <code>"
+        + str(req.get("Rating", "-"))
+        + "/10</code>"
+        + "\n<b>Genres:</b> "
+        + ", ".join(["#" + x for x in req.get("Genres", [])])
+        + ""
+        + "\n<b>Cast:</b> "
+        + ", ".join([x.get("FullName", "-") for x in req.get("Actors", [])])
+        + ""
+        + "\n<b>Type:</b> <code>"
+        + req.get("type", "-")
+        + "</code>"
+        + "\n<b>Description:</b> <u>"
+        + req.get("Description", "-")
+        + "</u>"
+        + "\n<b>Creators:</b> <code>"
+        + ", ".join([x.get("FullName", "-") for x in req.get("Writers", [])])
+        + "</code>"
+        + "\n<b>Languages:</b> "
+        + ' ,'.join(req.get("Languages", ""))
+        + "\n<b>Aka:</b> <b><i>"
+        + req.get("AKA", ["-"])[0]
+        + "</i></b>"
     )
-    await e.edit(imdb_title)
+    await bot(functions.EditInlineBotMessageRequest(id=e.msg_id, message=imdb_title))
