@@ -217,7 +217,7 @@ async def imdb_inline_query(e):
                 file=title.get("poster"),
                 force_document=True,
                 title=f"{title.get('title', '-')} ({title.get('year')})",
-                description=f"({title.get("id")})Actors: {title.get('actors')}",
+                description=f"({title.get('id')})Actors: {title.get('actors')}",
                 text=f"{title.get('title', '-')} ({title.get('year')})",
                 buttons=Button.inline(
                     "ViewInsideTG", data="vimdb_{}".format(title.get("id"))
