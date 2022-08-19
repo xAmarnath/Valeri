@@ -212,7 +212,7 @@ async def imdb_inline_query(e):
     results = []
     for title in req:
         results.append(
-            e.builder.document(
+           await e.builder.document(
                 file=title.get("poster"),
                 force_document=True,
                 title=f"{title.get('title', '-')} ({title.get('year')})",
