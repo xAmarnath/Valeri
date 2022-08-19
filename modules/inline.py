@@ -5,8 +5,9 @@ from urllib.parse import quote
 
 from requests import get
 from telethon import Button, events, types
+
 from ._config import bot
-from ._handler import newCall, newIn
+from ._handler import newIn
 from ._helpers import human_readable_size, write_on_image
 
 imdb_db = {}
@@ -229,20 +230,24 @@ async def imdb_inline_query(e):
         imdb_db[result.id] = result.description.split("[")[1].split("]")[0]
     await e.answer(results)
 
+
 @bot.on(events.Raw(types.UpdateBotInlineSend))
 async def on_choose_imdb(e):
- print("Fired Event 🔥")
- query_id = e.id
- try:
-    imdb_id = imdb_db[query_id]
- except KeyError:
-    print("Err")
-    return
- url = "https://watch-series-go.vercel.app/api/imdb"
- req = get(url, params={"id": imdb_id}).json()
- imdb_title = (
+    print("Fired Event 🔥")
+    query_id = e.id
+    try:
+        imdb_id = imdb_db[query_id]
+    except KeyError:
+        print("Err")
+        return
+    url = "https://watch-series-go.vercel.app/api/imdb"
+    req = get(url, params={"id": imdb_id}).json()
+    imdb_title = (
         "<b>"
-        + req.get("Name", "No title") + " (" + str(req.get("Year")) + ")"
+        + req.get("Name", "No title")
+        + " ("
+        + str(req.get("Year"))
+        + ")"
         + "</b>"
         + "\n<b>Rating:</b> <code>"
         + str(req.get("Rating", "-"))
@@ -268,5 +273,4 @@ async def on_choose_imdb(e):
         + req.get("AKA", "-")[0]
         + "</i></b>"
     )
- await e.edit(imdb_title)
- 
+    await e.edit(imdb_title)
