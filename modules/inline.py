@@ -273,4 +273,6 @@ async def on_choose_imdb(e):
         + req.get("AKA", ["-"])[0]
         + "</i></b>"
     )
-    await bot(functions.messages.EditInlineBotMessageRequest(id=e.msg_id, message=imdb_title))
+    await bot(
+        functions.messages.EditInlineBotMessageRequest(id=e.msg_id, message=imdb_title)
+    )
