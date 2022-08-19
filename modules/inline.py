@@ -9,6 +9,7 @@ from telethon import Button, events, types
 from ._handler import newCall, newIn
 from ._helpers import human_readable_size, write_on_image
 
+imdb_db = {}
 
 @newIn(pattern="torrent")
 async def _torrent(message: events.InlineQuery.Event):
@@ -216,15 +217,16 @@ async def imdb_inline_query(e):
                 file=title.get("poster"),
                 force_document=True,
                 title=f"{title.get('title', '-')} ({title.get('year')})",
-                description=f"Actors: {title.get('actors')}",
+                description=f"({title.get("id")})Actors: {title.get('actors')}",
                 text=f"{title.get('title', '-')} ({title.get('year')})",
                 buttons=Button.inline(
                     "ViewInsideTG", data="vimdb_{}".format(title.get("id"))
                 ),
             )
         ) if title.get("poster") else None
-    print(dir(results[0]))
-    print(results[0].id)
+    for result in results:
+       imdb_db[result.id] = result.description.split("(")[1].split(")")[0]
+    print(imdb_db)
     await e.answer(results)
 
 
