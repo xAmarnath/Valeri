@@ -243,12 +243,6 @@ async def on_choose_imdb(e):
     url = "https://watch-series-go.vercel.app/api/imdb"
     req = get(url, params={"id": imdb_id}).json()
     imdb_title = (
-        "<b>"
-        + req.get("Name", "No title")
-        + " ("
-        + str(req.get("Year"))
-        + ")"
-        + "</b>"
-        
+        "<b>" + req.get("Name", "No title") + " (" + str(req.get("Year")) + ")" + "</b>"
     )
     await e.edit(imdb_title)
