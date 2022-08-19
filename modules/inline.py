@@ -223,7 +223,8 @@ async def imdb_inline_query(e):
                 ),
             )
         ) if title.get("poster") else None
-    p(dir(results[0])
+    print(dir(results[0]))
+    print(results[0].id)
     await e.answer(results)
 
 
