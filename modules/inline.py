@@ -5,7 +5,7 @@ from urllib.parse import quote
 
 from requests import get
 from telethon import Button, events, types
-
+from ._config import bot
 from ._handler import newCall, newIn
 from ._helpers import human_readable_size, write_on_image
 
@@ -218,7 +218,7 @@ async def imdb_inline_query(e):
                 file=title.get("poster"),
                 force_document=True,
                 title=f"{title.get('title', '-')} ({title.get('year')})",
-                description=f"({title.get('id')})Actors: {title.get('actors')}",
+                description=f"[{title.get('id')}] Actors: {title.get('actors')}",
                 text=f"{title.get('title', '-')} ({title.get('year')})",
                 buttons=Button.inline(
                     "ViewInsideTG", data="vimdb_{}".format(title.get("id"))
@@ -226,12 +226,47 @@ async def imdb_inline_query(e):
             )
         ) if title.get("poster") else None
     for result in results:
-        imdb_db[result.id] = result.description.split("(")[1].split(")")[0]
-    print(imdb_db)
+        imdb_db[result.id] = result.description.split("[")[1].split("]")[0]
     await e.answer(results)
 
-
-@newCall(pattern="vimdb_(.*)")
-async def vimdb_cb(e):
-    media = await e.client.send_message("roseloverx", file="a.jpg")
-    await e.edit(file=media)
+@bot.on(events.Raw(types.UpdateBotInlineSend))
+async def on_choose_imdb(e):
+ print("Fired Event 🔥")
+ query_id = e.id
+ try:
+    imdb_id = imdb_db[query_id]
+ except KeyError:
+    print("Err")
+    return
+ url = "https://watch-series-go.vercel.app/api/imdb"
+ req = get(url, params={"id": imdb_id}).json()
+ imdb_title = (
+        "<b>"
+        + req.get("Name", "No title") + " (" + str(req.get("Year")) + ")"
+        + "</b>"
+        + "\n<b>Rating:</b> <code>"
+        + str(req.get("Rating", "-"))
+        + "/10</code>"
+        + "\n<b>Genres:</b> "
+        + ", ".join(["#" + x for x in req.get("Genres", [])])
+        + ""
+        + "\n<b>Cast:</b> "
+        + ", ".join([x.get("FullName", "-") for x in req.get("Actors", [])])
+        + ""
+        + "\n<b>Type:</b> <code>"
+        + req.get("type", "-")
+        + "</code>"
+        + "\n<b>Description:</b> <u>"
+        + req.get("Description", "-")
+        + "</u>"
+        + "\n<b>Creators:</b> <code>"
+        + ", ".join(x.get("FullName", "-") for x in req.get("Writers", []))
+        + "</code>"
+        + "\n<b>Languages:</b> "
+        + req.get("Languages", "")
+        + "\n<b>Aka:</b> <b><i>"
+        + req.get("AKA", "-")[0]
+        + "</i></b>"
+    )
+ await e.edit(imdb_title)
+ 
