@@ -277,9 +277,12 @@ async def on_choose_imdb(e):
         + req.get("AKA", ["-"])[0]
         + "</i></b>"
     )
+    file = await bot.upload_file(req.get("Poster", {}).get("ContentURL", "")
+    print(file)
     await bot.edit_message(
         e.msg_id,
         imdb_title,
+        file=file,
         parse_mode="html",
         buttons=[
             [Button.url("View On IMdb", url=req.get("URL"))],
