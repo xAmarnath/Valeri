@@ -276,7 +276,7 @@ async def on_choose_imdb(e):
         + "\n<b>Languages:</b> "
         + " ,".join(req.get("Languages", ""))
         + "\n<b>Aka:</b> <b><i>"
-        + ' ,'.join(req.get("AKA", ["-"])[:3])
+        + " ,".join(req.get("AKA", ["-"])[:3])
         + "</i></b>"
     )
     poster_url = req.get("Poster", {}).get("ContentURL", "")
