@@ -254,13 +254,17 @@ async def on_choose_imdb(e):
         + "\n<b>Rating:</b> <code>"
         + str(req.get("Rating", "-"))
         + "/10</code>"
-        + "\n<b>RatingCount:</b> </code>" + str(req.get("RatingCount", "-")) + "</code>"
+        + "\n<b>RatingCount:</b> </code>"
+        + str(req.get("RatingCount", "-"))
+        + "</code>"
         + "\n<b>Genres:</b> "
         + ", ".join(["#" + x for x in req.get("Genres", [])])
         + ""
         + "\n<b>Cast:</b> "
         + ", ".join([x.get("FullName", "-") for x in req.get("Actors", [])])
-        + "\n<b>Duration: </b><code>" + str(req.get("Duration", 0)) + "</code>"
+        + "\n<b>Duration: </b><code>"
+        + str(req.get("Duration", 0))
+        + "</code>"
         + "\n<b>Type:</b> <code>"
         + req.get("Yype", "-")
         + "</code>"
@@ -282,6 +286,5 @@ async def on_choose_imdb(e):
                 dc_id=e.msg_id.dc_id, id=e.msg_id.id, access_hash=e.msg_id.access_hash
             ),
             message=imdb_title,
-            
         )
     )
