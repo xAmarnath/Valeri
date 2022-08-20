@@ -5,7 +5,7 @@ import time
 from urllib.parse import quote
 
 from requests import get
-from telethon import Button, events, functions, types
+from telethon import Button, events, types
 
 from ._config import bot
 from ._handler import newIn
@@ -280,5 +280,12 @@ async def on_choose_imdb(e):
         + req.get("AKA", ["-"])[0]
         + "</i></b>"
     )
-    await bot.edit_message(e.msg_id, imdb_title, parse_mode="html", buttons=[[Button.url("View On IMdb", url=req.get("URL"))], [Button.switch_inline("Search Again", "imdb ", True)]])
-    
+    await bot.edit_message(
+        e.msg_id,
+        imdb_title,
+        parse_mode="html",
+        buttons=[
+            [Button.url("View On IMdb", url=req.get("URL"))],
+            [Button.switch_inline("Search Again", "imdb ", True)],
+        ],
+    )
