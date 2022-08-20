@@ -5,6 +5,7 @@ from requests import get
 
 
 def get_vid_url(imdb_id):
+ try: 
     url = "https://v2.vidsrc.me/embed/{}".format(imdb_id)
     soup = BeautifulSoup(get(url).text, "html.parser")
     src_hash = soup.find("div", class_="active_source source").get("data-hash")
@@ -29,3 +30,5 @@ def get_vid_url(imdb_id):
     if m3u8_url is None:
         return "Error: No m3u8 url found"
     return m3u8_url
+ except Exception as e:
+    return "Error: {}".format(e)

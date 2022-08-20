@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from requests import get, post
 from telethon import Button, types
 from ._vidsrc import get_vid_url
-from ._functions import get_imdb_soup, get_weather, translate
+from ._functions import get_imdb_soup, get_weather, translate, get_imdb_title_with_keyword
 from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
 
@@ -623,6 +623,8 @@ async def m3u8_audio(msg):
         query = msg.text.split(None, 1)[1]
     except IndexError:
         return await msg.reply("Query not given.")
+    if not query.startsWith("tt"):
+        query = get_imdb_title_with_keyword(query)
     URL = get_vid_url(query)
     if not URL:
         return await msg.reply("No video found.")
