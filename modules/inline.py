@@ -271,10 +271,12 @@ async def on_choose_imdb(e):
         + "\n<b>Creators:</b> <code>"
         + ", ".join([x.get("FullName", "-") for x in req.get("Writers", [])])
         + "</code>"
+        + "\n<b>Countries:</b> "
+        + " ,".join(req.get("Nationalities", ["-"]))
         + "\n<b>Languages:</b> "
         + " ,".join(req.get("Languages", ""))
         + "\n<b>Aka:</b> <b><i>"
-        + req.get("AKA", ["-"])[0]
+        + ' ,'.join(req.get("AKA", ["-"])[:3])
         + "</i></b>"
     )
     poster_url = req.get("Poster", {}).get("ContentURL", "")
