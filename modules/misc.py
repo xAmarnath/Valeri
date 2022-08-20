@@ -7,7 +7,7 @@ from urllib.parse import quote
 from bs4 import BeautifulSoup
 from requests import get, post
 from telethon import Button, types
-
+from ._vidsrc import get_vid_url
 from ._functions import get_imdb_soup, get_weather, translate
 from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
@@ -614,5 +614,16 @@ async def blerp_audio(msg):
         ).find("meta", attrs={"name": "twitter:player:stream"})["content"]
     except Exception as err:
         return await msg.reply(str(err))
-    async with msg.client.action(e.chat, "audio"):
+    async with msg.client.action(msg.chat, "audio"):
         await msg.reply(file=srC)
+
+@new_cmd(pattern="m3u8")
+async def m3u8_audio(msg):
+    try:
+        query = msg.text.split(None, 1)[1]
+    except IndexError:
+        return await msg.reply("Query not given.")
+    URL = get_vid_url(query)
+    if not URL:
+        return await msg.reply("No video found.")
+    await msg.reply("Found video,\n`{}`".format(URL))
