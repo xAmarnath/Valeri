@@ -234,8 +234,6 @@ async def imdb_inline_query(e):
 
 @bot.on(events.Raw(types.UpdateBotInlineSend))
 async def on_choose_imdb(e):
-    await asyncio.sleep(5)
-    print("Fired Event 🔥")
     query_id = e.id
     try:
         imdb_id = imdb_db[query_id]
