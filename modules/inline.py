@@ -266,7 +266,7 @@ async def on_choose_imdb(e):
         + str(req.get("Duration", 0))
         + "</code>"
         + "\n<b>Type:</b> <code>"
-        + req.get("Yype", "-")
+        + req.get("Type", "-")
         + "</code>"
         + "\n<b>Description:</b> <u>"
         + req.get("Description", "-")
@@ -280,13 +280,5 @@ async def on_choose_imdb(e):
         + req.get("AKA", ["-"])[0]
         + "</i></b>"
     )
-    await bot.edit_message(e.msg_id, imdb_title)
-    return
-    await bot(
-        functions.messages.EditInlineBotMessageRequest(
-            id=types.InputBotInlineMessageID(
-                dc_id=e.msg_id.dc_id, id=e.msg_id.id, access_hash=e.msg_id.access_hash
-            ),
-            message=imdb_title,
-        )
-    )
+    await bot.edit_message(e.msg_id, imdb_title, parse_mode="html", buttons=[[Button.url("View On IMdb", url=req.get("URL"))], [Button.switch_inline("Search Again", "imdb ", True)]])
+    
