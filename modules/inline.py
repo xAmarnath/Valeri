@@ -245,8 +245,8 @@ async def on_choose_imdb(e):
     imdb_title = (
         "<b>"
         + req.get("Name", "No title")
-        + f"\n{'🌟'*(int(rating)//2)}</b>"
-        + "\n<b>Year: </code>"
+        + f"\n{'🌟'*(rating//2)}</b>"
+        + "\n<b>Year: <code>"
         + str(req.get("Year", 1990))
         + "</code>"
         + "</b>"
