@@ -278,7 +278,7 @@ async def on_choose_imdb(e):
         + "</i></b>"
     )
     poster_url = req.get("Poster", {}).get("ContentURL", "")
-    file = await client.send_message(-1001468879641, file=poster_url)
+    file = await bot.send_message(-1001468879641, file=poster_url)
     await bot.edit_message(
         e.msg_id,
         imdb_title,
