@@ -627,12 +627,14 @@ async def blerp_audio(msg):
 @new_cmd(pattern="m3u8")
 async def m3u8_audio(msg):
     try:
-        query = msg.text.split(None, 1)[1]
+        query_ = msg.text.split(None, 1)[1]
     except IndexError:
         return await msg.reply("Query not given.")
-    if not query.startsWith("tt"):
-        query = get_imdb_title_with_keyword(query)
+    if not query_.startswith("tt"):
+        query = get_imdb_title_with_keyword(query_)
+    else:
+        query = query_
     URL = get_vid_url(query)
     if not URL:
         return await msg.reply("No video found.")
-    await msg.reply("Found video,\n`{}`".format(URL))
+    await msg.reply("**Found URL for {},**\n`{}`".format(query_, URL))
