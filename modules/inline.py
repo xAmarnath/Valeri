@@ -241,18 +241,20 @@ async def on_choose_imdb(e):
         return
     url = "https://watch-series-go.vercel.app/api/imdb"
     req = get(url, params={"id": imdb_id}).json()
+    rating = str(req.get("Rating", "-"))
     imdb_title = (
         "<b>"
         + req.get("Name", "No title")
-        + " ("
-        + str(req.get("Year"))
-        + ")"
+        + f"\n{"🌟"*(int(rating)//2)}</b>"
+        + "\n<b>Year: </code>"
+        + str(req.get("Year", 1990))
+        + "</code>"
         + "</b>"
         + "\n<b>Rating:</b> <code>"
-        + str(req.get("Rating", "-"))
+        + rating
         + "/10</code>"
         + "\n<b>RatingCount:</b> </code>"
-        + str(req.get("RatingCount", "-"))
+        + str(req.get("RatingCount", "0"))
         + "</code>"
         + "\n<b>Genres:</b> "
         + ", ".join(["#" + x for x in req.get("Genres", [])])
