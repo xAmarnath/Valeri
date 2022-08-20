@@ -1,5 +1,4 @@
 import datetime
-import io
 import threading
 import time
 from urllib.parse import quote
