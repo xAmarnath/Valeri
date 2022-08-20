@@ -2,7 +2,7 @@ import datetime
 import threading
 import time
 from urllib.parse import quote
-
+import io
 from requests import get
 from telethon import Button, events, types
 
@@ -277,8 +277,10 @@ async def on_choose_imdb(e):
         + req.get("AKA", ["-"])[0]
         + "</i></b>"
     )
-    file = await bot.upload_file(req.get("Poster", {}).get("ContentURL", ""))
-    print(file)
+    poster_url = req.get("Poster", {}).get("ContentURL", "")
+    with io.BytesIO(get(poster_url).content) as f:
+       f.name = "poster.jpg"
+       file = await bot.upload_file(f)
     await bot.edit_message(
         e.msg_id,
         imdb_title,
