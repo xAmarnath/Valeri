@@ -7,9 +7,13 @@ from urllib.parse import quote
 from bs4 import BeautifulSoup
 from requests import get, post
 from telethon import Button, types
-from ._vidsrc import get_vid_url
-from ._functions import get_imdb_soup, get_weather, translate, get_imdb_title_with_keyword
 
+from ._functions import (
+    get_imdb_soup,
+    get_imdb_title_with_keyword,
+    get_weather,
+    translate,
+)
 from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
 from ._vidsrc import get_vid_url
