@@ -16,7 +16,7 @@ from ._functions import (
 )
 from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
-from ._vidsrc import get_vid_url, get_vidcloud_stream
+from ._vidsrc import get_vid_url
 
 
 @new_cmd(pattern="math")
