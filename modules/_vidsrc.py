@@ -35,7 +35,7 @@ def get_vid_url(imdb_id):
         return "Error: {}".format(e)
 
 
-def get_vidcloud_stream(id):
+def get_vidcloud_stream(id, m3u8=False):
     try:
         media_server = (
             BeautifulSoup(
@@ -55,12 +55,13 @@ def get_vidcloud_stream(id):
             "https://www.2embed.to/ajax/embed/play",
             params={"id": media_server, "_token": recaptcha_resp},
         )
+        vid_id = vidcloudresp.json()["link"].split("/")[-1]
         rbstream = "https://rabbitstream.net/embed/m-download/{}".format(
-            vidcloudresp.json()["link"].split("/")[-1]
+            vid_id
         )
         soup = BeautifulSoup(get(rbstream).text, "html.parser")
         return [
             a["href"] for a in soup.find("div", class_="download-list").find_all("a")
-        ]
+        ], vid_id
     except:
         return None

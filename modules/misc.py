@@ -646,7 +646,7 @@ async def stream_audio(msg):
         return await msg.reply("Query not given.")
     if not query.startswith("tt"):
         query = get_imdb_title_with_keyword(query)
-    urls = get_vidcloud_stream(query)
+    urls, vid_id = get_vidcloud_stream(query)
     if not urls:
         return await msg.reply("No video found.")
     buttons = []
@@ -659,6 +659,6 @@ async def stream_audio(msg):
             btn = []
     if len(btn) == 1:
         buttons.append([btn[0]])
-    buttons.append([Button.web("Search on Google", "https://google.com/search?q=" + query)])
+    buttons.append([Button.url("Direct Stream", f"https://roseloverx.com/streaming?rid={vid_id}")])
     MSG = "Found {} streams, For **{}**\nchoose one:\n".format(len(urls), query)
     await msg.reply(MSG, buttons=buttons)
