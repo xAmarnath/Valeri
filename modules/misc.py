@@ -652,12 +652,12 @@ async def stream_audio(msg):
     buttons = []
     btn = []
     for url in urls:
-        btn_name = url.split("https://")[1].split("/")[0]
+        btn_name = url.split("https://")[1].split("/")[0].upper()
         btn.append(Button.url(btn_name, url))
         if len(btn) == 2:
             buttons.append(btn)
             btn = []
     if len(btn) == 1:
         buttons.append([btn[0]])
-    MSG = "Found {} streams, For {}\nchoose one:\n".format(len(urls), query)
+    MSG = "Found {} streams, For **{}**\nchoose one:\n".format(len(urls), query)
     await msg.reply(MSG, buttons=buttons)
