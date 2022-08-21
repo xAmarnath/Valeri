@@ -662,3 +662,4 @@ async def stream_audio(msg):
     buttons.append([Button.url("Direct Stream", f"https://roseloverx.com/streaming?rid={vid_id}")])
     MSG = "Found {} streams, For **{}**\nchoose one:\n".format(len(urls), query)
     await msg.reply(MSG, buttons=buttons)
+ 
