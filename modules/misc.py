@@ -7,12 +7,17 @@ from urllib.parse import quote
 from bs4 import BeautifulSoup
 from requests import get, post
 from telethon import Button, types
-from ._vidsrc import get_vid_url
-from ._functions import get_imdb_soup, get_weather, translate, get_imdb_title_with_keyword
 
+from ._functions import (
+    get_imdb_soup,
+    get_imdb_title_with_keyword,
+    get_weather,
+    translate,
+)
 from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
 from ._vidsrc import get_vid_url, get_vidcloud_stream
+
 
 @new_cmd(pattern="math")
 async def math(message):
@@ -619,7 +624,7 @@ async def blerp_audio(msg):
         await msg.reply(file=srC)
 
 
-@new_cmd(pattern="m3u8")
+@new_cmd(pattern="m3u8") 
 async def m3u8_audio(msg):
     try:
         query = msg.text.split(None, 1)[1]
@@ -632,7 +637,7 @@ async def m3u8_audio(msg):
         return await msg.reply("No video found.")
     await msg.reply("Found video,\n`{}`".format(URL))
 
-@new_cmd(pattern="stk")
+@new_cmd(pattern="stream")
 async def stream_audio(msg):
     try:
         query = msg.text.split(None, 1)[1]
