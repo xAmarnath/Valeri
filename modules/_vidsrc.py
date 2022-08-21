@@ -56,9 +56,7 @@ def get_vidcloud_stream(id, m3u8=False):
             params={"id": media_server, "_token": recaptcha_resp},
         )
         vid_id = vidcloudresp.json()["link"].split("/")[-1]
-        rbstream = "https://rabbitstream.net/embed/m-download/{}".format(
-            vid_id
-        )
+        rbstream = "https://rabbitstream.net/embed/m-download/{}".format(vid_id)
         soup = BeautifulSoup(get(rbstream).text, "html.parser")
         return [
             a["href"] for a in soup.find("div", class_="download-list").find_all("a")
