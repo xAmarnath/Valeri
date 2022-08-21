@@ -12,7 +12,7 @@ from ._functions import get_imdb_soup, get_weather, translate, get_imdb_title_wi
 
 from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
-from ._vidsrc import get_vid_url
+from ._vidsrc import get_vid_url, get_vidcloud_stream
 
 
 @new_cmd(pattern="math")
@@ -632,3 +632,27 @@ async def m3u8_audio(msg):
     if not URL:
         return await msg.reply("No video found.")
     await msg.reply("Found video,\n`{}`".format(URL))
+
+@new_cmd(pattern="stream")
+async def stream_audio(msg):
+    try:
+        query = msg.text.split(None, 1)[1]
+    except IndexError:
+        return await msg.reply("Query not given.")
+    if not query.startsWith("tt"):
+        query = get_imdb_title_with_keyword(query)
+    urls = get_vidcloud_stream(query)
+    if not urls:
+        return await msg.reply("No video found.")
+    buttons = []
+    btn = []
+    for url in urls:
+        btn_name = url.split("https://")[1].split("/")[0]
+        btn.append(Button.url(btn_name, url))
+        if len(btn) == 2:
+            buttons.append(btn)
+            btn = []
+    if len(btn) == 1:
+        buttons.append([btn[0]])
+    MSG = "Found {} streams, For {}\nchoose one:\n".format(len(urls), query)
+    await msg.reply(MSG, buttons=buttons)
