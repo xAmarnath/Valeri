@@ -624,7 +624,7 @@ async def blerp_audio(msg):
         await msg.reply(file=srC)
 
 
-@new_cmd(pattern="m3u8") 
+@new_cmd(pattern="m3u8")
 async def m3u8_audio(msg):
     try:
         query = msg.text.split(None, 1)[1]
@@ -636,6 +636,7 @@ async def m3u8_audio(msg):
     if not URL:
         return await msg.reply("No video found.")
     await msg.reply("Found video,\n`{}`".format(URL))
+
 
 @new_cmd(pattern="stream")
 async def stream_audio(msg):

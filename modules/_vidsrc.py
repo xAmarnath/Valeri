@@ -8,8 +8,7 @@ def get_vid_url(imdb_id):
     try:
         url = "https://v2.vidsrc.me/embed/{}".format(imdb_id)
         soup = BeautifulSoup(get(url).text, "html.parser")
-        src_hash = soup.find(
-            "div", class_="active_source source").get("data-hash")
+        src_hash = soup.find("div", class_="active_source source").get("data-hash")
         src_hash = soup.find("div", class_="active_source source").get("data-hash")
         headers = {
             "authority": "v2.vidsrc.me",
@@ -38,15 +37,30 @@ def get_vid_url(imdb_id):
 
 def get_vidcloud_stream(id):
     try:
-        media_server = BeautifulSoup(get("https://www.2embed.to/embed/imdb/movie?id={}".format(id), headers={'user-agent': 'Mozilla/5.0'}).text, 'html.parser').find(
-            'div', class_='media-servers dropdown').find('a')['data-id']
+        media_server = (
+            BeautifulSoup(
+                get(
+                    "https://www.2embed.to/embed/imdb/movie?id={}".format(id),
+                    headers={"user-agent": "Mozilla/5.0"},
+                ).text,
+                "html.parser",
+            )
+            .find("div", class_="media-servers dropdown")
+            .find("a")["data-id"]
+        )
         recaptcha_resp = get(
-            "https://recaptcha.harp.workers.dev/?anchor=https%3A%2F%2Fwww.google.com%2Frecaptcha%2Fapi2%2Fanchor%3Far%3D1%26k%3D6Lf2aYsgAAAAAFvU3-ybajmezOYy87U4fcEpWS4C%26co%3DaHR0cHM6Ly93d3cuMmVtYmVkLnRvOjQ0Mw..%26hl%3Den%26v%3DPRMRaAwB3KlylGQR57Dyk-pF%26size%3Dinvisible%26cb%3D7rsdercrealf&reload=https%3A%2F%2Fwww.google.com%2Frecaptcha%2Fapi2%2Freload%3Fk%3D6Lf2aYsgAAAAAFvU3-ybajmezOYy87U4fcEpWS4C").json()['rresp']
-        vidcloudresp = get("https://www.2embed.to/ajax/embed/play",
-                           params={'id': media_server, '_token': recaptcha_resp})
+            "https://recaptcha.harp.workers.dev/?anchor=https%3A%2F%2Fwww.google.com%2Frecaptcha%2Fapi2%2Fanchor%3Far%3D1%26k%3D6Lf2aYsgAAAAAFvU3-ybajmezOYy87U4fcEpWS4C%26co%3DaHR0cHM6Ly93d3cuMmVtYmVkLnRvOjQ0Mw..%26hl%3Den%26v%3DPRMRaAwB3KlylGQR57Dyk-pF%26size%3Dinvisible%26cb%3D7rsdercrealf&reload=https%3A%2F%2Fwww.google.com%2Frecaptcha%2Fapi2%2Freload%3Fk%3D6Lf2aYsgAAAAAFvU3-ybajmezOYy87U4fcEpWS4C"
+        ).json()["rresp"]
+        vidcloudresp = get(
+            "https://www.2embed.to/ajax/embed/play",
+            params={"id": media_server, "_token": recaptcha_resp},
+        )
         rbstream = "https://rabbitstream.net/embed/m-download/{}".format(
-            vidcloudresp.json()['link'].split('/')[-1])
-        soup = BeautifulSoup(get(rbstream).text, 'html.parser')
-        return [a['href'] for a in soup.find('div', class_='download-list').find_all('a')]
+            vidcloudresp.json()["link"].split("/")[-1]
+        )
+        soup = BeautifulSoup(get(rbstream).text, "html.parser")
+        return [
+            a["href"] for a in soup.find("div", class_="download-list").find_all("a")
+        ]
     except:
         return None
