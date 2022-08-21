@@ -652,7 +652,7 @@ async def stream_audio(msg):
     buttons = []
     btn = []
     for url in urls:
-        btn_name = url.split("https://")[1].split("/")[0].upper()
+        btn_name = url.split("https://")[1].split("/")[0].capitalize()
         btn.append(Button.url(btn_name, url))
         if len(btn) == 2:
             buttons.append(btn)
