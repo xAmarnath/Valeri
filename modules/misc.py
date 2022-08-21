@@ -12,8 +12,7 @@ from ._functions import get_imdb_soup, get_weather, translate, get_imdb_title_wi
 
 from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
-from ._vidsrc import get_vid_url
-
+from ._vidsrc import get_vid_url, get_vidcloud_stream
 
 @new_cmd(pattern="math")
 async def math(message):

@@ -8,12 +8,9 @@ def get_vid_url(imdb_id):
     try:
         url = "https://v2.vidsrc.me/embed/{}".format(imdb_id)
         soup = BeautifulSoup(get(url).text, "html.parser")
-<<<<<<< HEAD
         src_hash = soup.find(
             "div", class_="active_source source").get("data-hash")
-=======
         src_hash = soup.find("div", class_="active_source source").get("data-hash")
->>>>>>> 802f4cb705cce9836f7d6ffe95d95dfdbcad903b
         headers = {
             "authority": "v2.vidsrc.me",
             "sec-ch-ua": '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
@@ -37,7 +34,6 @@ def get_vid_url(imdb_id):
         return m3u8_url
     except Exception as e:
         return "Error: {}".format(e)
-<<<<<<< HEAD
 
 
 def get_vidcloud_stream(id):
@@ -54,5 +50,3 @@ def get_vidcloud_stream(id):
         return [a['href'] for a in soup.find('div', class_='download-list').find_all('a')]
     except:
         return None
-=======
->>>>>>> 802f4cb705cce9836f7d6ffe95d95dfdbcad903b
