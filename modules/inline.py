@@ -1,5 +1,4 @@
 import datetime
-import io
 import threading
 import time
 from urllib.parse import quote
@@ -347,5 +346,5 @@ async def pinterest_inline_query(e):
             break
     results = []
     for x in urls:
-            results.append(await e.builder.photo(file=x))
+        results.append(await e.builder.photo(file=x))
     await e.answer(results, gallery=True)
