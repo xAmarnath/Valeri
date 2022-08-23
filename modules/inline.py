@@ -24,7 +24,7 @@ async def inline_helper_menu(e):
             [Button.switch_inline("DogeMeme", "doge ", True)],
         ],
     )
-    await e.answer(result, switch_pm="Bot by @RoseLoverX", switch_pm_param="start")
+    await e.answer([result], switch_pm="Bot by @RoseLoverX", switch_pm_param="start")
 
 
 @newIn(pattern="torrent")
