@@ -269,9 +269,9 @@ def generate_thumbnail(in_filename, out_filename):
     probe = ffmpeg.probe(in_filename)
     time = 2
     try:
-     width = probe["streams"][0]["width"]
+        width = probe["streams"][0]["width"]
     except:
-     width = 720
+        width = 720
     try:
         (
             ffmpeg.input(in_filename, ss=time)
