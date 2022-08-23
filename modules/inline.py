@@ -22,6 +22,7 @@ async def inline_helper_menu(e):
         buttons=[
             [Button.switch_inline("IMDb", "imdb ", True)],
             [Button.switch_inline("DogeMeme", "doge ", True)],
+            [Button.switch_inline("Pinterest", "pin ", True)],
         ],
     )
     await e.answer([result], switch_pm="Bot by @RoseLoverX", switch_pm_param="start")
@@ -307,3 +308,38 @@ async def on_choose_imdb(e):
             [Button.switch_inline("Search Again", "imdb ", True)],
         ],
     )
+
+@newIn(pattern="pin ?(.*)")
+async def pinterest_inline_query(e):
+    try:
+        query = e.text.split(None, maxsplit=1)[1]
+    except:
+        return
+    url = "https://in.pinterest.com/resource/BaseSearchResource/get/"
+    params = {
+        "source_url": "/search/pins/?q=Avengers&rs=typed&term_meta[]=Avengers%7Ctyped",
+        "data": '{"options":{"article":null,"applied_filters":null,"appliedProductFilters":"---","auto_correction_disabled":false,"corpus":null,"customized_rerank_type":null,"filters":null,"query":"'
+        + query
+        + '","query_pin_sigs":null,"redux_normalize_feed":true,"rs":"typed","scope":"pins","source_id":null,"no_fetch_context_on_resource":false},"context":{}}',
+        "_": "1657012830705",
+    }
+    headers = {
+        "authority": "in.pinterest.com",
+        "accept": "application/json, text/javascript, */*, q=0.01",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+        "x-app-version": "e6a3b50",
+        "x-pinterest-source-url": "/search/pins/?q=Avengers&rs=typed&term_meta[]=Avengers%7Ctyped",
+    }
+    response = get(url, params=params, headers=headers)
+    result = response.json()
+    if result.get("resource_response", {}).get("status", "") != "success":
+        return await message.reply("No results found!")
+    urls = []
+    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
+    for pin in pins:
+        if pin.get("images", {}).get("orig", {}).get("url", "") != "":
+            urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
+        if len(urls) == 6:
+            break
+    results = [await e.builder.photo(file=url, title=urls.index(url)) for url in urls]
+    await e.answer(result, gallery=True)
