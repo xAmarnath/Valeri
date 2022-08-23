@@ -23,6 +23,8 @@ async def inline_helper_menu(e):
             [Button.switch_inline("IMDb", "imdb ", True)],
             [Button.switch_inline("DogeMeme", "doge ", True)],
             [Button.switch_inline("Pinterest", "pin ", True)],
+            [Button.switch_inline("Pirate Bay (soon)", "torrent ", True)],
+            [Button.switch_inline("M3U8 Stream (soon)", "m3u8 ", True)],
         ],
     )
     await e.answer([result], switch_pm="Bot by @RoseLoverX", switch_pm_param="start")
@@ -342,5 +344,9 @@ async def pinterest_inline_query(e):
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
         if len(urls) == 6:
             break
-    results = [await e.builder.photo(file=url) for url in urls]
+    files = []
+    for x in urls:
+      f = await e.client.upload_file(x)
+      files.append(f)
+    results = [await e.builder.photo(file=url) for url in files]
     await e.answer(result, gallery=True)
