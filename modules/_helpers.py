@@ -268,7 +268,10 @@ def generate_thumbnail(in_filename, out_filename):
     """gen thumb for video"""
     probe = ffmpeg.probe(in_filename)
     time = 2
-    width = probe["streams"][0]["width"]
+    try:
+     width = probe["streams"][0]["width"]
+    except:
+     width = 720
     try:
         (
             ffmpeg.input(in_filename, ss=time)
@@ -292,7 +295,7 @@ def get_video_metadata(file):
             data.get("streams", [])[0].get("height", 0),
         )
     except (KeyError, IndexError):
-        return (0, 0, 0)
+        return (1, 1280, 720)
 
 
 from emoji import is_emoji as is_emo
