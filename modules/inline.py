@@ -13,9 +13,9 @@ from ._helpers import human_readable_size, write_on_image
 imdb_db = {}
 
 
-@bot.on(events.InlineQuery(pattern=None))
+@bot.on(events.InlineQuery(pattern=None, func=lambda e: e.text != ""))
 async def inline_helper_menu(e):
-    result = await e.builder.article(
+     result = await e.builder.article(
         title="Inline Help Menu",
         description="Click here to open the inline Help Menu.",
         text="**HELP MENU:**",
@@ -24,7 +24,7 @@ async def inline_helper_menu(e):
             [Button.switch_inline("DogeMeme", "doge ", True)],
         ],
     )
-    await e.answer([result], switch_pm="Bot by @RoseLoverX", switch_pm_param="start")
+     await e.answer([result], switch_pm="Bot by @RoseLoverX", switch_pm_param="start")
 
 
 @newIn(pattern="torrent")
