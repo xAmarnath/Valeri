@@ -346,7 +346,7 @@ async def pinterest_inline_query(e):
             break
     files = []
     for x in urls:
-      f = await e.client.upload_file(x)
-      files.append(f)
+        f = await e.client.upload_file(x)
+        files.append(f)
     results = [await e.builder.photo(file=url) for url in files]
     await e.answer(result, gallery=True)
