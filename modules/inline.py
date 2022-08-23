@@ -2,7 +2,7 @@ import datetime
 import threading
 import time
 from urllib.parse import quote
-
+from ._config import bot
 from requests import get
 from telethon import Button, events, types
 
@@ -12,6 +12,11 @@ from ._helpers import human_readable_size, write_on_image
 
 imdb_db = {}
 
+@bot.on(events.InlineQuery(pattern=None))
+async def inline_helper_menu(e):
+ result = await e.builder.article(title="Inline Help Menu", description="Click here to open the inline Help Menu.", text="**HELP MENU:**", 
+         buttons = [[Button.switch_inline("IMDb", "imdb ", True)], [Button.switch_inline("DogeMeme", "doge ", True)]])
+ await e.answer(result, switch_pm="Bot by @RoseLoverX", switch_pm_param="start")
 
 @newIn(pattern="torrent")
 async def _torrent(message: events.InlineQuery.Event):
