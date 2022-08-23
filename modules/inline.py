@@ -343,12 +343,9 @@ async def pinterest_inline_query(e):
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
-        if len(urls) == 6:
+        if len(urls) == 4:
             break
     results = []
     for x in urls:
-        with io.BytesIO(get(x, timeout=2).content) as b:
-            b.name = "result.jpg"
-            f = await e.client.upload_file(b)
-            results.append(await e.builder.photo(file=f))
+            results.append(await e.builder.photo(file=x))
     await e.answer(results, gallery=True)
