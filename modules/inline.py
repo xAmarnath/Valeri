@@ -13,7 +13,7 @@ from ._helpers import human_readable_size, write_on_image
 imdb_db = {}
 
 
-@bot.on(events.InlineQuery(pattern=None, func=lambda e: e.text != ""))
+@bot.on(events.InlineQuery(pattern=None, func=lambda e: e.text == ""))
 async def inline_helper_menu(e):
     result = await e.builder.article(
         title="Inline Help Menu",
