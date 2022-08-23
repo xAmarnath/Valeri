@@ -1,4 +1,5 @@
 import datetime
+import io
 import threading
 import time
 from urllib.parse import quote
@@ -9,7 +10,7 @@ from telethon import Button, events, types
 from ._config import bot
 from ._handler import newIn
 from ._helpers import human_readable_size, write_on_image
-import io
+
 imdb_db = {}
 
 
@@ -347,8 +348,8 @@ async def pinterest_inline_query(e):
     files = []
     for x in urls:
         with io.BytesIO(get(x, timeout=2).content) as b:
-         b.name = "result.jpg"
-         f = await e.client.upload_file(b)
-         files.append(f)
+            b.name = "result.jpg"
+            f = await e.client.upload_file(b)
+            files.append(f)
     results = [await e.builder.photo(file=url) for url in files]
     await e.answer(result, gallery=True)
