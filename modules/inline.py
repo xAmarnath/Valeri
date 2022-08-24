@@ -20,17 +20,24 @@ async def inline_helper_menu(e):
         description="Click here to open the inline Help Menu.",
         text="**HELP MENU:**",
         buttons=[
-            [Button.switch_inline("IMDb", "imdb ", True)],
-            [Button.switch_inline("DogeMeme", "doge ", True)],
-            [Button.switch_inline("Pinterest", "pin ", True)],
-            [Button.switch_inline("Pirate Bay (soon)", "torrent ", True)],
-            [Button.switch_inline("M3U8 Stream (soon)", "m3u8 ", True)],
+            [Button.switch_inline("IMDb", "imdb ", True),
+             Button.switch_inline("DogeMeme", "doge ", True)],
+            [Button.switch_inline("Pinterest", "pin ", True),
+             Button.switch_inline("Torrent #DeadNoPiracy", "torrent ", True)],
+            [Button.switch_inline("M3U8 Stream", "m3u8 ", True),
+             Button.switch_inline("YouTube (soon)", "yt ", True)],
+            [Button.switch_inline("GitHub (soon)", "git ", True),
+             Button.switch_inline("Google (soon)", "google ", True)],
+            [Button.switch_inline("Reddit (soon)", "reddit ", True),
+             Button.switch_inline("Twitter (soon)", "twitter ", True)],
+            [Button.switch_inline("Wikipedia (soon)", "wiki ", True),
+             Button.switch_inline("Unknown (soon)", "wikipedia ", True)],
         ],
     )
     await e.answer([result], switch_pm="Bot by @RoseLoverX", switch_pm_param="start")
 
 
-@newIn(pattern="torrent")
+@ newIn(pattern="torrent")
 async def _torrent(message: events.InlineQuery.Event):
     try:
         query = message.text.split(maxsplit=1)[1]
@@ -48,7 +55,8 @@ async def _torrent(message: events.InlineQuery.Event):
     for result in request:
         if len(results) >= 10:
             break
-        magnet = "magnet:?xt=urn:btih:" + result["info_hash"] + "&dn=" + result["name"]
+        magnet = "magnet:?xt=urn:btih:" + \
+            result["info_hash"] + "&dn=" + result["name"]
         buttons = [
             [
                 Button.inline("🌟", data="star_torrent"),
@@ -56,7 +64,8 @@ async def _torrent(message: events.InlineQuery.Event):
             [
                 Button.url(
                     "Add to Seedr",
-                    url="t.me/missvaleri_bot?start=addtorrent&magnet=" + quote(magnet),
+                    url="t.me/missvaleri_bot?start=addtorrent&magnet=" +
+                        quote(magnet),
                 ),
             ],
         ]
@@ -136,7 +145,8 @@ async def geo_search_(e):
                 thumb=thumb,
                 link_preview=True,
                 buttons=[
-                    [Button.inline(title or "Map", data=f"geo_{description[:30]}")],
+                    [Button.inline(
+                        title or "Map", data=f"geo_{description[:30]}")],
                     [
                         Button.switch_inline(
                             "Search Again", query="geo ", same_peer=True
@@ -336,9 +346,19 @@ async def pinterest_inline_query(e):
     response = get(url, params=params, headers=headers)
     result = response.json()
     if result.get("resource_response", {}).get("status", "") != "success":
-        return await message.reply("No results found!")
+        return await e.answer(
+            [
+                await e.builder.article(
+                    title="No Results",
+                    description="No Results",
+                    text="No Results",
+                    buttons=Button.switch_inline("Search Again", "pin ", True),
+                ),
+            ], switch_pm="No Results", switch_pm_param="start",
+        )
     urls = []
-    pins = result.get("resource_response", {}).get("data", {}).get("results", [])
+    pins = result.get("resource_response", {}).get(
+        "data", {}).get("results", [])
     for pin in pins:
         if pin.get("images", {}).get("orig", {}).get("url", "") != "":
             urls.append(pin.get("images", {}).get("orig", {}).get("url", ""))
@@ -348,3 +368,11 @@ async def pinterest_inline_query(e):
     for x in urls:
         results.append(await e.builder.photo(file=x))
     await e.answer(results, gallery=True)
+
+@newIn(pattern="m3u8 ?(.*)")
+async def m3u8_inline_query(e):
+    try:
+        query = e.text.split(None, maxsplit=1)[1]
+    except:
+        return
+    
