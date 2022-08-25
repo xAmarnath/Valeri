@@ -3,9 +3,10 @@ import threading
 import time
 from urllib.parse import quote
 
+from pyYify import yify
 from requests import get
 from telethon import Button, events, types
-from pyYify import yify
+
 from ._config import bot
 from ._handler import newIn
 from ._helpers import human_readable_size, write_on_image
@@ -387,16 +388,19 @@ async def m3u8_inline_query(e):
     except:
         return
 
+
 @newIn(pattern="yify ?(.*)")
 async def yify_inline(e):
- try:
+    try:
         query = e.text.split(None, maxsplit=1)[1]
- except:
+    except:
         return
- results = yify.search_movies(query , quality="All")
- if len(results) == 0:
-    return
- answers = []
- for r in results:
-     answers.append(await e.builder.article(title=r.title, text="nil", description="nil"))
- await e.answer(answers)
+    results = yify.search_movies(query, quality="All")
+    if len(results) == 0:
+        return
+    answers = []
+    for r in results:
+        answers.append(
+            await e.builder.article(title=r.title, text="nil", description="nil")
+        )
+    await e.answer(answers)
