@@ -25,7 +25,7 @@ thumbs = []
 
 def is_bl(code):
     if any([re.search(x, code.lower()) for x in ["net", "bat", "chmod"]]):
-        return True
+        return False
     return False
 
 
