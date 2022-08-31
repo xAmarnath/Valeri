@@ -671,7 +671,7 @@ async def stream_audio(msg):
 @new_cmd(pattern="webss")
 async def web_ss(e):
     try:
-        e.text.split(None, 1)[0]
+        i = e.text.split(None, 1)[1]
     except IndexError:
         return await e.reply("Provide a URL to take Screenshot.")
     o = webdriver.ChromeOptions()
@@ -679,7 +679,7 @@ async def web_ss(e):
     o.add_argument("--no-sandbox")
     o.add_argument("--headless")
     driver = webdriver.Chrome(chrome_options=o)
-    driver.get("https://roseloverx.com")
+    driver.get(i)
     height = driver.execute_script(
         "return Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);"
     )
