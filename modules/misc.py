@@ -14,6 +14,8 @@ from ._functions import (
     get_weather,
     translate,
 )
+from io import BytesIO
+from selenium import webdriver
 from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
 from ._vidsrc import get_vid_url, get_vidcloud_stream
@@ -664,3 +666,28 @@ async def stream_audio(msg):
     )
     MSG = "Found {} streams, For **{}**\nchoose one:\n".format(len(urls), query)
     await msg.reply(MSG, buttons=buttons)
+
+@new_cmd(pattern="webss")
+async def web_ss(e):
+ try:
+   i = e.text.split(None, 1)[0]
+ except IndexError:
+   return await e.reply("Provide a URL to take Screenshot.")
+ o = webdriver.ChromeOptions()
+ o.add_argument("--ignore-certificate-errors")
+ o.add_argument("--no-sandbox")
+ o.add_argument("--headless")
+ driver = webdriver.Chrome(chrome_options=o)
+ driver.get("https://roseloverx.com")
+ height = driver.execute_script(
+            "return Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);"
+        )
+ width = driver.execute_script(
+            "return Math.max(document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth);"
+        )
+ driver.set_window_size(width + 100, height + 100)
+ im = driver.get_screenshot_as_png()
+ with BytesIO(im) as f:
+  f.name = "screenshot.jpg"
+  await e.respond(file=f)
+ driver.quit()
