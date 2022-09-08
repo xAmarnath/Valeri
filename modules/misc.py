@@ -8,9 +8,9 @@ from urllib.parse import quote
 from bs4 import BeautifulSoup
 from requests import get, post
 from selenium import webdriver
-from telethon import Button, types, events
-from ._config import bot
+from telethon import Button, events, types
 
+from ._config import bot
 from ._functions import (
     get_imdb_soup,
     get_imdb_title_with_keyword,
@@ -21,9 +21,11 @@ from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
 from ._vidsrc import get_vid_url, get_vidcloud_stream
 
+
 @bot.on(events.Album)
 async def _album(e):
- await bot.send_message('roseloverx', 'album_detected!')
+    await bot.send_message("roseloverx", "album_detected!")
+
 
 @new_cmd(pattern="math")
 async def math(message):
