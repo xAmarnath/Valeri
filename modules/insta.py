@@ -42,7 +42,7 @@ def get_ig_download_url(url: str):
             for image in images:
                 if image.get("width") == width and image.get("height") == hieght:
                     return (
-                        image.get("url", ""),
+                        image.get("url", "-"),
                         item.get("like_count", 0),
                         item.get("comment_count", 0),
                         item.get("user", {}).get("username", "-"),
@@ -53,7 +53,7 @@ def get_ig_download_url(url: str):
                         False,
                     )
             return (
-                images[0].get("url", ""),
+                images[0].get("url", "-"),
                 item.get("like_count", 0),
                 item.get("comment_count", 0),
                 item.get("user", {}).get("username", "-"),
@@ -97,7 +97,7 @@ def get_ig_download_url(url: str):
                 )
     except (JSONDecodeError, KeyError, IndexError) as err:
         print(err)
-        return "", 0, 0, "", "", 0
+        return "", 0, 0, "", "", 0, False
 
 
 @new_cmd(pattern="(insta|instagram|instadl|instadownload)")

@@ -13,6 +13,7 @@ from ._functions import (
     get_imdb_title_with_keyword,
     get_weather,
     translate,
+    ph_info
 )
 from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
@@ -664,3 +665,14 @@ async def stream_audio(msg):
     )
     MSG = "Found {} streams, For **{}**\nchoose one:\n".format(len(urls), query)
     await msg.reply(MSG, buttons=buttons)
+
+@new_cmd(pattern="ph")
+async def ph(msg):
+    query = await get_text_content(msg)
+    if not query:
+        return await msg.reply("Query not given.")
+    try:
+        data = ph_info(query)
+        await msg.reply(data)
+    except Exception as err:
+        return await msg.reply(str(err))
