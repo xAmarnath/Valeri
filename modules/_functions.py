@@ -74,80 +74,99 @@ def translate(text, to_lang="en"):
     result = soup.find("span", {"id": "tw-answ-target-text"})
     return result.text.capitalize() if result else "vision.google.api returned err."
 
+
 def ph_info(q):
 
     headers = {
-        'authority': 'www.findandtrace.com',
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
-        'cache-control': 'max-age=0',
-        'origin': 'https://www.findandtrace.com',
-        'referer': 'https://www.2embed.to/',
-        'sec-ch-ua': '".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Linux"',
-        'sec-fetch-dest': 'document',
-        'sec-fetch-mode': 'navigate',
-        'sec-fetch-site': 'same-origin',
-        'sec-fetch-user': '?1',
-        'upgrade-insecure-requests': '1',
-        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
+        "authority": "www.findandtrace.com",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+        "cache-control": "max-age=0",
+        "origin": "https://www.findandtrace.com",
+        "referer": "https://www.2embed.to/",
+        "sec-ch-ua": '".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"Linux"',
+        "sec-fetch-dest": "document",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-user": "?1",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
     }
 
     data = {
-        'mobilenumber': q,
-        'submit': 'Trace',
+        "mobilenumber": q,
+        "submit": "Trace",
     }
 
     response = post(
-        'https://www.findandtrace.com/trace-mobile-number-location', headers=headers, data=data)
+        "https://www.findandtrace.com/trace-mobile-number-location",
+        headers=headers,
+        data=data,
+    )
 
-    soup = BeautifulSoup(response.text, 'html.parser')
-    basic = soup.find('div', {'id': 'order_review'})
+    soup = BeautifulSoup(response.text, "html.parser")
+    basic = soup.find("div", {"id": "order_review"})
     if not basic:
         return "Invalid Number/Not Found"
     if not basic.find_all("tr"):
         return "Invalid Number/Not Found"
 
     data = {}
-    for i in basic.find_all('tr'):
-        data[i.find('th').text.strip().replace(
-            ':', '')] = i.find('td').text.strip()
-    next = basic.findNext('div', {'id': 'order_review'})
-    for i in next.find_all('tr'):
-        data[i.find('th').text.strip().replace(
-            ':', '')] = i.find('td').text.strip()
+    for i in basic.find_all("tr"):
+        data[i.find("th").text.strip().replace(":", "")] = i.find("td").text.strip()
+    next = basic.findNext("div", {"id": "order_review"})
+    for i in next.find_all("tr"):
+        data[i.find("th").text.strip().replace(":", "")] = i.find("td").text.strip()
 
-    fmt = ("**phoneNumber:** {phoneNumber}" + "\n" +
-           "**TelecomCircle:** {TelecomCircle}" + "\n" +
-           "**Operator:** {Operator}" + "\n" +
-           "**Service:** {Service}" + "\n" +
-           "**State:** {State}" + "\n" +
-           "**SimCard Distributed:** {SimCardDist}" + "\n" +
-           "**Owner:** {Owner}" + "\n" +
-           "**Address:** {Address}" + "\n" +
-           "**Last Login:** {LastLogin}" + "\n" +
-           "**Last Live Location:** {LastLiveLocation}" + "\n" +
-           "**Num of Search:** {NumofSearch}" + "\n" +
-           "**Latest Search Places:** {LatestSearchPlaces}" + "\n" +
-           "**TelecomCircle Capital:** {TelecomCircleCapital}" + "\n" +
-           "**Language:** {Language}" + "\n" +
-           "**Ref Hash:** {RefHash}"
-           ).format(
-        phoneNumber=data['Mobile Phone'],
-        TelecomCircle=data['Telecoms Circle / State'],
-        Operator=data['Original Network (First Alloted)'],
-        Service=data['Service Type / Signal'],
-        State=data['Connection Status'],
+    fmt = (
+        "**phoneNumber:** {phoneNumber}"
+        + "\n"
+        + "**TelecomCircle:** {TelecomCircle}"
+        + "\n"
+        + "**Operator:** {Operator}"
+        + "\n"
+        + "**Service:** {Service}"
+        + "\n"
+        + "**State:** {State}"
+        + "\n"
+        + "**SimCard Distributed:** {SimCardDist}"
+        + "\n"
+        + "**Owner:** {Owner}"
+        + "\n"
+        + "**Address:** {Address}"
+        + "\n"
+        + "**Last Login:** {LastLogin}"
+        + "\n"
+        + "**Last Live Location:** {LastLiveLocation}"
+        + "\n"
+        + "**Num of Search:** {NumofSearch}"
+        + "\n"
+        + "**Latest Search Places:** {LatestSearchPlaces}"
+        + "\n"
+        + "**TelecomCircle Capital:** {TelecomCircleCapital}"
+        + "\n"
+        + "**Language:** {Language}"
+        + "\n"
+        + "**Ref Hash:** {RefHash}"
+    ).format(
+        phoneNumber=data["Mobile Phone"],
+        TelecomCircle=data["Telecoms Circle / State"],
+        Operator=data["Original Network (First Alloted)"],
+        Service=data["Service Type / Signal"],
+        State=data["Connection Status"],
         SimCardDist=data[f'+91 {data["Mobile Phone"]} - SIM card distributed at'],
-        Owner=data['Owner / Name of the caller'],
-        Address=data['Address / Current GPS Location'],
-        LastLogin=data['Last Login Location (Facebook / Google Map / Twitter / Instagram )'],
-        LastLiveLocation=data['Last Live location'],
-        NumofSearch=data['Number of Search History'],
-        LatestSearchPlaces=data['Latest Search Places '],
-        TelecomCircleCapital=data['Telecom Circle Capital '],
-        Language=data['Main Language in the telecoms circle '],
-        RefHash=data['Unique search request Ref ']
+        Owner=data["Owner / Name of the caller"],
+        Address=data["Address / Current GPS Location"],
+        LastLogin=data[
+            "Last Login Location (Facebook / Google Map / Twitter / Instagram )"
+        ],
+        LastLiveLocation=data["Last Live location"],
+        NumofSearch=data["Number of Search History"],
+        LatestSearchPlaces=data["Latest Search Places "],
+        TelecomCircleCapital=data["Telecom Circle Capital "],
+        Language=data["Main Language in the telecoms circle "],
+        RefHash=data["Unique search request Ref "],
     )
     return fmt

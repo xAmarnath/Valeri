@@ -21,18 +21,30 @@ async def inline_helper_menu(e):
         description="Click here to open the inline Help Menu.",
         text="Here is the **Inline HELP MENU:**",
         buttons=[
-            [Button.switch_inline("IMDb", "imdb ", True),
-             Button.switch_inline("DogeMeme", "doge ", True)],
-            [Button.switch_inline("Pinterest", "pin ", True),
-             Button.switch_inline("Torrent #DeadNoPiracy", "torrent ", True)],
-            [Button.switch_inline("M3U8 Stream", "m3u8 ", True),
-             Button.switch_inline("YouTube (soon)", "yt ", True)],
-            [Button.switch_inline("GitHub (soon)", "git ", True),
-             Button.switch_inline("Google (soon)", "google ", True)],
-            [Button.switch_inline("Reddit (soon)", "reddit ", True),
-             Button.switch_inline("Twitter (soon)", "twitter ", True)],
-            [Button.switch_inline("Wikipedia (soon)", "wiki ", True),
-             Button.switch_inline("Unknown (soon)", "wikipedia ", True)],
+            [
+                Button.switch_inline("IMDb", "imdb ", True),
+                Button.switch_inline("DogeMeme", "doge ", True),
+            ],
+            [
+                Button.switch_inline("Pinterest", "pin ", True),
+                Button.switch_inline("Torrent #DeadNoPiracy", "torrent ", True),
+            ],
+            [
+                Button.switch_inline("M3U8 Stream", "m3u8 ", True),
+                Button.switch_inline("YouTube (soon)", "yt ", True),
+            ],
+            [
+                Button.switch_inline("GitHub (soon)", "git ", True),
+                Button.switch_inline("Google (soon)", "google ", True),
+            ],
+            [
+                Button.switch_inline("Reddit (soon)", "reddit ", True),
+                Button.switch_inline("Twitter (soon)", "twitter ", True),
+            ],
+            [
+                Button.switch_inline("Wikipedia (soon)", "wiki ", True),
+                Button.switch_inline("Unknown (soon)", "wikipedia ", True),
+            ],
         ],
     )
     await e.answer([result], switch_pm="Bot by @RoseLoverX", switch_pm_param="start")

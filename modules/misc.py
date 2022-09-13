@@ -1,13 +1,11 @@
 import io
 import json
 import os
-from io import BytesIO
 from random import choice, randint
 from urllib.parse import quote
 
 from bs4 import BeautifulSoup
 from requests import get, post
-from selenium import webdriver
 from telethon import Button, events, types
 
 from ._config import bot
@@ -15,8 +13,8 @@ from ._functions import (
     get_imdb_soup,
     get_imdb_title_with_keyword,
     get_weather,
+    ph_info,
     translate,
-    ph_info
 )
 from ._handler import new_cmd
 from ._helpers import get_text_content, get_user
@@ -673,6 +671,7 @@ async def stream_audio(msg):
     )
     MSG = "Found {} streams, For **{}**\nchoose one:\n".format(len(urls), query)
     await msg.reply(MSG, buttons=buttons)
+
 
 @new_cmd(pattern="ph")
 async def ph(msg):
