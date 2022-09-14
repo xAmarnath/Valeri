@@ -79,11 +79,11 @@ def truecaller(num):
         "authorization": "Bearer "
         + "a2i0C--ZjHrjP-gk3zNq11u1KMCWm9I17jsqJ5HHQXbmtmIhx5_vhbIbG6VNirFJ",
     }
-    req = requests.get(
+    req = get(
         "https://search5-noneu.truecaller.com/v2/search",
         headers=headers,
         params=params,
-        timeout=10,
+        timeout=4,
     )
     d = req.json().get("data", [])
     if len(d) == 0:
