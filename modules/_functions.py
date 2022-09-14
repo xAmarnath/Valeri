@@ -61,8 +61,9 @@ def get_weather(city: str):
     )
     return result
 
+
 def truecaller(num):
- params = {
+    params = {
         "q": num,
         "countryCode": "+91",
         "type": "4",
@@ -70,7 +71,7 @@ def truecaller(num):
         "placement": "SEARCHRESULTS,HISTORY,DETAILS",
         "encoding": "json",
     }
- headers = {
+    headers = {
         "content-type": "application/json; charset=UTF-8",
         "accept-encoding": "gzip",
         "user-agent": "Truecaller/11.75.5 (Android;10)",
@@ -78,26 +79,25 @@ def truecaller(num):
         "authorization": "Bearer "
         + "a2i0C--ZjHrjP-gk3zNq11u1KMCWm9I17jsqJ5HHQXbmtmIhx5_vhbIbG6VNirFJ",
     }
- req = requests.get(
+    req = requests.get(
         "https://search5-noneu.truecaller.com/v2/search",
         headers=headers,
         params=params,
         timeout=10,
     )
- d = req.json().get('data', [])
- if len(d) == 0:
-   return '', None
- tc = ''
- d = d[0]
- if d.get('name', '') != '':
-     tc += "**Name:** {}\n".format(d.get('name', '-'))
- tc += f"**Gender:** {d.get('gender', '-')}\n"
- tc += f"**About:** {d.get('about', '-')}\n"
- if len(d.get('internetAddresses', [])) != 0:
-  tc += f"**EmailID:** {d.get('internetAddresses', [])[0].get('id', '-')}"
- return tc, d.get('image')
+    d = req.json().get("data", [])
+    if len(d) == 0:
+        return "", None
+    tc = ""
+    d = d[0]
+    if d.get("name", "") != "":
+        tc += "**Name:** {}\n".format(d.get("name", "-"))
+    tc += f"**Gender:** {d.get('gender', '-')}\n"
+    tc += f"**About:** {d.get('about', '-')}\n"
+    if len(d.get("internetAddresses", [])) != 0:
+        tc += f"**EmailID:** {d.get('internetAddresses', [])[0].get('id', '-')}"
+    return tc, d.get("image")
 
- 
 
 def translate(text, to_lang="en"):
     url = "https://www.google.com/async/translate?vet=12ahUKEwiM3pvpx8z1AhV_SmwGHRb5C5MQqDh6BAgDECY..i&ei=EL_vYYyWFP-UseMPlvKvmAk&client=opera&yv=3"
@@ -207,5 +207,3 @@ def ph_info(q):
         RefHash=data["Unique search request Ref "],
     )
     return fmt
-
-
