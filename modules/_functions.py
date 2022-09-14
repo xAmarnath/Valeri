@@ -93,7 +93,7 @@ def truecaller(num):
     if d.get("name", "") != "":
         tc += "**Name:** {}\n".format(d.get("name", "-"))
     tc += f"**Gender:** {d.get('gender', '-')}\n"
-    tc += f"**About:** {d.get('about', '-')}\n" if d.get('about', '') != '' else ''
+    tc += f"**About:** {d.get('about', '-')}\n" if d.get("about", "") != "" else ""
     if len(d.get("internetAddresses", [])) != 0:
         tc += f"**Email:** {d.get('internetAddresses', [])[0].get('id', '-')}\n"
     return tc, d.get("image")
@@ -154,59 +154,57 @@ def ph_info(q):
 
     data = {}
     for i in basic.find_all("tr"):
-       if i:
-        data[i.find("th").text.strip().replace(":", "")] = i.find("td").text.strip()
+        if i:
+            data[i.find("th").text.strip().replace(":", "")] = i.find("td").text.strip()
     next = basic.findNext("div", {"id": "order_review"})
     for i in next.find_all("tr"):
-       if i:
-        data[i.find("th").text.strip().replace(":", "")] = i.find("td").text.strip()
+        if i:
+            data[i.find("th").text.strip().replace(":", "")] = i.find("td").text.strip()
     if data.get("Connection Status"):
         txt += (
-        + "**TelecomCircle:** {TelecomCircle}"
-        + "\n"
-        + "**Operator:** {Operator}"
-        + "\n"
-        + "**Service:** {Service}"
-        + "\n"
-        + "**State:** {State}"
-        + "\n"
-        + "**SimCard Distributed:** {SimCardDist}"
-        + "\n"
-        + "**Owner:** {Owner}"
-        + "\n"
-        + "**Address:** {Address}"
-        + "\n"
-        + "**Last Login:** {LastLogin}"
-        + "\n"
-        + "**Last Live Location:** {LastLiveLocation}"
-        + "\n"
-        + "**Num of Search:** {NumofSearch}"
-        + "\n"
-        + "**Latest Search Places:** {LatestSearchPlaces}"
-        + "\n"
-        + "**TelecomCircle Capital:** {TelecomCircleCapital}"
-        + "\n"
-        + "**Language:** {Language}"
-        + "\n"
-        + "**Ref Hash:** {RefHash}"
-    ).format(
-        TelecomCircle=data["Telecoms Circle / State"],
-        Operator=data["Original Network (First Alloted)"],
-        Service=data["Service Type / Signal"],
-        State=data["Connection Status"],
-        SimCardDist=data[f'+91 {data["Mobile Phone"]} - SIM card distributed at'],
-        Owner=data["Owner / Name of the caller"],
-        Address=data["Address / Current GPS Location"],
-        LastLogin=data[
-            "Last Login Location (Facebook / Google Map / Twitter / Instagram )"
-        ],
-        LastLiveLocation=data["Last Live location"],
-        NumofSearch=data["Number of Search History"],
-        LatestSearchPlaces=data["Latest Search Places "],
-        TelecomCircleCapital=data["Telecom Circle Capital "],
-        Language=data["Main Language in the telecoms circle "],
-        RefHash=data["Unique search request Ref "],
-    )
+            +"**TelecomCircle:** {TelecomCircle}"
+            + "\n"
+            + "**Operator:** {Operator}"
+            + "\n"
+            + "**Service:** {Service}"
+            + "\n"
+            + "**State:** {State}"
+            + "\n"
+            + "**SimCard Distributed:** {SimCardDist}"
+            + "\n"
+            + "**Owner:** {Owner}"
+            + "\n"
+            + "**Address:** {Address}"
+            + "\n"
+            + "**Last Login:** {LastLogin}"
+            + "\n"
+            + "**Last Live Location:** {LastLiveLocation}"
+            + "\n"
+            + "**Num of Search:** {NumofSearch}"
+            + "\n"
+            + "**Latest Search Places:** {LatestSearchPlaces}"
+            + "\n"
+            + "**TelecomCircle Capital:** {TelecomCircleCapital}"
+            + "\n"
+            + "**Language:** {Language}"
+            + "\n"
+            + "**Ref Hash:** {RefHash}"
+        ).format(
+            TelecomCircle=data["Telecoms Circle / State"],
+            Operator=data["Original Network (First Alloted)"],
+            Service=data["Service Type / Signal"],
+            State=data["Connection Status"],
+            SimCardDist=data[f'+91 {data["Mobile Phone"]} - SIM card distributed at'],
+            Owner=data["Owner / Name of the caller"],
+            Address=data["Address / Current GPS Location"],
+            LastLogin=data[
+                "Last Login Location (Facebook / Google Map / Twitter / Instagram )"
+            ],
+            LastLiveLocation=data["Last Live location"],
+            NumofSearch=data["Number of Search History"],
+            LatestSearchPlaces=data["Latest Search Places "],
+            TelecomCircleCapital=data["Telecom Circle Capital "],
+            Language=data["Main Language in the telecoms circle "],
+            RefHash=data["Unique search request Ref "],
+        )
     return txt, image
-    
-    
