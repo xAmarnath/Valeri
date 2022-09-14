@@ -93,9 +93,9 @@ def truecaller(num):
     if d.get("name", "") != "":
         tc += "**Name:** {}\n".format(d.get("name", "-"))
     tc += f"**Gender:** {d.get('gender', '-')}\n"
-    tc += f"**About:** {d.get('about', '-')}\n"
+    tc += f"**About:** {d.get('about', '-')}\n" if d.get('about', '') != '' else ''
     if len(d.get("internetAddresses", [])) != 0:
-        tc += f"**EmailID:** {d.get('internetAddresses', [])[0].get('id', '-')}"
+        tc += f"**Email:** {d.get('internetAddresses', [])[0].get('id', '-')}\n"
     return tc, d.get("image")
 
 
@@ -113,7 +113,9 @@ def translate(text, to_lang="en"):
 
 
 def ph_info(q):
-
+    txt = f"**phoneNumber:** {q}\n"
+    tc, image = truecaller(q)
+    txt += tc
     headers = {
         "authority": "www.findandtrace.com",
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -152,14 +154,14 @@ def ph_info(q):
 
     data = {}
     for i in basic.find_all("tr"):
+       if i:
         data[i.find("th").text.strip().replace(":", "")] = i.find("td").text.strip()
     next = basic.findNext("div", {"id": "order_review"})
     for i in next.find_all("tr"):
+       if i:
         data[i.find("th").text.strip().replace(":", "")] = i.find("td").text.strip()
-
-    fmt = (
-        "**phoneNumber:** {phoneNumber}"
-        + "\n"
+    if data.get("Connection Status"):
+        txt += (
         + "**TelecomCircle:** {TelecomCircle}"
         + "\n"
         + "**Operator:** {Operator}"
@@ -188,7 +190,6 @@ def ph_info(q):
         + "\n"
         + "**Ref Hash:** {RefHash}"
     ).format(
-        phoneNumber=data["Mobile Phone"],
         TelecomCircle=data["Telecoms Circle / State"],
         Operator=data["Original Network (First Alloted)"],
         Service=data["Service Type / Signal"],
@@ -206,4 +207,6 @@ def ph_info(q):
         Language=data["Main Language in the telecoms circle "],
         RefHash=data["Unique search request Ref "],
     )
-    return fmt
+    return txt, image
+    
+    
