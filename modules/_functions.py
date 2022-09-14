@@ -91,7 +91,7 @@ def truecaller(num):
  d = d[0]
  if d.get('name', '') != '':
      tc += "**Name:** {}\n".format(d.get('name', '-'))
- tc += f"**Gender:** {d.get("gender", "-")}\n"
+ tc += f"**Gender:** {d.get('gender', '-')}\n"
  tc += f"**About:** {d.get('about', '-')}\n"
  if len(d.get('internetAddresses', [])) != 0:
   tc += f"**EmailID:** {d.get('internetAddresses', [])[0].get('id', '-')}"
