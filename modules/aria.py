@@ -67,7 +67,7 @@ async def check_progress_for_dl(gid, message, previous):
                         f"**Seeds:**  `{t_file.num_seeders}` \n"
                     )
                 msg = (
-                    f"`{prog_str}` \n\n"
+                    f"```{prog_str}```\n\n"
                     f"**Name:**  `{t_file.name or 'unknown'}` \n"
                     f"**Completed:**  `{human_readable_size(downloaded)}` \n"
                     f"**Total:**  `{t_file.total_length_string()}` \n"
@@ -81,7 +81,7 @@ async def check_progress_for_dl(gid, message, previous):
                     previous = msg
             else:
                 pass
-            await sleep(5)
+            await sleep(10)
         except Exception as e:
             if "not found" in str(e) or "'file'" in str(e):
                 if "Your Torrent/Link is Dead." not in message.text:
