@@ -15,3 +15,7 @@ ffmpeg-python
 fake_useragent
 yt-dlp
 tinytag
+pyYify
+pilmoji
+pilmoji-fixed
+emoji
