@@ -9,7 +9,6 @@ from requests import get
 from telethon import types
 
 from ._handler import new_cmd
-from ._transfers import upload_file
 
 HOST = "https://www.jiosaavn.com/"
 
@@ -27,27 +26,27 @@ async def _song(message):
         get_download_url_hq(song[0].get("more_info", {}).get("encrypted_media_url", ""))
     )
     with io.BytesIO(response.content) as file:
-     with io.BytesIO(get(song[0]["image"]).content) as thumb:
-        thumb.name = "thumbnail.jpg"
-        # TODO Resize the thumbnail
-        file.name = song[0]["id"] + ".m4a"
-        async with message.client.action(message.chat_id, "audio"):
-            
-            await message.respond(
-                "<b>BitRate:</b> 320kbps\n<b>{}</b>".format(song[0]["subtitle"]),
-                parse_mode="html",
-                file=file,
-                attributes=[
-                    types.DocumentAttributeAudio(
-                        duration=int(song[0]["more_info"]["duration"]),
-                        title=song[0]["title"],
-                        performer=song[0]["more_info"]["music"],
-                    ),
-                    types.DocumentAttributeFilename(file_name=song[0]["id"] + ".m4a"),
-                ],
-                thumb=thumb,
-            )
-            
+        with io.BytesIO(get(song[0]["image"]).content) as thumb:
+            thumb.name = "thumbnail.jpg"
+            # TODO Resize the thumbnail
+            file.name = song[0]["id"] + ".m4a"
+            async with message.client.action(message.chat_id, "audio"):
+                await message.respond(
+                    "<b>BitRate:</b> 320kbps\n<b>{}</b>".format(song[0]["subtitle"]),
+                    parse_mode="html",
+                    file=file,
+                    attributes=[
+                        types.DocumentAttributeAudio(
+                            duration=int(song[0]["more_info"]["duration"]),
+                            title=song[0]["title"],
+                            performer=song[0]["more_info"]["music"],
+                        ),
+                        types.DocumentAttributeFilename(
+                            file_name=song[0]["id"] + ".m4a"
+                        ),
+                    ],
+                    thumb=thumb,
+                )
 
 
 def search_song(query):
