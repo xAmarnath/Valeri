@@ -43,7 +43,9 @@ async def _song(message):
                             title=song[0]["title"],
                             performer=song[0]["more_info"]["music"],
                         ),
-                        types.DocumentAttributeFilename(file_name=song[0]["id"] + ".m4a"),
+                        types.DocumentAttributeFilename(
+                            file_name=song[0]["id"] + ".m4a"
+                        ),
                     ],
                     thumb=thumb,
                 )
