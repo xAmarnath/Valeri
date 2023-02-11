@@ -32,8 +32,8 @@ async def _song(message):
             file.name = song[0]["id"] + ".m4a"
             async with message.client.action(message.chat_id, "audio"):
                 await message.respond(
-                    "<b>{}</b>".format(song[0]['subtitle']),
-                    parse_mode='html',
+                    "<b>{}</b>".format(song[0]["subtitle"]),
+                    parse_mode="html",
                     file=file,
                     attributes=[
                         types.DocumentAttributeAudio(
@@ -70,15 +70,15 @@ def get_download_url(enc):
         .replace("_96.", ".")
     )
 
+
 def get_download_url_hq(enc):
     des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
     base_url = "http://h.saavncdn.com"
     enc_url = base64.b64decode(enc.strip())
     dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode("utf-8")
     dec_url = dec_url.replace("mp3:audios", "")
-    return (
-        dec_url.replace("_96.", "_320.")
-    )
+    return dec_url.replace("_96.", "_320.")
+
 
 def convert_duration(duration):
     """
