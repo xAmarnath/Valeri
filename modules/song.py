@@ -61,7 +61,7 @@ def get_download_url(enc):
     enc_url = base64.b64decode(enc.strip())
     dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode("utf-8")
     dec_url = base_url + dec_url.replace("mp3:audios", "") + ".mp3"
-    return dec_url.replace("https://aac.saavncdn.com", "").replace(".mp4", "")
+    return dec_url.replace("https://aac.saavncdn.com", "").replace(".mp4", "").replace('_96.', '.')
 
 
 def convert_duration(duration):
