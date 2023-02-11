@@ -9,6 +9,7 @@ from requests import get
 from telethon import types
 
 from ._handler import new_cmd
+from ._transfers import upload_file
 
 HOST = "https://www.jiosaavn.com/"
 
@@ -31,10 +32,11 @@ async def _song(message):
             # TODO Resize the thumbnail
             file.name = song[0]["id"] + ".m4a"
             async with message.client.action(message.chat_id, "audio"):
+                fi = await upload_file(message.client, file)
                 await message.respond(
-                    "<b>{}</b>".format(song[0]["subtitle"]),
+                    "<b>BitRate:</b> 320kbps\n<b>{}</b>".format(song[0]["subtitle"]),
                     parse_mode="html",
-                    file=file,
+                    file=fi,
                     attributes=[
                         types.DocumentAttributeAudio(
                             duration=int(song[0]["more_info"]["duration"]),
