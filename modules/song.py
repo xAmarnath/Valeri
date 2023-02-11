@@ -26,18 +26,17 @@ async def _song(message):
     response = get(
         get_download_url_hq(song[0].get("more_info", {}).get("encrypted_media_url", ""))
     )
-    file = io.BytesIO(response.content)
-    with io.BytesIO(get(song[0]["image"]).content) as thumb:
+    with io.BytesIO(response.content) as file:
+     with io.BytesIO(get(song[0]["image"]).content) as thumb:
         thumb.name = "thumbnail.jpg"
         # TODO Resize the thumbnail
         file.name = song[0]["id"] + ".m4a"
         async with message.client.action(message.chat_id, "audio"):
-            fi = await upload_file(message.client, file)
-            file.close()
+            
             await message.respond(
                 "<b>BitRate:</b> 320kbps\n<b>{}</b>".format(song[0]["subtitle"]),
                 parse_mode="html",
-                file=fi,
+                file=file,
                 attributes=[
                     types.DocumentAttributeAudio(
                         duration=int(song[0]["more_info"]["duration"]),
@@ -48,6 +47,7 @@ async def _song(message):
                 ],
                 thumb=thumb,
             )
+            
 
 
 def search_song(query):
