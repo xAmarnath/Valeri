@@ -7,6 +7,7 @@ from telethon import types
 
 from ._handler import new_cmd
 from pyDes import *
+import base64
 
 HOST = "https://www.jiosaavn.com/"
 
