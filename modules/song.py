@@ -19,23 +19,22 @@ async def _song(message):
     except IndexError:
         return await message.reply("song query missing.")
     song = search_song(query=query)
-    if song is None:
-        return await message.reply("song not found.")
-    params = {"id": song["id"], "download": "true"}
-    response = get(HOST + "/youtube/download", params=params)
+    if len(song) == 0:
+        return await message.reply("Song not found!")
+    response = get(get_download_url(song[0].get('more_info', {}).get('encrypted_media_url', '')))
     with io.BytesIO(response.content) as file:
-        with io.BytesIO(get(song["thumbnail"]).content) as thumb:
+        with io.BytesIO(get(song[0]["image"]).content) as thumb:
             thumb.name = "thumbnail.jpg"
             # TODO Resize the thumbnail
-            file.name = response.headers.get("file-name") or "song.mp3"
+            file.name = song[0]['id'] + '.mp3'
             async with message.client.action(message.chat_id, "audio"):
                 await message.respond(
                     file=file,
                     attributes=[
                         types.DocumentAttributeAudio(
-                            duration=convert_duration(song["duration"]),
-                            title=song["title"],
-                            performer=song["channel"],
+                            duration=song[0]['more_info']['duration'],
+                            title=song[0]['more_info']["title"],
+                            performer=song[0]['label'],
                         )
                     ],
                     thumb=thumb,
@@ -53,7 +52,7 @@ def search_song(query):
 def get_download_url(enc):
  des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0" , pad=None, padmode=PAD_PKCS5)
  base_url = 'http://h.saavncdn.com'
- enc_url = base64.b64decode(url.strip())
+ enc_url = base64.b64decode(enc.strip())
  dec_url = des_cipher.decrypt(enc_url,padmode=PAD_PKCS5).decode('utf-8')
  dec_url = base_url + dec_url.replace('mp3:audios','') + '.mp3'
  return dec_url.replace('https://aac.saavncdn.com', '').replace('.mp4', '')
