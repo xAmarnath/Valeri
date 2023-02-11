@@ -1,13 +1,13 @@
 # song.py
 
+import base64
 import io
 
+from pyDes import *
 from requests import get
 from telethon import types
 
 from ._handler import new_cmd
-from pyDes import *
-import base64
 
 HOST = "https://www.jiosaavn.com/"
 
@@ -21,20 +21,22 @@ async def _song(message):
     song = search_song(query=query)
     if len(song) == 0:
         return await message.reply("Song not found!")
-    response = get(get_download_url(song[0].get('more_info', {}).get('encrypted_media_url', '')))
+    response = get(
+        get_download_url(song[0].get("more_info", {}).get("encrypted_media_url", ""))
+    )
     with io.BytesIO(response.content) as file:
         with io.BytesIO(get(song[0]["image"]).content) as thumb:
             thumb.name = "thumbnail.jpg"
             # TODO Resize the thumbnail
-            file.name = song[0]['id'] + '.mp3'
+            file.name = song[0]["id"] + ".mp3"
             async with message.client.action(message.chat_id, "audio"):
                 await message.respond(
                     file=file,
                     attributes=[
                         types.DocumentAttributeAudio(
-                            duration=song[0]['more_info']['duration'],
-                            title=song[0]['more_info']["title"],
-                            performer=song[0]['label'],
+                            duration=song[0]["more_info"]["duration"],
+                            title=song[0]["more_info"]["title"],
+                            performer=song[0]["label"],
                         )
                     ],
                     thumb=thumb,
@@ -45,19 +47,21 @@ def search_song(query):
     """
     Search for a song on youtube and return the first result.
     """
-    resp = get(HOST+f"/api.php?_format=json&_marker=0&api_version=4&ctx=web6dot0&__call=search.getResults&p=1&q={quote(query)}")
-    results = resp.json().get('results', [])
-    return results 
+    resp = get(
+        HOST
+        + f"/api.php?_format=json&_marker=0&api_version=4&ctx=web6dot0&__call=search.getResults&p=1&q={quote(query)}"
+    )
+    results = resp.json().get("results", [])
+    return results
+
 
 def get_download_url(enc):
- des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0" , pad=None, padmode=PAD_PKCS5)
- base_url = 'http://h.saavncdn.com'
- enc_url = base64.b64decode(enc.strip())
- dec_url = des_cipher.decrypt(enc_url,padmode=PAD_PKCS5).decode('utf-8')
- dec_url = base_url + dec_url.replace('mp3:audios','') + '.mp3'
- return dec_url.replace('https://aac.saavncdn.com', '').replace('.mp4', '')
-
-    
+    des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
+    base_url = "http://h.saavncdn.com"
+    enc_url = base64.b64decode(enc.strip())
+    dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode("utf-8")
+    dec_url = base_url + dec_url.replace("mp3:audios", "") + ".mp3"
+    return dec_url.replace("https://aac.saavncdn.com", "").replace(".mp4", "")
 
 
 def convert_duration(duration):
