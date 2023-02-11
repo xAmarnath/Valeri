@@ -25,6 +25,7 @@ async def _song(message):
     response = get(
         get_download_url(song[0].get("more_info", {}).get("encrypted_media_url", ""))
     )
+    print(response.url)
     with io.BytesIO(response.content) as file:
         with io.BytesIO(get(song[0]["image"]).content) as thumb:
             thumb.name = "thumbnail.jpg"
