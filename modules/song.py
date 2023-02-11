@@ -38,7 +38,7 @@ async def _song(message):
                         types.DocumentAttributeAudio(
                             duration=int(song[0]["more_info"]["duration"]),
                             title=song[0]["title"],
-                            performer='JioSaavn',
+                            performer="JioSaavn",
                         ),
                         types.DocumentAttributeFilename(
                             file_name=song[0]["id"] + ".m4a"
