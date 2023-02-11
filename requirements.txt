@@ -19,3 +19,4 @@ pyYify
 pilmoji
 pilmoji-fixed
 emoji
+pyDes
