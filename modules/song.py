@@ -32,7 +32,7 @@ async def _song(message):
             file.name = song[0]["id"] + ".m4a"
             async with message.client.action(message.chat_id, "audio"):
                 await message.respond(
-                    "<b>BitRate:</b> 320kbps\n<b>{}</b>".format(song[0]["subtitle"]),
+                    "<b>{} (320Kbps)</b>".format(song[0]["subtitle"]),
                     parse_mode="html",
                     file=file,
                     attributes=[
