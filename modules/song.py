@@ -6,8 +6,9 @@ from requests import get
 from telethon import types
 
 from ._handler import new_cmd
+from pyDes import *
 
-HOST = "https://api.roseloverx.tk"
+HOST = "https://www.jiosaavn.com/"
 
 
 @new_cmd(pattern="song")
@@ -40,46 +41,23 @@ async def _song(message):
                 )
 
 
-@new_cmd(pattern="video")
-async def _video_dl_youtube(message):
-    try:
-        query = message.text.split(None, maxsplit=1)[1]
-    except IndexError:
-        return await message.reply("video query missing.")
-    vid = search_song(query=query)
-    if vid is None:
-        return await message.reply("video result not found.")
-    params = {"id": vid["id"], "download": "true", "video": "true"}
-    response = get(HOST + "/youtube/download", params=params)
-    with io.BytesIO(response.content) as file:
-        with io.BytesIO(get(vid["thumbnail"]).content) as thumb:
-            thumb.name = "thumbnail.jpg"
-            file.name = response.headers.get("file-name") or "video.mp4"
-            async with message.client.action(message.chat_id, "video"):
-                await message.respond(
-                    file=file,
-                    attributes=[
-                        types.DocumentAttributeVideo(
-                            duration=convert_duration(vid["duration"]),
-                            w=1280,
-                            h=720,
-                            supports_streaming=True,
-                        )
-                    ],
-                    thumb=thumb,
-                )
-
-
 def search_song(query):
     """
     Search for a song on youtube and return the first result.
     """
-    params = {"q": query}
-    request = get(HOST + "/youtube/search", params=params)
-    request = request.json() if request.status_code == 200 else {"data": []}
-    if len(request["data"]) == 0:
-        return None
-    return request["data"][0]
+    resp = get(HOST+f"/api.php?_format=json&_marker=0&api_version=4&ctx=web6dot0&__call=search.getResults&p=1&q={quote(query)}")
+    results = resp.json().get('results', [])
+    return results 
+
+def get_download_url(enc):
+ des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0" , pad=None, padmode=PAD_PKCS5)
+ base_url = 'http://h.saavncdn.com'
+ enc_url = base64.b64decode(url.strip())
+ dec_url = des_cipher.decrypt(enc_url,padmode=PAD_PKCS5).decode('utf-8')
+ dec_url = base_url + dec_url.replace('mp3:audios','') + '.mp3'
+ return dec_url.replace('https://aac.saavncdn.com', '').replace('.mp4', '')
+
+    
 
 
 def convert_duration(duration):
