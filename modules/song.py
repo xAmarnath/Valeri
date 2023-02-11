@@ -23,22 +23,23 @@ async def _song(message):
     if len(song) == 0:
         return await message.reply("Song not found!")
     response = get(
-        get_download_url(song[0].get("more_info", {}).get("encrypted_media_url", ""))
+        get_download_url_hq(song[0].get("more_info", {}).get("encrypted_media_url", ""))
     )
-    print(response.url)
     with io.BytesIO(response.content) as file:
         with io.BytesIO(get(song[0]["image"]).content) as thumb:
             thumb.name = "thumbnail.jpg"
             # TODO Resize the thumbnail
-            file.name = song[0]["id"] + ".mp3"
+            file.name = song[0]["id"] + ".m4a"
             async with message.client.action(message.chat_id, "audio"):
                 await message.respond(
+                    "<b>{}</b>".format(song[0]['subtitle']),
+                    parse_mode='html',
                     file=file,
                     attributes=[
                         types.DocumentAttributeAudio(
                             duration=int(song[0]["more_info"]["duration"]),
-                            title=song[0]["subtitle"],
-                            performer=song[0]["more_info"]["label"],
+                            title=song[0]["title"],
+                            performer=song[0]["more_info"]["music"],
                         )
                     ],
                     thumb=thumb,
@@ -69,6 +70,15 @@ def get_download_url(enc):
         .replace("_96.", ".")
     )
 
+def get_download_url_hq(enc):
+    des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
+    base_url = "http://h.saavncdn.com"
+    enc_url = base64.b64decode(enc.strip())
+    dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode("utf-8")
+    dec_url = dec_url.replace("mp3:audios", "")
+    return (
+        dec_url.replace("_96.", "_320.")
+    )
 
 def convert_duration(duration):
     """
