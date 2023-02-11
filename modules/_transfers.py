@@ -304,9 +304,9 @@ async def internal_transfer_to_telegram(client, response, filename="upload"):
     """Transfers a file to telegram"""
     file_id = helpers.generate_random_long()
     try:
-     file_size = os.path.getsize(response.name)
+        file_size = os.path.getsize(response.name)
     except:
-     file_size = len(response)
+        file_size = len(response)
     hash_md5 = hashlib.md5()
     uploader = ParallelTransferrer(client)
     part_size, part_count, is_large = await uploader.init_upload(file_id, file_size)
