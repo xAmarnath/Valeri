@@ -51,7 +51,7 @@ async def _inline_song(e):
         )
     q = 0
     for x in results:
-        song_db[x.id] = song[q].get("more_info", {}).get("encrypted_media_url", "")
+        song_db[x.id] = [song[q].get("more_info", {}).get("encrypted_media_url", ""), song[q]['image']]
         q += 1
     await e.answer(results)
 
@@ -62,9 +62,9 @@ async def on_choose_song(e):
         song_url = song_db[q_id]
     except (IndexError, KeyError):
         return
-    response = get(get_download_url_hq(song_url))
+    response = get(get_download_url_hq(song_url[0])
     with io.BytesIO(response.content) as file:
-        with io.BytesIO(get(song[0]["image"]).content) as thumb:
+        with io.BytesIO(get(song_url[1]).content) as thumb:
             thumb.name = "thumbnail.jpg"
             # TODO Resize the thumbnail
             file.name = song[0]["id"] + ".m4a"
