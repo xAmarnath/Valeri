@@ -53,7 +53,7 @@ async def _inline_song(e):
     for x in results:
         song_db[x.id] = [
             song[q].get("more_info", {}).get("encrypted_media_url", ""),
-            song[q]["image"],
+            song[q]["image"], song[q]['title'], song[q]['more_info']['duration'],
         ]
         q += 1
     await e.answer(results)
@@ -70,15 +70,15 @@ async def on_choose_song(e):
         with io.BytesIO(get(song_url[1]).content) as thumb:
             thumb.name = "thumbnail.jpg"
             # TODO Resize the thumbnail
-            file.name = song[0]["id"] + ".m4a"
+            file.name = "song.m4a"
             await bot.edit_message(
                 e.msg_id,
                 parse_mode="html",
                 file=file,
                 attributes=[
                     types.DocumentAttributeAudio(
-                        duration=int(song[0]["more_info"]["duration"]),
-                        title=song[0]["title"],
+                        duration=int(song_url[3]),
+                        title=song_url[2],
                         performer="JioSaavn",
                     ),
                     types.DocumentAttributeFilename(file_name=song[0]["id"] + ".m4a"),
