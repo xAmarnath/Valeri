@@ -12,41 +12,44 @@ from ._handler import new_cmd, newIn
 
 HOST = "https://www.jiosaavn.com/"
 
+
 @newIn(pattern="song")
 async def _inline_song(e):
- try:
+    try:
         query = e.text.split(None, maxsplit=1)[1]
- except IndexError:
-   result = message.builder.article(
+    except IndexError:
+        result = message.builder.article(
             "Query missing",
             "Please add a query to search for a song.",
             link_preview=False,
             text="Song search query missing." + "\n" + "Usage: `song <query>`",
         )
-   return await message.answer([result])
- song = search_song(query=query)
- if len(song) == 0:
-  result = message.builder.article(
+        return await message.answer([result])
+    song = search_song(query=query)
+    if len(song) == 0:
+        result = message.builder.article(
             "No Results",
             "try rephrasing your query .",
             link_preview=False,
             text="No Results found on JioSaavn" + "\n" + "Usage: `song <query>`",
         )
-  return await message.answer([result])
- dummy_file = io.BytesIO(b'66')
- dummy_file.name = 'placeHolder.m4a'
- fi = await client.upload_file(dummy_file)
- results = []
- for s in song:
-     results.append(await e.builder.document(
-               file=fi,
-               force_document=True,
-               title=s['title'],
-               description='JioSaavn',
-               text='Fetching Song...',
-             ))
- await e.answer(results, gallery=True)
- 
+        return await message.answer([result])
+    dummy_file = io.BytesIO(b"66")
+    dummy_file.name = "placeHolder.m4a"
+    fi = await client.upload_file(dummy_file)
+    results = []
+    for s in song:
+        results.append(
+            await e.builder.document(
+                file=fi,
+                force_document=True,
+                title=s["title"],
+                description="JioSaavn",
+                text="Fetching Song...",
+            )
+        )
+    await e.answer(results, gallery=True)
+
 
 @new_cmd(pattern="song")
 async def _song(message):
