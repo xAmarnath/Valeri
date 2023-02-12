@@ -84,7 +84,7 @@ async def on_choose_song(e):
                         title=song_url[2],
                         performer="JioSaavn",
                     ),
-                    types.DocumentAttributeFilename(file_name=song[0]["id"] + ".m4a"),
+                    types.DocumentAttributeFilename(file_name="song_svnn.m4a"),
                 ],
                 thumb=thumb,
             )
