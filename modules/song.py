@@ -53,7 +53,9 @@ async def _inline_song(e):
     for x in results:
         song_db[x.id] = [
             song[q].get("more_info", {}).get("encrypted_media_url", ""),
-            song[q]["image"], song[q]['title'], song[q]['more_info']['duration'],
+            song[q]["image"],
+            song[q]["title"],
+            song[q]["more_info"]["duration"],
         ]
         q += 1
     await e.answer(results)
