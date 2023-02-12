@@ -36,12 +36,11 @@ async def _inline_song(e):
         return await e.answer([result])
     dummy_file = io.BytesIO(b"66")
     dummy_file.name = "placeHolder.m4a"
-    fi = await client.upload_file(dummy_file)
     results = []
     for s in song:
         results.append(
             await e.builder.document(
-                file=fi,
+                file=dummy_file,
                 force_document=True,
                 title=s["title"],
                 description="JioSaavn",
