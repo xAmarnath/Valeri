@@ -3,6 +3,7 @@
 import base64
 import io
 from urllib.parse import quote
+from ._config import bot
 
 from pyDes import *
 from requests import get
