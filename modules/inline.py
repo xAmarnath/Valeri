@@ -6,10 +6,11 @@ from urllib.parse import quote
 from pyYify import yify
 from requests import get
 from telethon import Button, events, types
-from .song import on_choose_song
+
 from ._config import bot
 from ._handler import newIn
 from ._helpers import human_readable_size, write_on_image
+from .song import on_choose_song
 
 imdb_db = {}
 
@@ -271,7 +272,7 @@ async def imdb_inline_query(e):
 async def on_choose_imdb(e):
     if "song" in e.query:
         await on_choose_song(e)
-        return 
+        return
     query_id = e.id
     try:
         imdb_id = imdb_db[query_id]
