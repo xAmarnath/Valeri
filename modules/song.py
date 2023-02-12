@@ -11,7 +11,7 @@ from telethon import types
 from ._handler import new_cmd, newIn
 
 HOST = "https://www.jiosaavn.com/"
-
+song_db = {}
 
 @newIn(pattern="song")
 async def _inline_song(e):
@@ -46,10 +46,47 @@ async def _inline_song(e):
                 title=s["title"],
                 description="JioSaavn",
                 text="Fetching Song...",
+                thumb = types.InputWebDocument(
+        url="https://te.legra.ph/file/011efb7763ba20a03a517.jpg",
+        size=1423,
+        mime_type="image/jpeg",
+        attributes=[],
+    )
             )
         )
-    await e.answer(results, gallery=True)
+    q = 0
+    for x in results:
+        song_db[x.id] = song[q].get("more_info", {}).get("encrypted_media_url", "")
+        q += 1
+    await e.answer(results)
 
+async def on_choose_song(e):
+ q_id = e.id
+ try:
+  song_url = song_db[q_id]
+ except (IndexError, KeyError):
+  return
+ response= get(get_download_url_hq(song_url))
+ with io.BytesIO(response.content) as file:
+        with io.BytesIO(get(song[0]["image"]).content) as thumb:
+            thumb.name = "thumbnail.jpg"
+            # TODO Resize the thumbnail
+            file.name = song[0]["id"] + ".m4a"
+            await bot.edit_message(e.msg_id,
+                    parse_mode="html",
+                    file=file,
+                    attributes=[
+                        types.DocumentAttributeAudio(
+                            duration=int(song[0]["more_info"]["duration"]),
+                            title=song[0]["title"],
+                            performer="JioSaavn",
+                        ),
+                        types.DocumentAttributeFilename(
+                            file_name=song[0]["id"] + ".m4a"
+                        ),
+                    ],
+                    thumb=thumb,
+                )
 
 @new_cmd(pattern="song")
 async def _song(message):
