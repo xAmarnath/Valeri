@@ -62,7 +62,7 @@ async def on_choose_song(e):
         song_url = song_db[q_id]
     except (IndexError, KeyError):
         return
-    response = get(get_download_url_hq(song_url[0])
+    response = get(get_download_url_hq(song_url[0]))
     with io.BytesIO(response.content) as file:
         with io.BytesIO(get(song_url[1]).content) as thumb:
             thumb.name = "thumbnail.jpg"
