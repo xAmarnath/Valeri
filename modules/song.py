@@ -47,12 +47,6 @@ async def _inline_song(e):
                 title=s["title"],
                 description="JioSaavn",
                 text="Fetching Song...",
-                thumb=types.InputWebDocument(
-                    url="https://te.legra.ph/file/011efb7763ba20a03a517.jpg",
-                    size=1423,
-                    mime_type="image/jpeg",
-                    attributes=[],
-                ),
             )
         )
     q = 0
