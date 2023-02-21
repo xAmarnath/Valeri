@@ -35,12 +35,12 @@ async def _spek(e):
     aud = await r.download_media()
     if not aud.endswith(".wav"):
         aud_wav = aud + ".wav"
-        cmd_to_wav = "ffmpeg -i '{}' '{}'".format(aud, aud_wav)
+        cmd_to_wav = "ffmpeg -i {} {}".format(aud, aud_wav)
         proc1 = subprocess.Popen(cmd_to_wav.split(" "))
         proc1.communicate()
     else:
         aud_wav = aud
-    gen_spek = "sox '{}' -n spectrogram".format(aud_wav)
+    gen_spek = "sox {} -n spectrogram".format(aud_wav)
     proc2 = subprocess.Popen(gen_spek.split(" "))
     proc2.communicate()
     await e.reply("{}".format(aud), file="spectrogram.png")
