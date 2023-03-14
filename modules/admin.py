@@ -92,7 +92,7 @@ async def promote_demote(e):
 
 @new_cmd(pattern="ban|kick|unban|tban|sban|mute|tmute|smute|skick|unmute|kickme")
 async def restrict_user(msg):
-    action = msg.text.split(" ")[0][1:].lower()
+    action = msg.text.split(" ")[0][1:].lower() if not msg.text.startswith("/") else msg.text.split(" ")[0].lower()
     if action == "kickme":
         try:
             await msg.client.kick_participant(msg.chat_id, msg.from_id)
@@ -105,17 +105,17 @@ async def restrict_user(msg):
     user, arg = await get_user(msg)
     if not user:
         return
-    try:
-        p = await msg.client(
-            functions.channels.GetParticipantRequest(msg.chat_id, user.id)
-        )
-        try:
-            p.participant.admin_rights
-            return await msg.reply("Sorry, can't restrict admins!")
-        except AttributeError:
-            pass
-    except:
-        pass
+    #try:
+        #p = await msg.client(
+            #functions.channels.GetParticipantRequest(msg.chat_id, user.id)
+        #)
+        #try:
+           # p.participant.admin_rights
+           # return await msg.reply("Sorry, can't restrict admins!")
+        #except AttributeError:
+           # pass
+    #except:
+        #pass
     if action in ["ban", "sban", "tban", "unban"]:
         if arg == "" and action == "tban":
             await msg.reply("Please specify a time!")
