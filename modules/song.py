@@ -5,44 +5,39 @@ import io
 from urllib.parse import quote
 
 from pyDes import *
-from requests import get
+from requests import Session, get
 from telethon import types
 
 from ._config import bot
 from ._handler import new_cmd, newIn
-from requests import Session
 
 HOST = "https://www.jiosaavn.com/"
 song_db = {}
 
+
 @new_cmd(pattern="sptfy")
 async def _sptfy(e):
     s = Session()
-    s.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
-                        # "cf-ray": "7a943c88eaf61192-COK"
-                        }
+    s.headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
+        # "cf-ray": "7a943c88eaf61192-COK"
+    }
     try:
         query = e.text.split(None, maxsplit=1)[1]
     except IndexError:
         await e.reply("Please add a query to search for a song.")
         return
-    resp = s.post("https://api.spotify-downloader.com/",
-                    data={'link': query})
+    resp = s.post("https://api.spotify-downloader.com/", data={"link": query})
     if resp.status_code != 200:
         await e.reply("Something went wrong.")
         return
-    aud = resp.json()['audio']
-    url = aud['url']
+    aud = resp.json()["audio"]
+    url = aud["url"]
     import io
+
     with io.BytesIO(s.get(url, allow_redirects=True).content) as file:
         file.name = resp.json()['name'] + ".mp3"
         await e.respond(file=file)
-
-
-
-
-
-
 
 
 @newIn(pattern="song")
