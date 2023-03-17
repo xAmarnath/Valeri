@@ -36,7 +36,7 @@ async def _sptfy(e):
     import io
 
     with io.BytesIO(s.get(url, allow_redirects=True).content) as file:
-        file.name = resp.json()['name'] + ".mp3"
+        file.name = resp.json()["name"] + ".mp3"
         await e.respond(file=file)
 
 
