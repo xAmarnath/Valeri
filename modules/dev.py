@@ -29,6 +29,8 @@ def is_bl(code):
     return False
 
 
+
+
 @new_cmd(pattern="ls")
 @auth_only
 async def _ls(e):
@@ -128,6 +130,7 @@ async def _ul(e):
 
 async def upload_decorator(e, files, chat, caption: str, directory: str):
     thumb, attributes, action, streamable = None, [], "document", False
+    force_document = False
     if len(files) == 1:
         msg = await e.reply("`Uploading...`")
     else:
@@ -152,6 +155,7 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
             ]
             streamable = True
             action = "video"
+            force_document = True
         elif l.endswith(("mp3", "wav", "flv", "ogg", "opus")):
             metadata = tinytag.TinyTag.get(l)
             attributes = [
@@ -171,6 +175,7 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
                     file=file,
                     thumb=thumb,
                     attributes=attributes,
+                    force_document=force_document,
                     supports_streaming=streamable,
                 )
             if thumb and thumb != "thumb.jpg":
