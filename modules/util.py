@@ -1,5 +1,5 @@
 import os
-from _helpers import human_readable_size as hs
+from ._helpers import human_readable_size as hs
 
 emoji_dict = {"📁": "folder", "📄": "file", "🎥": "video", "🎵": "audio",
               "🖼": "image", "🎇": "gif", "🗜": "archive", "📝": "text", "🐍": "python"}
