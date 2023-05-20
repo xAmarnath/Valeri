@@ -33,7 +33,7 @@ def is_bl(code):
 
 
 @new_cmd(pattern="eval")
-@bot.on(events.MessageEdited(pattern="^(?i)[!?.]eval (.*?)"))
+@bot.on(events.MessageEdited(pattern="^[!?.]eval (.*?)"))
 @auth_only
 async def _eval(e):
     try:
