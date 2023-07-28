@@ -4,6 +4,7 @@ import sys
 from os import environ, execle, listdir, path, remove, system
 
 import speedtest
+import telethon
 import tinytag
 from telethon import types
 
@@ -79,6 +80,112 @@ async def _ls(e):
     caption += "\n<b>{} folders, {} files</b>".format(folder_count, file_count)
     await e.reply(caption, parse_mode="html")
 
+def extract_args_from_text(text):
+    import re
+    pattern = r'-(\w+)(?:\s+([^\s-]+))?'
+    _text_without_any_args = re.sub(pattern, '', text)
+
+    args_list = re.findall(pattern, text)
+    return {key: value if value else True for key, value in args_list}, _text_without_any_args.strip()
+
+@new_cmd(pattern="upl")
+@auth_only
+async def _upl(e):
+    l = await get_text_content(e)
+    if not l:
+        return await e.reply("No input found.")
+    _l, args = extract_args_from_text(l)
+    if not _l:
+        return await e.reply("No input file/folder specified.")
+    _files = []
+    _needed_ext = args.get('ext', None) or args.get('e', None) or args.get('extension', None)
+    if os.path.isdir(_l):
+        for f in os.listdir(_l):
+            if _needed_ext and not f.endswith(_needed_ext):
+                continue
+            _file_path = os.path.join(_l, f)
+            if os.path.isfile(_file_path):
+                _file_name = f.split("/")[-1]
+                _file_name_without_ext = ''.join(_file_name.split(".")[:-1])
+                _files.append({'path': _file_path, 'name': _file_name, 'name_without_ext': _file_name_without_ext})
+
+    elif os.path.isfile(_l):
+        _file_name = _l.split("/")[-1]
+        _file_name_without_ext = ''.join(_file_name.split(".")[:-1]) if args.get('name', '') == '' else args.get('name', '')
+        
+        _files.append({'path': _l, 'name': _file_name, 'name_without_ext': _file_name_without_ext})
+
+    if not _files:
+        return await e.reply("No files found.")
+    
+    _caption = args.get('caption', None) or args.get('c', '')
+    if args.get('nc', False) or args.get('no_caption', False):
+        _caption = None
+
+    _chat = args.get('chat', None) or args.get('c', '')
+    if _chat == '':
+        _chat = e.chat_id
+
+    if not _caption and not any([args.get('nc', False), args.get('no_caption', False)]):
+        _caption =_file_name_without_ext if len(_files) == 1 else ''
+
+    message = await e.reply("Uploading {} file(s)...".format(len(_files)))
+    _percent, _progress, _total = 0, 0, len(_files)
+    for _file in _files:
+        attributes, streamble_media, thumbnail = [], False, None
+        if os.path.isfile(_file['path']) and _file['path'].endswith((".mp4", ".mkv", ".webm", ".3gp", ".mpeg")):
+            duration, width, height = await get_video_metadata(_file['path'])
+            attributes.append(
+                types.DocumentAttributeVideo(
+                    duration=duration,
+                    w=width,
+                    h=height,
+                    round_message=args.get('round', False),
+                    supports_streaming=True,
+                ),
+                types.DocumentAttributeFilename(file_name=_file['name']),
+            )
+            streamble_media = True
+            if len(thumbs) == 0 and args.get('nothumb', False) == False:
+                thumbnail = await generate_thumbnail(_file['path'], _file['name']+'.jpg')
+            elif len(thumbs) > 0:
+                thumbnail = thumbs[0]
+
+        elif os.path.isfile(_file['path']) and _file['path'].endswith((".mp3", ".wav", ".flv", ".ogg", ".opus", ".alac")):
+            metadata = tinytag.TinyTag.get(l)
+            attributes = [
+                types.DocumentAttributeAudio(
+                    duration=int(metadata.duration or "0"),
+                    performer=metadata.artist or "-",
+                    title=metadata.title or "-",
+                    voice=args.get('voice', False),
+                ),
+                types.DocumentAttributeFilename(file_name=_file['name']),
+            ]
+
+        uploaded_file = await upload_file(e.client, _file['path'])
+        if uploaded_file:
+            await e.client.send_file(
+                _chat,
+                file=uploaded_file,
+                caption=_caption,
+                force_document=True,
+                thumb=thumbnail,
+                attributes=attributes,
+                supports_streaming=streamble_media,
+                parse_mode="html",
+            )
+            _progress += 1
+            _percent = ((_progress) / _total) * 100
+            if _percent % 10 == 0:
+                await message.edit("Uploaded {}% of ({}/{}) files.".format(_percent, _progress, _total))
+
+        else:
+            await message.edit("Failed to upload {}.".format(_file['name']))
+            return
+        
+    await message.edit("Upload Done.")
+            
 
 @new_cmd(pattern="ul")
 @auth_only
