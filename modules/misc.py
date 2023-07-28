@@ -447,12 +447,12 @@ async def paste_(message):
             paste_name = "Spacebin"
         elif arg == "n":
             req = post(
-                url="https://warm-anchorage-15807.herokuapp.com/api/documents",
+                url="https://nekobin.com/api/documents",
                 json={"content": content},
                 timeout=5,
             )
             url = (
-                "https://warm-anchorage-15807.herokuapp.com/"
+                "https://nekobin.com/"
                 + req.json()["result"]["key"]
             )
             paste_name = "Nekobin"
