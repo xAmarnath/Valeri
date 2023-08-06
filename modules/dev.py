@@ -44,7 +44,7 @@ async def _k_new_in(e):
     for x in matches:
         results.append(await e.builder.document(
             title=x.get("name"),
-            file="photo_2023-08-06_15-40-10.jpg",
+            file="photo_2023-08-06_15-40-10.webp",
             text="**"+x.get("name", "") + "** \nPlease wait while Fetching File...",
         ))
 
