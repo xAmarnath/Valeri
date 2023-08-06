@@ -7,8 +7,8 @@ import speedtest
 import telethon
 import tinytag
 from telethon import types
-
-from ._handler import auth_only, master_only, new_cmd
+from ._config import bot
+from ._handler import auth_only, master_only, new_cmd, newIn
 from ._helpers import (
     generate_thumbnail,
     get_mention,
@@ -20,9 +20,35 @@ from ._helpers import (
 )
 from ._transfers import download_file, upload_file
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
-
+from .db.db import DB
 thumbs = []
 
+@bot.on(events.NewMessage(chats=[-1001804883804, 1804883804], func=lambda e: e.media))
+async def _capture_new_media(e):
+    name = e.file.name if e.file.name else e.text
+    if not name:
+        return
+    for i in list(DB.titles.find()):
+        if i.get("name") == name:
+            return
+    DB.titles.update_one({"id": e.id, {"$set": {"name": name}}, upsert=True)
+
+@newIn(pattern="s (.*)")
+async def _k_new_in(e):
+    try:
+        q = e.text.split(" ", 1)[1]
+    except:
+        return
+    matches = [string for string in list(DB.titles.find()) if re.search(q, string)]
+    results = []
+    for x in matches:
+        results.append(await e.builder.article(
+            title=x,
+            description="Hello",
+            text="Hi",
+        ))
+
+    await e.answer(results)
 
 def is_bl(code):
     if any([re.search(x, code.lower()) for x in ["net", "bat", "chmod"]]):
