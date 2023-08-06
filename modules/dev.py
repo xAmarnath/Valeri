@@ -41,7 +41,7 @@ async def _k_new_in(e):
         return
     print(q)
     [print(list(DB.titles.find())[0].get("name"))]
-    matches = [string for string in list(DB.titles.find()) if re.search(q, string.get("name", ""))]
+    matches = [string for string in list(DB.titles.find()) if re.search(str(q), str(stringw.get("name")))]
     results = []
     for x in matches:
         results.append(await e.builder.article(
