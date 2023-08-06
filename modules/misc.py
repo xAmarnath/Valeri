@@ -29,6 +29,7 @@ async def _album(e):
 
 @new_cmd(pattern="spek")
 async def _spek(e):
+    return
     r = await e.get_reply_message()
     if not r or not r.audio:
         return await e.reply("Reply to Audio file.")
@@ -278,6 +279,7 @@ async def fake(message):
 
 @new_cmd(pattern="realaddr")
 async def _raddr(msg):
+    return
     query = await get_text_content(msg)
     if query is None:
         return await msg.reply("No query was given!")
@@ -355,6 +357,7 @@ async def wiki_(message):
 
 @new_cmd(pattern="carbon")
 async def _carbon(message):
+    return
     text = await get_text_content(message)
     if text is None:
         return await message.reply("No text provided")
@@ -395,10 +398,15 @@ async def id_(message):
     if not message.reply or not len(message.text.split(None)) > 1:
         user = message.sender
     else:
-        user, _ = await get_user(message)
+        if message.is_reply:
+            reply = await message.get_reply_message()
+            if reply:
+                user = reply.sender
+        else:
+            user, _ = await get_user(message)
     if user is None:
         return await message.reply(
-            "Your ID is: ```" + str(message.from_user.id) + "```"
+            "Your ID is: ```" + str(message.from_user.id) + f"```\nChatID is: ```{message.chat_id}```"
         )
     return await message.reply(
         "The ID of " + user.first_name + " is: ```" + str(user.id) + "```"
