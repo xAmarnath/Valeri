@@ -39,6 +39,8 @@ async def _k_new_in(e):
         q = e.text.split(" ", 1)[1]
     except:
         return
+    print(q)
+    [print(list(DB.titles.find())[0].get("name"))]
     matches = [string for string in list(DB.titles.find()) if re.search(q, string.get("name", ""))]
     results = []
     for x in matches:
