@@ -6,7 +6,7 @@ from os import environ, execle, listdir, path, remove, system
 import speedtest
 import telethon
 import tinytag
-from telethon import types
+from telethon import types, events 
 from ._config import bot
 from ._handler import auth_only, master_only, new_cmd, newIn
 from ._helpers import (
