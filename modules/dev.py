@@ -39,15 +39,13 @@ async def _k_new_in(e):
         q = e.text.split(" ", 1)[1]
     except:
         return
-    print(q)
-    [print(list(DB.titles.find())[0].get("name"))]
-    matches = [stringw for stringw in list(DB.titles.find()) if re.search(str(q), str(stringw.get("name")))]
+    matches = [stringw for stringw in list(DB.titles.find()) if re.search(str(q), str(stringw.get("name")), re.I)]
     results = []
     for x in matches:
         results.append(await e.builder.article(
             title=x.get("name", ""),
-            description="Hello",
-            text="Hi",
+            description=str(x.get("FileID: " + str(x.get("id", 0)))),
+            text=x.get("name", "") + " Please wait while Fetching File...",
         ))
 
     await e.answer(results)
