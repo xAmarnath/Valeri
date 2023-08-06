@@ -45,7 +45,7 @@ async def _k_new_in(e):
         results.append(await e.builder.article(
             title=x.get("name", ""),
             description=str(x.get("FileID: " + str(x.get("id", 0)))),
-            text=x.get("name", "") + " Please wait while Fetching File...",
+            text="**"+x.get("name", "") + "** \nPlease wait while Fetching File...",
         ))
 
     await e.answer(results)
