@@ -44,7 +44,7 @@ async def _k_new_in(e):
     for x in matches:
         results.append(await e.builder.document(
             title=x.get("name"),
-            file=types.InputDocument(id=5945200916327043271, access_hash=-2372154407822515962, file_reference=b"\x04o'\x12\x93\x00\x00\x0f\x17d\xcf\xbf\x1dL\x19|\xfe\xdf\xc4\xc4v$\xb3\xc1\xd2a\x04k|"),
+            file="photo_2023-08-06_15-40-10.jpg",
             text="**"+x.get("name", "") + "** \nPlease wait while Fetching File...",
         ))
 
