@@ -31,7 +31,7 @@ async def _capture_new_media(e):
     for i in list(DB.titles.find()):
         if i.get("name") == name:
             return
-    DB.titles.update_one({"id": e.id, {"$set": {"name": name}}, upsert=True)
+    DB.titles.update_one({"id": e.id}, {"$set": {"name": name}}, upsert=True)
 
 @newIn(pattern="s (.*)")
 async def _k_new_in(e):
