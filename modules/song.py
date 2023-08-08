@@ -1,197 +1,67 @@
-# song.py
-
-import base64
+from ._handler import new_cmd
+from youtubesearchpython import VideosSearch
+import yt_dlp
+from telethon.tl.types import DocumentAttributeAudio, DocumentAttributeFilename
 import io
-from urllib.parse import quote
-
-from pyDes import *
-from requests import Session, get
-from telethon import types
-
-from ._config import bot
-from ._handler import new_cmd, newIn
-
-HOST = "https://www.jiosaavn.com/"
-song_db = {}
-
-
-@new_cmd(pattern="sptfy")
-async def _sptfy(e):
-    s = Session()
-    s.headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
-        # "cf-ray": "7a943c88eaf61192-COK"
-    }
-    try:
-        query = e.text.split(None, maxsplit=1)[1]
-    except IndexError:
-        await e.reply("Please add a query to search for a song.")
-        return
-    resp = s.post("https://api.spotify-downloader.com/", data={"link": query})
-    if resp.status_code != 200:
-        await e.reply("Something went wrong.")
-        return
-    aud = resp.json()["audio"]
-    url = aud["url"]
-    import io
-
-    with io.BytesIO(s.get(url, allow_redirects=True).content) as file:
-        file.name = resp.json()["name"] + ".mp3"
-        await e.respond(file=file)
-
-
-@newIn(pattern="song")
-async def _inline_song(e):
-    try:
-        query = e.text.split(None, maxsplit=1)[1]
-    except IndexError:
-        result = e.builder.article(
-            "Query missing",
-            "Please add a query to search for a song.",
-            link_preview=False,
-            text="Song search query missing." + "\n" + "Usage: `song <query>`",
-        )
-        return await e.answer([result])
-    song = search_song(query=query)
-    if len(song) == 0:
-        result = e.builder.article(
-            "No Results",
-            "try rephrasing your query .",
-            link_preview=False,
-            text="No Results found on JioSaavn" + "\n" + "Usage: `song <query>`",
-        )
-        return await e.answer([result])
-    dummy_file = io.BytesIO(b"66")
-    dummy_file.name = "placeHolder.m4a"
-    fi = await e.client.upload_file(dummy_file)
-    results = []
-    for s in song:
-        results.append(
-            await e.builder.document(
-                file=fi,
-                force_document=True,
-                title=s["title"],
-                description="JioSaavn",
-                text="Fetching Song...",
-            )
-        )
-    q = 0
-    for x in results:
-        song_db[x.id] = [
-            song[q].get("more_info", {}).get("encrypted_media_url", ""),
-            song[q]["image"],
-            song[q]["title"],
-            song[q]["more_info"]["duration"],
-        ]
-        q += 1
-    await e.answer(results)
-
-
-async def on_choose_song(e):
-    q_id = e.id
-    try:
-        song_url = song_db[q_id]
-    except (IndexError, KeyError):
-        return
-    response = get(get_download_url_hq(song_url[0]))
-    with io.BytesIO(response.content) as file:
-        with io.BytesIO(get(song_url[1]).content) as thumb:
-            thumb.name = "thumbnail.jpg"
-            # TODO Resize the thumbnail
-            file.name = "song.m4a"
-            await bot.edit_message(
-                e.msg_id,
-                parse_mode="html",
-                file=file,
-                attributes=[
-                    types.DocumentAttributeAudio(
-                        duration=int(song_url[3]),
-                        title=song_url[2],
-                        performer="JioSaavn",
-                    ),
-                    types.DocumentAttributeFilename(file_name="song_svnn.m4a"),
-                ],
-                thumb=thumb,
-            )
-
-
-@new_cmd(pattern="song")
-async def _song(message):
-    try:
-        query = message.text.split(None, maxsplit=1)[1]
-    except IndexError:
-        return await message.reply("song query missing.")
-    song = search_song(query=query)
-    if len(song) == 0:
-        return await message.reply("Song not found!")
-    response = get(
-        get_download_url_hq(song[0].get("more_info", {}).get("encrypted_media_url", ""))
-    )
-    with io.BytesIO(response.content) as file:
-        with io.BytesIO(get(song[0]["image"]).content) as thumb:
-            thumb.name = "thumbnail.jpg"
-            # TODO Resize the thumbnail
-            file.name = song[0]["id"] + ".m4a"
-            async with message.client.action(message.chat_id, "audio"):
-                await message.respond(
-                    parse_mode="html",
-                    file=file,
-                    attributes=[
-                        types.DocumentAttributeAudio(
-                            duration=int(song[0]["more_info"]["duration"]),
-                            title=song[0]["title"],
-                            performer="JioSaavn",
-                        ),
-                        types.DocumentAttributeFilename(
-                            file_name=song[0]["id"] + ".m4a"
-                        ),
-                    ],
-                    thumb=thumb,
-                )
+import requests
+import os
 
 
 def search_song(query):
-    """
-    Search for a song on youtube and return the first result.
-    """
-    resp = get(
-        HOST
-        + f"/api.php?_format=json&_marker=0&api_version=4&ctx=web6dot0&__call=search.getResults&p=1&q={quote(query)}"
-    )
-    results = resp.json().get("results", [])
-    return results
+    videosSearch = VideosSearch(query, limit=1)
+    result = videosSearch.result()
+    if len(result["result"]) == 0:
+        return None
+    return result["result"][0]
 
 
-def get_download_url(enc):
-    des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
-    base_url = "http://h.saavncdn.com"
-    enc_url = base64.b64decode(enc.strip())
-    dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode("utf-8")
-    dec_url = base_url + dec_url.replace("mp3:audios", "") + ".mp3"
-    return (
-        dec_url.replace("https://aac.saavncdn.com", "")
-        .replace(".mp4", "")
-        .replace("_96.", ".")
-    )
+def download_song(link):
+    opts = {
+        'format': 'bestaudio/best',
+        'outtmpl': '%(id)s.%(ext)s',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '320',
+        }],
+        "quiet": True,
+    }
+
+    with yt_dlp.YoutubeDL(opts) as ydl:
+        ydl.download([link])
 
 
-def get_download_url_hq(enc):
-    des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
-    base_url = "http://h.saavncdn.com"
-    enc_url = base64.b64decode(enc.strip())
-    dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode("utf-8")
-    dec_url = dec_url.replace("mp3:audios", "")
-    return dec_url.replace("_96.", "_320.")
+@new_cmd(pattern="song")
+async def song(e):
+    try:
+        q = e.text.split(" ", 1)[1]
+    except IndexError:
+        return await e.reply("Give me a song name.")
 
+    msg = await e.reply("Searching...")
+    result = search_song(q)
+    if not result:
+        return await msg.edit("Song not found.")
+    await msg.edit(f"Downloading {result['title']}...")
+    download_song(result["link"])
 
-def convert_duration(duration):
-    """
-    Converts a duration in the format of HH:MM:SS to seconds.
-    """
-    duration = duration.split(":")
-    if len(duration) == 3:
-        return int(duration[0]) * 60 * 60 + int(duration[1]) * 60 + int(duration[2])
-    elif len(duration) == 2:
-        return int(duration[0]) * 60 + int(duration[1])
-    else:
-        return int(duration[0])
+    async with e.client.action(e.chat_id, "audio"):
+        with io.BytesIO(requests.get(result["thumbnails"][0]["url"]).content) as thumb:
+            thumb.name = "thumb.jpg"
+            await e.client.send_file(
+                e.chat_id,
+                f"{result['id']}.mp3",
+                thumb=thumb,
+                attributes=[
+                    DocumentAttributeAudio(
+                        duration=0,
+                        title=result["title"],
+                        performer=result["channel"]["name"],
+                    ),
+                    DocumentAttributeFilename(f"{result['title']}.mp3")
+                ],
+            )
+
+    await msg.delete()
+    os.remove(f"{result['id']}.mp3")
+    os.remove(f"{result['id']}.jpg") if os.path.exists(f"{result['id']}.jpg") else ""

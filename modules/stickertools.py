@@ -8,8 +8,6 @@ from telethon.tl.functions import stickers
 from ._config import bot
 from ._handler import new_cmd
 
-print(stickers.SuggestShortNameRequest)
-
 
 async def run_cmd(cmd):
     proc = await asyncio.create_subprocess_shell(

@@ -90,7 +90,7 @@ async def promote_demote(e):
         await e.reply(str(ex) + str(type(ex)))
 
 
-@new_cmd(pattern="ban|kick|unban|tban|sban|mute|tmute|smute|skick|unmute|kickme")
+@new_cmd(pattern="(ban|kick|unban|tban|sban|mute|tmute|smute|skick|unmute|kickme)")
 async def restrict_user(msg):
     action = (
         msg.text.split(" ")[0][1:].lower()
@@ -308,6 +308,27 @@ async def adminlist(msg):
     )
     admins = [get_mention(x) for x in admins]
     await msg.reply("Admins in this chat: " + ", ".join(admins))
+
+
+@new_cmd(pattern="purge")
+async def purge(msg):
+    r, arg = await has_admin_rights(e.chat_id, e.sender_id, "add_admins")
+    if not r:
+        return await msg.reply("You don't have enough rights to use this!")
+    
+    if not msg.is_reply:
+        return await msg.reply("Reply to a message to purge!")
+    to_delete_ids = list(range(msg.reply_to_msg_id, msg.id))
+    to_delete_batch_of_200 = [
+        to_delete_ids[i : i + 200] for i in range(0, len(to_delete_ids), 200)
+    ]
+
+    for batch in to_delete_batch_of_200:
+        await msg.client.delete_messages(msg.chat_id, batch)
+    m = await msg.reply("Purged {} messages!".format(len(to_delete_ids)))
+    await asyncio.sleep(3)
+    await m.delete()
+
 
 
 __help__ = """
