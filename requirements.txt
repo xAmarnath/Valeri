@@ -21,3 +21,5 @@ pilmoji-fixed
 emoji
 pyDes
 youtube-search-python
+flask
+gunicorn
