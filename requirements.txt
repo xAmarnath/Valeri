@@ -20,3 +20,4 @@ pilmoji
 pilmoji-fixed
 emoji
 pyDes
+youtube-search-python
