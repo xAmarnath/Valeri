@@ -42,7 +42,7 @@ TMDB_KEY = getenv("TMDB_KEY")  # required for !imdb
 
 # clients
 bot = TelegramClient(
-    None, api_id=API_KEY, api_hash=API_HASH, device_model="iPhone XS", lang_code="en"
+    "bot", api_id=API_KEY, api_hash=API_HASH, device_model="iPhone XS", lang_code="en"
 )
 db = MongoClient(MONGO_DB, connect=True)
 

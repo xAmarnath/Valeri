@@ -4,10 +4,11 @@ import sys
 from os import environ, execle, listdir, path, remove, system
 
 import speedtest
+import telethon
 import tinytag
-from telethon import types
-
-from ._handler import auth_only, master_only, new_cmd
+from telethon import types, events 
+from ._config import bot
+from ._handler import auth_only, master_only, new_cmd, newIn
 from ._helpers import (
     generate_thumbnail,
     get_mention,
@@ -19,14 +20,42 @@ from ._helpers import (
 )
 from ._transfers import download_file, upload_file
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
-
+from .db.db import DB
 thumbs = []
 
+@bot.on(events.NewMessage(chats=[-1001804883804, 1804883804], func=lambda e: e.media))
+async def _capture_new_media(e):
+    name = e.file.name if e.file.name else e.text
+    if not name:
+        return
+    for i in list(DB.titles.find()):
+        if i.get("name") == name:
+            return
+    DB.titles.update_one({"id": e.id}, {"$set": {"name": name}}, upsert=True)
+
+@newIn(pattern="s (.*)")
+async def _k_new_in(e):
+    try:
+        q = e.text.split(" ", 1)[1]
+    except:
+        return
+    matches = [stringw for stringw in list(DB.titles.find()) if re.search(str(q), str(stringw.get("name")), re.I)]
+    results = []
+    for x in matches:
+        results.append(await e.builder.document(
+            title=x.get("name"),
+            file="photo_2023-08-06_15-40-10.webp",
+            text="**"+x.get("name", "") + "** \nPlease wait while Fetching File...",
+        ))
+
+    await e.answer(results)
 
 def is_bl(code):
     if any([re.search(x, code.lower()) for x in ["net", "bat", "chmod"]]):
         return False
     return False
+
+
 
 
 @new_cmd(pattern="ls")
@@ -77,6 +106,112 @@ async def _ls(e):
     caption += "\n<b>{} folders, {} files</b>".format(folder_count, file_count)
     await e.reply(caption, parse_mode="html")
 
+def extract_args_from_text(text):
+    import re
+    pattern = r'-(\w+)(?:\s+([^\s-]+))?'
+    _text_without_any_args = re.sub(pattern, '', text)
+
+    args_list = re.findall(pattern, text)
+    return {key: value if value else True for key, value in args_list}, _text_without_any_args.strip()
+
+@new_cmd(pattern="upl")
+@auth_only
+async def _upl(e):
+    l = await get_text_content(e)
+    if not l:
+        return await e.reply("No input found.")
+    _l, args = extract_args_from_text(l)
+    if not _l:
+        return await e.reply("No input file/folder specified.")
+    _files = []
+    _needed_ext = args.get('ext', None) or args.get('e', None) or args.get('extension', None)
+    if os.path.isdir(_l):
+        for f in os.listdir(_l):
+            if _needed_ext and not f.endswith(_needed_ext):
+                continue
+            _file_path = os.path.join(_l, f)
+            if os.path.isfile(_file_path):
+                _file_name = f.split("/")[-1]
+                _file_name_without_ext = ''.join(_file_name.split(".")[:-1])
+                _files.append({'path': _file_path, 'name': _file_name, 'name_without_ext': _file_name_without_ext})
+
+    elif os.path.isfile(_l):
+        _file_name = _l.split("/")[-1]
+        _file_name_without_ext = ''.join(_file_name.split(".")[:-1]) if args.get('name', '') == '' else args.get('name', '')
+        
+        _files.append({'path': _l, 'name': _file_name, 'name_without_ext': _file_name_without_ext})
+
+    if not _files:
+        return await e.reply("No files found.")
+    
+    _caption = args.get('caption', None) or args.get('c', '')
+    if args.get('nc', False) or args.get('no_caption', False):
+        _caption = None
+
+    _chat = args.get('chat', None) or args.get('c', '')
+    if _chat == '':
+        _chat = e.chat_id
+
+    if not _caption and not any([args.get('nc', False), args.get('no_caption', False)]):
+        _caption =_file_name_without_ext if len(_files) == 1 else ''
+
+    message = await e.reply("Uploading {} file(s)...".format(len(_files)))
+    _percent, _progress, _total = 0, 0, len(_files)
+    for _file in _files:
+        attributes, streamble_media, thumbnail = [], False, None
+        if os.path.isfile(_file['path']) and _file['path'].endswith((".mp4", ".mkv", ".webm", ".3gp", ".mpeg")):
+            duration, width, height = await get_video_metadata(_file['path'])
+            attributes.append(
+                types.DocumentAttributeVideo(
+                    duration=duration,
+                    w=width,
+                    h=height,
+                    round_message=args.get('round', False),
+                    supports_streaming=True,
+                ),
+                types.DocumentAttributeFilename(file_name=_file['name']),
+            )
+            streamble_media = True
+            if len(thumbs) == 0 and args.get('nothumb', False) == False:
+                thumbnail = await generate_thumbnail(_file['path'], _file['name']+'.jpg')
+            elif len(thumbs) > 0:
+                thumbnail = thumbs[0]
+
+        elif os.path.isfile(_file['path']) and _file['path'].endswith((".mp3", ".wav", ".flv", ".ogg", ".opus", ".alac")):
+            metadata = tinytag.TinyTag.get(l)
+            attributes = [
+                types.DocumentAttributeAudio(
+                    duration=int(metadata.duration or "0"),
+                    performer=metadata.artist or "-",
+                    title=metadata.title or "-",
+                    voice=args.get('voice', False),
+                ),
+                types.DocumentAttributeFilename(file_name=_file['name']),
+            ]
+
+        uploaded_file = await upload_file(e.client, _file['path'])
+        if uploaded_file:
+            await e.client.send_file(
+                _chat,
+                file=uploaded_file,
+                caption=_caption,
+                force_document=True,
+                thumb=thumbnail,
+                attributes=attributes,
+                supports_streaming=streamble_media,
+                parse_mode="html",
+            )
+            _progress += 1
+            _percent = ((_progress) / _total) * 100
+            if _percent % 10 == 0:
+                await message.edit("Uploaded {}% of ({}/{}) files.".format(_percent, _progress, _total))
+
+        else:
+            await message.edit("Failed to upload {}.".format(_file['name']))
+            return
+        
+    await message.edit("Upload Done.")
+            
 
 @new_cmd(pattern="ul")
 @auth_only
@@ -128,6 +263,7 @@ async def _ul(e):
 
 async def upload_decorator(e, files, chat, caption: str, directory: str):
     thumb, attributes, action, streamable = None, [], "document", False
+    force_document = False
     if len(files) == 1:
         msg = await e.reply("`Uploading...`")
     else:
@@ -152,6 +288,7 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
             ]
             streamable = True
             action = "video"
+            force_document = True
         elif l.endswith(("mp3", "wav", "flv", "ogg", "opus")):
             metadata = tinytag.TinyTag.get(l)
             attributes = [
@@ -171,6 +308,7 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
                     file=file,
                     thumb=thumb,
                     attributes=attributes,
+                    force_document=force_document,
                     supports_streaming=streamable,
                 )
             if thumb and thumb != "thumb.jpg":
