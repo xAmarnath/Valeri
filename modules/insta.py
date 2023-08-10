@@ -44,9 +44,9 @@ async def _insta(message):
     if not url:
         await message.reply("`Usage: !insta <url>`")
         return
-    if check_if_spam(message.sender_id):
-        await message.reply("`You are spamming.`")
-        return
+    # if check_if_spam(message.sender_id):
+        # await message.reply("`You are spamming.`")
+        # return
 
     msg = await message.reply("`Downloading...`")
     data = get_ig_download_url(url)
