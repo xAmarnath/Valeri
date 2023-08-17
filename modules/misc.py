@@ -759,7 +759,7 @@ async def _dept(e):
     b = []
     i = 0
     for student in result:
-        b.append([Button.inline(f"{student[0]}", "stud_" + student[1])])
+        b.append([Button.inline(f"{student[0]}", "stud_" + str(student[1]))])
         i+=1
         if i == 20:
             break
