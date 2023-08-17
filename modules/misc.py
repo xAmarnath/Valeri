@@ -762,13 +762,25 @@ async def _dept(e):
     b = []
     i = 0
     for student in result:
-        b.append([Button.inline(f"{student[0]}", "stud_" + str(student[1]))])
+        b.append([Button.inline(f"{student[0].title()}", "stud_" + str(student[1]))])
         i+=1
         if i == 20:
             break
     await e.edit(f"Found **{len(result)}** Students for **Q({query})**:", buttons=b)
-    
 
+@newCall(pattern="stud_(.*)")
+async def _studj(e):
+    q = e.data.decode().split("_")
+    query = q[1]
+    with open("AJCE_DATA.txt", "r") as f:
+        data = json.load(f)
+    if query.isdigit():
+        for a, stud in data.items():
+            for b in stud:
+                if str(b["admission_number"]) == query:
+                    return await e.edit("<b>Student Found at AJCE.</b>\n<b>Name: </b> {}\n</b>AddNum: </b><code>{}</code>\n<b>Branch: </b> {}\n<b>S. House: </b> {}\n<b>Gender: </b>{}\n<b>RollNo: </b><code>{}</code>".format(b["name"], b["admission_number"], b["branch"], b["house"], b["gender"], b["roll_no"]), parse_mode="html")
+        return await e.answer("No found!n", alert=True)
+    
 
 @new_cmd(pattern="ph")
 async def ph(msg):
