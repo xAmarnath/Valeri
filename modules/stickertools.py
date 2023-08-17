@@ -22,7 +22,7 @@ def color_image(path):
         r = post(
             "https://api.deepai.org/api/colorizer",
             files={"image": file},
-            headers={"api-key": "quickstart-QUdJIGlzIGNvbWluZy4uLi4K"},
+            headers={"api-key": "e1d03cc1-58ba-419e-99e1-ce2d742f62d1"},
         )
         with open("color-" + path, "wb") as file:
             data = r.json()
