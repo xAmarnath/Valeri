@@ -738,7 +738,7 @@ async def _ajce(e):
     await e.reply(f"Choose the **Department and Year**:", buttons=b)
     
 
-@newCall(pattern="dep_(*.)_(*.)")
+@newCall(pattern="dep_(.*)_(.*)")
 async def _dept(e):
     q = e.data.decode().split("_")
     branch_s, query = q[1], q[2]
