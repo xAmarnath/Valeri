@@ -730,7 +730,7 @@ async def _ajce(e):
     i = 0
     for student in result:
         b.append([Button.inline(f"{i+1}. {student[0]}", str(student[1]))])
-        i++
+        i+=1
         if i == 20:
             break
     await e.reply(f"Found {len(b)} Results for **{query}**:", buttons=b)
