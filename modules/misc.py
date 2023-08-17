@@ -731,9 +731,12 @@ async def _ajce(e):
     b = []
     i = 0
     for student in result:
+        vxv = False
         for v in b:
             if student[0].strip() in v[0].text.strip():
-                continue
+                vxv = True
+        if vxv:
+            continue 
         b.append([Button.inline(f"{student[0]}", "dep_" + str(student[0]+"_"+student[1]))])
         i+=1
         if i == 20:
