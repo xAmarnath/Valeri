@@ -713,9 +713,9 @@ async def _ajce(e):
     with open("AJCE_DATA.txt", "r") as f:
         data = json.load(f)
     if query.isdigit():
-        for a, b in data.items():
-            for stud in b:
-                if str(stud["admission_number"]) == query:
+        for a, stud in data.items():
+            for b in stud:
+                if str(b["admission_number"]) == query:
                     return await e.reply("<b>Student Found at AJCE.</b>\n<b>Name: </b> {}</b>AddNum: </b><code>{}</code>\n<b>Branch: </b> {}\n<b>S. House: </b> {}\n<b>Gender: </b>{}\n<b>RollNo: </b><code>{}</code>".format(b["name"], b["admission_number"], b["branch"], b["house"], b["gender"], b["roll_no"]), parse_mode="html")
         return await e.reply("No found!n")
     result = []
