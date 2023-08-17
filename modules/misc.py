@@ -732,7 +732,7 @@ async def _ajce(e):
     i = 0
     for student in result:
         for v in b:
-            if v.text == student[0]:
+            if v[0].text == student[0]:
                 continue
         b.append([Button.inline(f"{student[0]}", "dep_" + str(student[0]+"_"+student[1]))])
         i+=1
