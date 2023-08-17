@@ -703,6 +703,24 @@ async def stream_audio(msg):
     MSG = "Found {} streams, For **{}**\nchoose one:\n".format(len(urls), query)
     await msg.reply(MSG, buttons=buttons)
 
+@new_cmd(pattern="ajce")
+async def _ajce(e):
+    query = await get_text_content(msg)
+    if not query:
+        return await msg.reply("Ask with Name/AddmNo!!!")
+    import json
+    from telethon import Button
+    with open("AJCE_DATA.txt", "r") as f:
+        data = json.load(f)
+    if query.isdigit():
+        for a, b in data.items():
+            if str(b["admission_number"]) == query:
+                return await e.reply("<b>Student Found at AJCE.</b>\n<b>Name: </b> {}</b>AddNum: </b><code>{}</code>\n<b>Branch: </b> {}\n<b>S. House: </b> {}\n<b>Gender: </b>{}\n<b>RollNo: </b><code>{}</code>".format(
+                    b["name"], b["admission_number"], b["branch"], b["house"], b["gender"], b["roll_no"],
+                )
+        await e.reply("No found!n")
+        
+
 
 @new_cmd(pattern="ph")
 async def ph(msg):
