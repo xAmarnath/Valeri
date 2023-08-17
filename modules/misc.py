@@ -718,7 +718,7 @@ async def _ajce(e):
         for a, stud in data.items():
             for b in stud:
                 if str(b["admission_number"]) == query:
-                    return await e.reply("<b>Student Found at AJCE.</b>\n<b>Name: </b> {}\n</b>AddNum: </b><code>{}</code>\n<b>Branch: </b> {}\n<b>S. House: </b> {}\n<b>Gender: </b>{}\n<b>RollNo: </b><code>{}</code>".format(b["name"], b["admission_number"], b["branch"], b["house"], b["gender"], b["roll_no"]), parse_mode="html")
+                    return await e.reply("<b>Student Found at AJCE.</b>\n<b>Name: </b> {}\n<b>AddNum: </b><code>{}</code>\n<b>Branch: </b> {}\n<b>S. House: </b> {}\n<b>Gender: </b>{}\n<b>RollNo: </b><code>{}</code>".format(b["name"], b["admission_number"], b["branch"], b["house"], b["gender"], b["roll_no"]), parse_mode="html")
         return await e.reply("No found!n")
     result = []
     query = query.lower()
@@ -778,9 +778,12 @@ async def _studj(e):
         for a, stud in data.items():
             for b in stud:
                 if str(b["admission_number"]) == query:
-                    return await e.edit("<b>Student Found at AJCE.</b>\n<b>Name: </b> {}\n</b>AddNum: </b><code>{}</code>\n<b>Branch: </b> {}\n<b>S. House: </b> {}\n<b>Gender: </b>{}\n<b>RollNo: </b><code>{}</code>".format(b["name"], b["admission_number"], b["branch"], b["house"], b["gender"], b["roll_no"]), parse_mode="html")
+                    return await e.edit("<b>Student Found at AJCE.</b>\n<b>Name: </b> {}\n<b>AddNum: </b><code>{}</code>\n<b>Branch: </b> {}\n<b>S. House: </b> {}\n<b>Gender: </b>{}\n<b>RollNo: </b><code>{}</code>".format(b["name"], b["admission_number"], b["branch"], b["house"], b["gender"], b["roll_no"]), parse_mode="html", buttons=Button.inline("Back", "pm"))
         return await e.answer("No found!n", alert=True)
-    
+
+@newCall(pattern="pm")
+async def _poda_myre(r):
+    await r.answer("Poda Mayre", alert=True)
 
 @new_cmd(pattern="ph")
 async def ph(msg):
