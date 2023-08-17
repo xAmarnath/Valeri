@@ -705,9 +705,9 @@ async def stream_audio(msg):
 
 @new_cmd(pattern="ajce")
 async def _ajce(e):
-    query = await get_text_content(msg)
+    query = await get_text_content(e)
     if not query:
-        return await msg.reply("Ask with Name/AddmNo!!!")
+        return await e.reply("Ask with Name/AddmNo!!!")
     import json
     from telethon import Button
     with open("AJCE_DATA.txt", "r") as f:
