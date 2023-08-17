@@ -716,12 +716,12 @@ async def _ajce(e):
         for a, stud in data.items():
             for b in stud:
                 if str(b["admission_number"]) == query:
-                    return await e.reply("<b>Student Found at AJCE.</b>\n<b>Name: </b> {}</b>AddNum: </b><code>{}</code>\n<b>Branch: </b> {}\n<b>S. House: </b> {}\n<b>Gender: </b>{}\n<b>RollNo: </b><code>{}</code>".format(b["name"], b["admission_number"], b["branch"], b["house"], b["gender"], b["roll_no"]), parse_mode="html")
+                    return await e.reply("<b>Student Found at AJCE.</b>\n<b>Name: </b> {}\n</b>AddNum: </b><code>{}</code>\n<b>Branch: </b> {}\n<b>S. House: </b> {}\n<b>Gender: </b>{}\n<b>RollNo: </b><code>{}</code>".format(b["name"], b["admission_number"], b["branch"], b["house"], b["gender"], b["roll_no"]), parse_mode="html")
         return await e.reply("No found!n")
     result = []
     query = query.lower()
-    for a, b in data.items():
-        for stud in b:
+    for a, stud in data.items():
+        for b in stud:
             if query in b["name"]:
                 result.append([b["name"], b["admission_number"]])
     if len(result) == 0:
