@@ -716,8 +716,26 @@ async def _ajce(e):
         for a, b in data.items():
             for stud in b:
                 if str(stud["admission_number"]) == query:
-                    return await e.reply("<b>Student Found at AJCE.</b>\n<b>Name: </b> {}</b>AddNum: </b><code>{}</code>\n<b>Branch: </b> {}\n<b>S. House: </b> {}\n<b>Gender: </b>{}\n<b>RollNo: </b><code>{}</code>".format(b["name"], b["admission_number"], b["branch"], b["house"], b["gender"], b["roll_no"]))
-        await e.reply("No found!n")
+                    return await e.reply("<b>Student Found at AJCE.</b>\n<b>Name: </b> {}</b>AddNum: </b><code>{}</code>\n<b>Branch: </b> {}\n<b>S. House: </b> {}\n<b>Gender: </b>{}\n<b>RollNo: </b><code>{}</code>".format(b["name"], b["admission_number"], b["branch"], b["house"], b["gender"], b["roll_no"]), parse_mode="html")
+        return await e.reply("No found!n")
+    result = []
+    query = query.lower()
+    for a, b in data.items():
+        for stud in b:
+            if query in b["name"]:
+                result.append([b["name"], b["admission_number"]])
+    if len(result) == 0:
+        return await e.reply("Not found!n")
+    b = []
+    i = 0
+    for student in result:
+        b.append([Button.inline(f"{i+1}. {student[0]}", str(student[1]))])
+        i ++
+        if i == 20:
+            break
+    await e.reply(f"Found {len(b)} Results for **{query}**:", buttons=b)
+    
+    
         
 
 
