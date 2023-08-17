@@ -703,13 +703,15 @@ async def stream_audio(msg):
     MSG = "Found {} streams, For **{}**\nchoose one:\n".format(len(urls), query)
     await msg.reply(MSG, buttons=buttons)
 
+import json
+from telethon import Button
+from ._handler import newCall
+
 @new_cmd(pattern="ajce")
 async def _ajce(e):
     query = await get_text_content(e)
     if not query:
         return await e.reply("Ask with Name/AddmNo!!!")
-    import json
-    from telethon import Button
     with open("AJCE_DATA.txt", "r") as f:
         data = json.load(f)
     if query.isdigit():
@@ -723,20 +725,43 @@ async def _ajce(e):
     for a, stud in data.items():
         for b in stud:
             if query in b["name"].lower():
-                result.append([b["name"], b["admission_number"]])
+                result.append([a, b["name"]])
     if len(result) == 0:
         return await e.reply("Not found!n")
     b = []
     i = 0
     for student in result:
-        b.append([Button.inline(f"{i+1}. {student[0]}", str(student[1]))])
+        b.append([Button.inline(f"{student[0]}", "dep_" + str(student[0]+"_"student[1]))])
         i+=1
         if i == 20:
             break
-    await e.reply(f"Found {len(b)} Results for **{query}**:", buttons=b)
+    await e.reply(f"Choose the **Department and Year**:", buttons=b)
     
+
+@newCall(pattern="dep_(*.)_(*.)")
+async def _dept(e):
+    q = e.data.decode().split("_")
+    branch_s, query = q[1], q[2]
+    with open("AJCE_DATA.txt", "r") as f:
+        data = json.load(f)
     
-        
+    result = []
+    query = query.lower()
+    for a, stud in data.items():
+        for b in stud:
+            if query in b["name"].lower() and b["section"] == branch_s:
+                result.append([b["name"], b["admission_number"]])
+    if len(result) == 0:
+        return await e.answer("Not found!n", alert=True)
+    b = []
+    i = 0
+    for student in result:
+        b.append([Button.inline(f"{student[0]}", "stud_" + student[1]))])
+        i+=1
+        if i == 20:
+            break
+    await e.edit(f"Found **{len(result)}** Students for **Q({query})**:", buttons=b)
+    
 
 
 @new_cmd(pattern="ph")
