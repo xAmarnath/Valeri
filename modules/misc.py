@@ -722,7 +722,7 @@ async def _ajce(e):
     query = query.lower()
     for a, stud in data.items():
         for b in stud:
-            if query in b["name"]:
+            if query in b["name"].lower():
                 result.append([b["name"], b["admission_number"]])
     if len(result) == 0:
         return await e.reply("Not found!n")
