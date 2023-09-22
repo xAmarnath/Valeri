@@ -1,5 +1,6 @@
 import asyncio
 from os import remove, rename
+import os
 
 from PIL import Image
 from requests import get, post
@@ -32,6 +33,23 @@ def color_image(path):
                 return "", str(data)
             file.write(get(url).content)
     return "color-" + path, ""
+
+def edit_image(path, arg):
+    with open(path, "rb") as file:
+        r = post(
+            "https://api.deepai.org/api/image-editor",
+            files={"image": file},
+            data={"text": arg},
+            headers={"api-key": "8f9015f2-8358-420d-a294-1da9c488f67e"},
+        )
+        with open("edit-" + path, "wb") as file:
+            data = r.json()
+            try:
+                url = data["output_url"]
+            except KeyError:
+                return "", str(data)
+            file.write(get(url).content)
+    return "edit-" + path, ""
 
 
 def similarize_image(image):
@@ -67,7 +85,7 @@ async def _animate(msg):
 @new_cmd(pattern="color")
 async def _animate(msg):
     if not msg.reply_to:
-        return await msg.reply("Reply to sticker/photo to animate it")
+        return await msg.reply("Reply to sticker/photo to color it")
     r = await msg.get_reply_message()
     mg = await msg.reply("`Processing..`")
     if not any([r.photo, r.sticker]):
@@ -78,6 +96,29 @@ async def _animate(msg):
         return await mg.edit(str(err))
     await msg.respond(file=color_f)
     await mg.delete()
+    os.remove(f)
+    os.remove("color-"+f)
+
+@new_cmd(pattern="edit")
+async def _animate(msg):
+    if not msg.reply_to:
+        return await msg.reply("Reply to sticker/photo to edit it")
+    r = await msg.get_reply_message()
+    mg = await msg.reply("`Processing..`")
+    if not any([r.photo, r.sticker]):
+        return await msg.reply("nilv3")
+    f = await r.download_media()
+    try:
+        a = msg.text.split(None, 1)[1]
+    except IndexError:
+        a = "enhance image"
+    color_f, err = edit_image(f, a)
+    if err != "":
+        return await mg.edit(str(err))
+    await msg.respond(file=color_f)
+    await mg.delete()
+    os.remove(f)
+    os.remove("edit-"+f)
 
 
 @new_cmd(pattern="(stoi|itos)")
