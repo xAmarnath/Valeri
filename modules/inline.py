@@ -1,6 +1,4 @@
 import datetime
-import threading
-import time
 from urllib.parse import quote
 
 from pyYify import yify
@@ -9,7 +7,7 @@ from telethon import Button, events, types
 
 from ._config import bot
 from ._handler import newIn
-from ._helpers import human_readable_size, write_on_image
+from ._helpers import human_readable_size
 
 imdb_db = {}
 
@@ -167,77 +165,6 @@ async def geo_search_(e):
         )
     await e.answer(pop_list)
 
-
-async def doge_write_on_sticker(e: events.InlineQuery.Event):
-    try:
-        if "doge" in e.text:
-            tex = e.text.split("doge ")[1]
-        else:
-            tex = e.text
-    except IndexError:
-        return await e.answer(
-            [
-                e.builder.article(
-                    "Query missing",
-                    "Please add a query to search for a doge.",
-                    link_preview=False,
-                    text="Doge search query missing." + "\n" + "Usage: `doge <query>`",
-                )
-            ]
-        )
-    if not tex:
-        return
-    images = []
-    time.time()
-    threads = [
-        threading.Thread(
-            target=write_on_image,
-            args=("doge_write.webp", tex, "doge.ttf", "black", images),
-        ),
-        threading.Thread(
-            target=write_on_image,
-            args=("doge_2.webp", tex, "doge.ttf", "black", images),
-        ),
-        threading.Thread(
-            target=write_on_image,
-            args=("doge_3.webp", tex, "doge.ttf", "black", images),
-        ),
-        threading.Thread(
-            target=write_on_image,
-            args=("doge_4.webp", tex, "doge.ttf", "black", images),
-        ),
-    ]
-    [t.start() for t in threads]
-    [t.join() for t in threads]
-    await e.answer(
-        [
-            await e.builder.document(
-                images[0],
-                title="doge_write.webp",
-                description="xd_1",
-                text="🥵",
-            ),
-            await e.builder.document(
-                images[1],
-                title="doge_2.webp",
-                description="xd_2",
-                text="😭",
-            ),
-            await e.builder.document(
-                images[2],
-                title="doge_3.webp",
-                description="xd_3",
-                text="🤧",
-            ),
-            await e.builder.document(
-                images[3],
-                title="doge_4.webp",
-                description="xd_4",
-                text="🙂",
-            ),
-        ],
-        gallery=True,
-    )
 
 
 @newIn(pattern="imdb ?(.*)")

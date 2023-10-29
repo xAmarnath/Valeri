@@ -4,13 +4,12 @@ import os
 import random
 import string
 import sys
-import textwrap
 import time
 from os import listdir, path
 
 import ffmpeg
 import telethon
-from PIL import Image, ImageColor, ImageDraw, ImageFont
+from PIL import Image
 from telethon import errors
 
 from ._config import OWNER_ID, bot, help_dict, log
@@ -296,51 +295,3 @@ def get_video_metadata(file):
         )
     except (KeyError, IndexError):
         return (1, 1280, 720)
-
-
-from emoji import is_emoji as is_emo
-
-
-def is_emoji(s):
-    for x in s:
-        if is_emo(x):
-            return True
-    return False
-
-
-from pilmoji import Pilmoji
-
-
-def write_on_image(image_name: str, text: str, font, color: str, im):
-    """Write text on an image"""
-    image = Image.open(image_name)
-    is_em = is_emoji(text)
-    font = (
-        ImageFont.truetype(font, size=67)
-        # if not is_em
-        # else ImageFont.truetype("emoji.ttf", size=109)
-    )
-    try:
-        color = ImageColor.getrgb(color)
-    except ValueError:
-        color = (255, 255, 255)
-    draw = ImageDraw.Draw(image)
-    width, height = image.size
-    if len(text) > 0:
-        text = textwrap.fill(text, 20)
-        draw_box = draw.textbbox((5, 5), text=text, font=font)
-        text_x = (width - (draw_box[2] - draw_box[0])) // 2
-        text_y = ((height - (draw_box[3] - draw_box[1])) // 2) - 125
-    else:
-        text_size = draw.textsize(text, font=font)
-        text_x = (width - text_size[0]) // 2
-        text_y = (height - text_size[1]) // 2 - 100
-        if is_em and text_size[0] < width:
-            text = textwrap.fill(text, 4)
-    if not is_em:
-        draw.text((text_x, text_y), text.strip(), font=font, fill=color)
-    else:
-        with Pilmoji(image) as pilmoji:
-            pilmoji.text((text_x, text_y), text.strip(), (0, 0, 0), font)
-    image.save(image_name + "xd_text.webp")
-    im.append(image_name + "xd_text.webp")

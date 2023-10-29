@@ -10,15 +10,11 @@ seedrcc
 pillow
 bs4
 aria2p
-aiohttp
 ffmpeg-python 
 fake_useragent
 yt-dlp
 tinytag
 pyYify
-pilmoji
-pilmoji-fixed
-emoji
 pyDes
 youtube-search-python
 flask

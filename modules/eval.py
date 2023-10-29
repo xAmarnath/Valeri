@@ -61,13 +61,51 @@ async def _eval(e):
         with io.BytesIO(str(evaluation).encode()) as file:
             file.name = "eval.txt"
             return await e.respond(file=file)
-    final_output = (
-        "__►__ **EVALPy**\n```{}``` \n\n __►__ **OUTPUT**: \n```{}``` \n".format(
-            c,
-            evaluation,
+
+    formatting_entities = [
+        types.MessageEntityBold(offset=0, length=len("► EVALPy")),
+        types.MessageEntityPre(
+            offset=len("► EVALPy\n"), length=len(str(c)), language="python"
+        ),
+        types.MessageEntityBold(
+            offset=len("► EVALPy\n") + len(str(c)) + len("\n\n "),
+            length=len("► OUTPUT: "),
+        ),
+    ]
+
+    if stderr or exc:
+        formatting_entities.append(
+            types.MessageEntityPre(
+                offset=len("► EVALPy\n") + len(str(c)) + len("\n\n ► OUTPUT: "),
+                length=len(evaluation),
+                language="python",
+            )
         )
+    else:
+        formatting_entities.append(
+            types.MessageEntityCode(
+                offset=len("► EVALPy\n") + len(str(c)) + len("\n\n ► OUTPUT: "),
+                length=len(evaluation),
+            )
+        )
+
+    final_output = "► EVALPy\n{}\n\n ► OUTPUT: \n{} \n".format(
+        c,
+        evaluation,
     )
-    await e.reply(final_output)
+
+    try:
+        await e.reply(
+            final_output,
+            formatting_entities=formatting_entities,
+            parse_mode="html",
+        )
+    except:
+        await e.reply(
+            final_output,
+            # formatting_entities=formatting_entities,
+            parse_mode="html",
+        )
 
 
 async def aexec(code, event):
@@ -108,8 +146,17 @@ async def _exec(e):
             await e.reply(file=file)
             await p.delete()
     else:
-        f = "`BASH` \n`Output:`\n\n```{}```".format(out)
-        await p.edit(f)
+        formatting_entities = [
+            types.MessageEntityCode(offset=0, length=len("BASH \n")),
+            types.MessageEntityCode(
+                offset=len("BASH \n"), length=len("Output:\n\n"),
+            ),
+            types.MessageEntityPre(
+                offset=len("BASH \nOutput:\n\n"), length=len(out), language="bash"
+            ),
+        ]
+        f = "BASH \nOutput:\n\n{}".format(out)
+        await p.edit(f, formatting_entities=formatting_entities, parse_mode="html")
 
 
 @new_cmd(pattern="request")
