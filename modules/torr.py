@@ -114,7 +114,7 @@ async def torrent(e):
     msg = f"Search results for: {q}\n\n"
     q = 0
     for i in results:
-        if q > 5:
+        if q > 15:
             break
         q += 1
         msg += f"( {q} ) <b><a href='{i['url']}'>{i['name']}</a></b>\n"
