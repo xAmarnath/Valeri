@@ -2,8 +2,9 @@ from bs4 import BeautifulSoup as soup
 from requests import get
 from telethon import events, Button
 from ._config import bot
+import uuid
 
-BASE_URL = "https://www.torlock.com/"
+BASE_URL = "https://www.torlock.com"
 
 
 def search_torrents(q):
@@ -68,8 +69,6 @@ def search_torrents(q):
             except:
                 pass
 
-    # print(results)
-
     return results, None
 
 
@@ -86,6 +85,76 @@ def get_torrent_magnet(url):
             return i["href"], None
 
     return None, "Error: Magnet not found"
+
+
+def gen_unique_id():
+    return str(uuid.uuid4())
+
+
+search_cache = {}
+
+
+@bot.on(events.NewMessage(pattern="/t (.*)"))
+async def torrent(e):
+    try:
+        q = e.text.split(" ", 1)[1]
+    except IndexError:
+        await e.reply("Usage: /t <query>")
+        return
+
+    results, err = search_torrents(q)
+
+    if not results:
+        await e.reply("No results")
+        return
+
+    buttons = []
+    btns = []
+    bc = 0
+    msg = f"Search results for: {q}\n\n"
+    q = 0
+    for i in results:
+        if q > 5:
+            break
+        q += 1
+        msg += f"( {q} ) <b><a href='{i['url']}'>{i['name']}</a></b>\n"
+        uq = gen_unique_id()
+        search_cache[uq] = i
+        btns.append(Button.inline(f"{q}", data=f"t {q}|{uq}"))
+        bc += 1
+        if bc == 6:
+            buttons.append(btns)
+            btns = []
+            bc = 0
+    if bc > 0:
+        buttons.append(btns)
+
+    await e.reply(msg, buttons=buttons, link_preview=False, parse_mode="html")
+
+
+@bot.on(events.CallbackQuery(pattern=r"t"))
+async def callback_torrent(e):
+    try:
+        x = e.data.decode().split(" ", 1)[1]
+        q = int(x.split("|")[0])
+        link = x.split("|")[1]
+    except IndexError:
+        await e.answer("Invalid link")
+        return
+    try:
+        url = search_cache[link]["url"]
+    except KeyError:
+        await e.answer("Cache expired, search again")
+        return
+    
+    print(url)
+
+    magnet, err = get_torrent_magnet(url)
+
+    await e.respond(
+        "**#MagnetLink**\n\n`" + magnet + "`"
+    )
+
 
 @bot.on(events.InlineQuery(pattern=r"t (.*)"))
 async def inline_torrent(e):
@@ -106,15 +175,19 @@ async def inline_torrent(e):
         articles.append(
             e.builder.article(
                 title=i["name"],
-                description=i["date"] + " | " + i["size"] + " | " + i["seeds"] + " | " + i["leeches"],
+                description=i["date"]
+                + " | "
+                + i["size"]
+                + " | "
+                + i["seeds"]
+                + " | "
+                + i["leeches"],
                 text=i["url"],
                 buttons=[
-                    [Button.url("Magnet", await get_torrent_magnet(i["url"]))],
+                    [Button.url("Magnet", "https://google.com")],
                     [Button.url("Open", i["url"])],
                 ],
             )
         )
 
     await e.answer(articles, switch_pm="Search results for: " + q)
-
-    
