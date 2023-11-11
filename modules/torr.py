@@ -1,15 +1,24 @@
 from bs4 import BeautifulSoup as soup
-from requests import get
+from requests import get, auth
 from telethon import events, Button
 from ._config import bot
 import uuid
 
 BASE_URL = "https://www.torlock.com"
 
+proxies = {
+    "http": "socks5://iad.socks.ipvanish.com:1080",
+    "https": "socks5://iad.socks.ipvanish.com:1080",
+    "socks5": "socks5://iad.socks.ipvanish.com:1080",
+}
+
+
+auth = auth.HTTPProxyAuth("6fUNyidVCgY", "5shI6NljlqMY")
+
 
 def search_torrents(q):
     if not q or q == "":
-        r = get(BASE_URL, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+        r = get("https://google.com", headers={"User-Agent": "Mozilla/5.0"}, timeout=10, proxies=proxies, auth=auth)
 
         s = soup(r.text, "html.parser")
         results = []
@@ -40,7 +49,7 @@ def search_torrents(q):
         return results, None
 
     r = get(
-        BASE_URL + "?qq=1&q=avatar", headers={"User-Agent": "Mozilla/5.0"}, timeout=10
+        "https://google.com" + "?qq=1&q=avatar", headers={"User-Agent": "Mozilla/5.0"}, timeout=10, proxies=proxies, auth=auth
     )
 
     if r.status_code != 200:
