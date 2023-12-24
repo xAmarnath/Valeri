@@ -92,7 +92,7 @@ async def _(e):
     if e.reply_to_msg_id:
         r = await e.get_reply_message()
         if r.media:
-            if r.media.document:
+            if r.document:
                 if r.media.document.mime_type == "image/jpeg":
                     await e.reply(send_image_prompt(e.pattern_match.group(1), await r.download_media()).strip())
                     return
