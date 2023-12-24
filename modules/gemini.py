@@ -1,5 +1,4 @@
-from requests import get, post
-import json
+from requests import post
 import base64
 
 from ._handler import new_cmd
