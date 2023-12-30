@@ -142,7 +142,8 @@ async def _rm(e):
         if len(btns) == 2:
             buttons.append(btns)
             btns = []
-        btns.append(Button.inline(file, data=f"rm {file}"))
+        max_bytes = 50
+        btns.append(Button.inline(file, data=f"rm {file[:max_bytes]}"))
     if btns:
         buttons.append(btns)
     await e.reply("Select the files to delete.", buttons=buttons)
@@ -151,7 +152,11 @@ async def _rm(e):
 async def _rm_cbq(e):
     file = e.data_match.group(1)
     try:
-        os.remove(os.path.join(os.getcwd(), file.decode()))
+        if os.name == "nt":
+            cmd = "cd " + os.getcwd() + " && del " + path
+        else:
+            cmd = "cd " + os.getcwd() + " && rm -rf " + path
+        os.system(cmd)
         await e.answer("Deleted Successfully!")
     except Exception as o:
         await e.answer(f"Error: {str(o)}")
