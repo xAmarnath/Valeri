@@ -118,7 +118,8 @@ async def _cd(e):
         await e.reply("`No such directory found.`")
         return
     os.chdir(directory)
-    await e.reply("`Changed directory to {}`".format(directory))
+    curr = os.getcwd()
+    await e.reply("`Changed directory to {}`".format(curr))
 
 from telethon import Button
 
@@ -185,7 +186,7 @@ async def _rm_cbq(e):
     file = e.data_match.group(1)
     try:
         path = os.path.join(os.getcwd(), get_full_path(file.decode()))
-        await e.edit("Are you sure you want to delete this file?\n\n`{}`".format(path), buttons=[[Button.inline("Yes", data=f"rmx {file}"), Button.inline("No", data="cancel")], [Button.inline("Back", data="rm_x")]])
+        await e.edit("Are you sure you want to delete this file?\n\n`{}`".format(path), buttons=[[Button.inline("Yes", data=f"rmx {file.decode()}"), Button.inline("No", data="cancel")], [Button.inline("Back", data="rm_x")]])
     except Exception as o:
         await e.answer(f"Error: {str(o)}")
 
