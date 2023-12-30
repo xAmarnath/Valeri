@@ -104,7 +104,8 @@ async def react_remove_filter(e):
 @bot.on(events.NewMessage)
 async def reaction_filter_trigger(e):
     for _, data in react_filter_cache.copy().items():
-        if e.chat_id == data[4] and (re.search("\b" + str(data[0]) + "\b", e.text, re.IGNORECASE) or (e.photo and data[0] == e.photo.id) or (e.document and data[0] == e.document.id)):
+        pattern = r"( |^|[^\w])" + re.escape(str(data[0])) + r"( |$|[^\w])"
+        if e.chat_id == data[4] and (re.search(pattern, e.text, re.IGNORECASE) or (e.photo and data[0] == e.photo.id) or (e.document and data[0] == e.document.id)):
             if data[1] == "":
                 return
             await bot(
