@@ -197,11 +197,12 @@ async def _rm_cbq(e):
 async def _rm_cbq(e):
     file = e.data_match.group(1)
     try:
-        os.remove(os.path.join(os.getcwd(), get_full_path(file.decode())))
+        os.remove((os.path.join(os.getcwd(), get_full_path(file.decode()))).strip())
         await e.answer("Deleted Successfully!")
         await _rm_cbq_xedit(e)
     except Exception as o:
-        await e.answer(f"Error: {str(o)}")
+        msg = await e.get_message()
+        await msg.edit(msg.text + f"\n\nError: {str(o)}", buttons=msg.buttons)
 
 def get_full_path(path):
     files = listdir(os.getcwd())
