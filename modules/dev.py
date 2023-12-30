@@ -204,7 +204,7 @@ async def _rm_cbq(e):
         await e.answer(f"Error: {str(o)}")
 
 def get_full_path(path):
-    files = listdir(path)
+    files = listdir(os.getcwd())
     for file in files:
         if file.startswith(path):
             return file
