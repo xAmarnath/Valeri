@@ -155,6 +155,8 @@ async def _exec(e):
                 offset=len("BASH \nOutput:\n\n"), length=len(out), language="bash"
             ),
         ]
+        if out.strip() == "":
+            out = "No output"
         f = "BASH \nOutput:\n\n{}".format(out)
         await p.edit(f, formatting_entities=formatting_entities, parse_mode="html")
 
