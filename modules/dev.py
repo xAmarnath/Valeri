@@ -132,6 +132,7 @@ async def _rm(e):
     if arg is not None:
         os.remove(arg)
         await e.reply("`Removed {} successfully.`".format(arg))
+        return
     # list files as buttons
     try:
         directory = e.text.split(" ", 1)[1]
