@@ -9,6 +9,8 @@ from ._helpers import (
     parse_time,
 )
 
+import asyncio
+
 
 @new_cmd(pattern="promote|superpromote|demote")
 async def promote_demote(e):
@@ -312,7 +314,7 @@ async def adminlist(msg):
 
 @new_cmd(pattern="purge")
 async def purge(msg):
-    r, arg = await has_admin_rights(e.chat_id, e.sender_id, "add_admins")
+    r, arg = await has_admin_rights(msg.chat_id, msg.sender_id, "delete_messages")
     if not r:
         return await msg.reply("You don't have enough rights to use this!")
     

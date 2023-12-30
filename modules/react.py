@@ -57,8 +57,6 @@ def _load_db_cache():
 
 
 _load_db_cache()
-print("Loaded reaction filter cache successfully!: ", react_filter_cache)
-
 
 @new_cmd(pattern=r"rf(?: |$)(.*)")
 async def react_filter(e):

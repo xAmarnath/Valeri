@@ -106,6 +106,56 @@ async def _ls(e):
     caption += "\n<b>{} folders, {} files</b>".format(folder_count, file_count)
     await e.reply(caption, parse_mode="html")
 
+@new_cmd(pattern="cd")
+@auth_only
+async def _cd(e):
+    try:
+        directory = e.text.split(" ", 1)[1]
+        directory = directory + "/" if not directory.endswith("/") else directory
+    except IndexError:
+        directory = "./"
+    if not path.isdir(directory):
+        await e.reply("`No such directory found.`")
+        return
+    os.chdir(directory)
+    await e.reply("`Changed directory to {}`".format(directory))
+
+from telethon import Button
+
+@new_cmd(pattern="rm")
+@auth_only
+async def _rm(e):
+    # list files as buttons
+    try:
+        directory = e.text.split(" ", 1)[1]
+        directory = directory + "/" if not directory.endswith("/") else directory
+    except IndexError:
+        directory = "./"
+    contents = listdir(directory)
+    if len(contents) == 0:
+        await e.reply("`No files found.`")
+        return
+    
+    buttons = []
+    btns = []
+    for file in contents:
+        if len(btns) == 2:
+            buttons.append(btns)
+            btns = []
+        btns.append(Button.inline(file, data=f"rm {file}"))
+    if btns:
+        buttons.append(btns)
+    await e.reply("Select the files to delete.", buttons=buttons)
+
+@bot.on(events.CallbackQuery(pattern=r"rm (.*)"))
+async def _rm_cbq(e):
+    file = e.data_match.group(1)
+    try:
+        os.remove(os.path.join(os.getcwd(), file.decode()))
+        await e.answer("Deleted Successfully!")
+    except Exception as o:
+        await e.answer(f"Error: {str(o)}")
+
 def extract_args_from_text(text):
     import re
     pattern = r'-(\w+)(?:\s+([^\s-]+))?'

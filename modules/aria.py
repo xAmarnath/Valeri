@@ -92,6 +92,12 @@ async def check_progress_for_dl(gid, message, previous):
                     f"**Download Auto Canceled :**\n`{t_file.name}`\nYour Torrent/Link is Dead."
                 )
 
+@new_cmd(pattern="bit")
+@auth_only
+async def magnet_download(message):
+    await message.reply("`https://cdn.csa.codes`")
+    
+
 
 @new_cmd(pattern="ariadl")
 @auth_only
