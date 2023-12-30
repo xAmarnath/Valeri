@@ -148,18 +148,60 @@ async def _rm(e):
         buttons.append(btns)
     await e.reply("Select the files to delete.", buttons=buttons)
 
+@bot.on(events.CallbackQuery(pattern=r"rm_x"))
+async def _rm_cbq_xedit(e):
+    try:
+        directory = e.text.split(" ", 1)[1]
+        directory = directory + "/" if not directory.endswith("/") else directory
+    except IndexError:
+        directory = "./"
+    contents = listdir(directory)
+    if len(contents) == 0:
+        await e.edit("`No files found.`")
+        return
+    
+    buttons = []
+    btns = []
+    for file in contents:
+        if len(btns) == 2:
+            buttons.append(btns)
+            btns = []
+        max_bytes = 50
+        btns.append(Button.inline(file, data=f"rm {file[:max_bytes]}"))
+    if btns:
+        buttons.append(btns)
+    await e.edit("Select the files to delete.", buttons=buttons)
+
 @bot.on(events.CallbackQuery(pattern=r"rm (.*)"))
 async def _rm_cbq(e):
     file = e.data_match.group(1)
     try:
-        if os.name == "nt":
-            cmd = "cd " + os.getcwd() + " && del " + path
-        else:
-            cmd = "cd " + os.getcwd() + " && rm -rf " + path
-        os.system(cmd)
-        await e.answer("Deleted Successfully!")
+        path = os.path.join(os.getcwd(), get_full_path(file))
+        await e.edit("Are you sure you want to delete this file?\n\n`{}`".format(path), buttons=[[Button.inline("Yes", data=f"rmx {file}"), Button.inline("No", data="cancel")], [Button.inline("Back", data="rm_x")]])
     except Exception as o:
         await e.answer(f"Error: {str(o)}")
+
+@bot.on(events.CallbackQuery(pattern=r"cancel"))
+async def _rm_cbq(e):
+    await e.delete()
+
+@bot.on(events.CallbackQuery(pattern=r"rmx (.*)"))
+async def _rm_cbq(e):
+    file = e.data_match.group(1)
+    try:
+        os.remove(os.path.join(os.getcwd(), get_full_path(file)))
+        await e.answer("Deleted Successfully!")
+        await _rm_cbq_xedit(e)
+    except Exception as o:
+        await e.answer(f"Error: {str(o)}")
+
+def get_full_path(path):
+    files = listdir(path)
+    for file in files:
+        if file.startswith(path):
+            return file
+    return path
+
 
 def extract_args_from_text(text):
     import re
