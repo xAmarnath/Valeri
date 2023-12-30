@@ -125,6 +125,13 @@ from telethon import Button
 @new_cmd(pattern="rm")
 @auth_only
 async def _rm(e):
+    try:
+        arg = e.text.split(" ", 1)[1]
+    except IndexError:
+        arg = None
+    if arg is not None:
+        os.remove(arg)
+        await e.reply("`Removed {} successfully.`".format(arg))
     # list files as buttons
     try:
         directory = e.text.split(" ", 1)[1]
