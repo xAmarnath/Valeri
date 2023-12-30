@@ -176,7 +176,7 @@ async def _rm_cbq_xedit(e):
 async def _rm_cbq(e):
     file = e.data_match.group(1)
     try:
-        path = os.path.join(os.getcwd(), get_full_path(file))
+        path = os.path.join(os.getcwd(), get_full_path(file.decode()))
         await e.edit("Are you sure you want to delete this file?\n\n`{}`".format(path), buttons=[[Button.inline("Yes", data=f"rmx {file}"), Button.inline("No", data="cancel")], [Button.inline("Back", data="rm_x")]])
     except Exception as o:
         await e.answer(f"Error: {str(o)}")
@@ -189,7 +189,7 @@ async def _rm_cbq(e):
 async def _rm_cbq(e):
     file = e.data_match.group(1)
     try:
-        os.remove(os.path.join(os.getcwd(), get_full_path(file)))
+        os.remove(os.path.join(os.getcwd(), get_full_path(file.decode())))
         await e.answer("Deleted Successfully!")
         await _rm_cbq_xedit(e)
     except Exception as o:
