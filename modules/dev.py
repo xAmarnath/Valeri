@@ -160,7 +160,7 @@ async def _rm(e):
 @bot.on(events.CallbackQuery(pattern=r"rm_x"))
 async def _rm_cbq_xedit(e):
     try:
-        directory = e.text.split(" ", 1)[1]
+        directory = e.data.decode().split(" ", 1)[1]
         directory = directory + "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
