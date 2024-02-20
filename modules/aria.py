@@ -1,10 +1,11 @@
 import subprocess
 from asyncio import sleep
+from telethon import Button
 
 import aria2p
 from requests import get
 
-from ._handler import auth_only, new_cmd
+from ._handler import auth_only, new_cmd, master_only
 from ._helpers import human_readable_size
 
 
@@ -36,25 +37,32 @@ async def check_progress_for_dl(gid, message, previous):
         try:
             t_file = aria2p_client.get_download(gid)
         except:
-            return await message.edit("Download cancelled by user ...")
+            await message.edit("Download cancelled by user!")
+            sleep(5)
+            await message.delete()
         complete = t_file.is_complete
         is_file = t_file.seeder
         try:
             if t_file.error_message:
-                print(str(t_file.error_message))
                 await message.edit(str(t_file.error_message))
             if t_file.is_complete:
                 return await message.edit(
                     f"**Successfully Downloaded {t_file.name}** \n\n"
                     f"> Size:  `{t_file.total_length_string()}` \n"
-                    f"> Path:  `{t_file.name}`"
+                    f"> Path:  `{t_file.name}`",
+                    buttons=[
+                        [Button.url("Fast Direct Link", "https://csa.codes")],
+                    ],
                 )
             if not complete and not t_file.error_message:
                 if t_file.progress_string() == "100.00%":
                     return await message.edit(
                         f"**Successfully Downloaded {t_file.name}** \n\n"
                         f"> Size:  `{t_file.total_length_string()}` \n"
-                        f"> Path:  `{t_file.name}`"
+                        f"> Path:  `{t_file.name}`",
+                        buttons=[
+                            [Button.url("Fast Direct Link", "https://csa.codes")],
+                        ],
                     )
                 percentage = int(t_file.progress)
                 downloaded = percentage * int(t_file.total_length) / 100
@@ -81,7 +89,7 @@ async def check_progress_for_dl(gid, message, previous):
                     previous = msg
             else:
                 pass
-            await sleep(10)
+            await sleep(4)
         except Exception as e:
             if "not found" in str(e) or "'file'" in str(e):
                 if "Your Torrent/Link is Dead." not in message.text:
@@ -92,11 +100,17 @@ async def check_progress_for_dl(gid, message, previous):
                     f"**Download Auto Canceled :**\n`{t_file.name}`\nYour Torrent/Link is Dead."
                 )
 
+
 @new_cmd(pattern="bit")
 @auth_only
 async def magnet_download(message):
-    await message.reply("`https://cdn.csa.codes`")
-    
+    await message.reply("`https://20.84.125.125:3000/`")
+
+@new_cmd(pattern="del")
+@master_only
+async def del_download(message):
+    await message.reply("NOT IMPL> `https://20.84.125.125:3002/`")
+
 
 
 @new_cmd(pattern="ariadl")
@@ -118,13 +132,17 @@ async def t_url_download(message):
         if args.lower().startswith("http"):
             try:
                 is_url = True
-                download = aria2p_client.add_uris([args], options={"dir": "/root/downloads"})
+                download = aria2p_client.add_uris(
+                    [args], options={"dir": "/root/downloads"}
+                )
             except Exception as e:
                 return await message.edit(f"**ERROR while adding URI** \n`{e}`")
         elif args.lower().startswith("magnet:"):
             is_mag = True
             try:
-                download = aria2p_client.add_magnet(args, options={"dir": "/root/downloads"})
+                download = aria2p_client.add_magnet(
+                    args, options={"dir": "/root/downloads"}
+                )
             except Exception as e:
                 return await message.edit(f"**ERROR while adding URI** \n`{e}`")
     else:
