@@ -104,7 +104,7 @@ async def check_progress_for_dl(gid, message, previous):
 @new_cmd(pattern="bit")
 @auth_only
 async def magnet_download(message):
-    await message.reply("`https://20.84.125.125:3000/`")
+    await message.reply("--> https://20.84.125.125:3000/")
 
 @new_cmd(pattern="del")
 @master_only
