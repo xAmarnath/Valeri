@@ -5,7 +5,6 @@ from telethon import events
 from ._config import OWNER_ID, bot
 from ._helpers import is_worth
 from .db.auth import is_auth
-from .db.stats_db import add_user, already_added_user
 
 
 def new_cmd(**args):
@@ -17,8 +16,6 @@ def new_cmd(**args):
     def decorator(func):
         async def wrapper(event):
             await func(event)
-            if not already_added_user(event.sender_id):
-                add_user(event.sender_id)
 
         bot.add_event_handler(wrapper, events.NewMessage(**args))
         return func
