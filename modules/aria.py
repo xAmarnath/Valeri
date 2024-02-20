@@ -10,7 +10,7 @@ from ._helpers import human_readable_size
 
 def aria_start():
     trackers = f'[{get("https://raw.githubusercontent.com/pexcn/daily/gh-pages/trackerlist/trackerlist-aria2.txt").text}]'
-    cmd = f"aria2c --enable-rpc --rpc-listen-all=false --rpc-listen-port=6800 --max-connection-per-server=10 --rpc-max-request-size=1024M --check-certificate=false --follow-torrent=mem --seed-time=600 --max-upload-limit=0 --max-concurrent-downloads=10 --min-split-size=10M --follow-torrent=mem --split=10 --daemon=true --allow-overwrite=true --bt-tracker={trackers}"
+    cmd = f"sudo aria2c --enable-rpc --rpc-listen-all=false --rpc-listen-port=6800 --max-connection-per-server=10 --rpc-max-request-size=1024M --check-certificate=false --follow-torrent=mem --seed-time=600 --max-upload-limit=0 --max-concurrent-downloads=10 --min-split-size=10M --follow-torrent=mem --split=10 --daemon=true --allow-overwrite=true --bt-tracker={trackers}"
     subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     aria2 = aria2p.API(aria2p.Client(host="http://localhost", port=6800, secret=""))
     return aria2
@@ -118,13 +118,13 @@ async def t_url_download(message):
         if args.lower().startswith("http"):
             try:
                 is_url = True
-                download = aria2p_client.add_uris([args], options=None)
+                download = aria2p_client.add_uris([args], options={"dir": "/root/downloads"})
             except Exception as e:
                 return await message.edit(f"**ERROR while adding URI** \n`{e}`")
         elif args.lower().startswith("magnet:"):
             is_mag = True
             try:
-                download = aria2p_client.add_magnet(args, options=None)
+                download = aria2p_client.add_magnet(args, options={"dir": "/root/downloads"})
             except Exception as e:
                 return await message.edit(f"**ERROR while adding URI** \n`{e}`")
     else:

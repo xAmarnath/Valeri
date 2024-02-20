@@ -12,6 +12,7 @@ proxies = {
     "socks5": "socks5://iad.socks.ipvanish.com:1080",
 }
 
+# REWRITE.....
 
 auth = auth.HTTPProxyAuth("6fUNyidVCgY", "5shI6NljlqMY")
 
