@@ -400,7 +400,7 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
             ]
             streamable = True
             action = "video"
-            force_document = True
+            force_document = False
         elif l.endswith(("mp3", "wav", "flv", "ogg", "opus")):
             metadata = tinytag.TinyTag.get(l)
             attributes = [
