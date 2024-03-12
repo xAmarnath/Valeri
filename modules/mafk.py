@@ -1,6 +1,6 @@
-from .db.db import DB
+# from .db.db import DB
 
-afk = DB.afk
+afk = None
 
 from ._config import bot
 from telethon import events, types
@@ -192,4 +192,4 @@ async def get_entities(e):
         except:
             return None
 
-__load_cached_Afk()
+# __load_cached_Afk()
