@@ -2,7 +2,7 @@ import asyncio
 from os import remove, rename
 import os
 
-from PIL import Image
+# from PIL import Image
 from requests import get, post
 from telethon.tl.functions import stickers
 
@@ -53,10 +53,11 @@ def edit_image(path, arg):
 
 
 def similarize_image(image):
-    image1 = Image.open(image)
-    image2 = Image.open("color-" + image)
-    image2 = image2.resize((image1.size[0], image1.size[1]))
-    image2.save("color-" + image)
+    #image1 = Image.open(image)
+    #image2 = Image.open("color-" + image)
+    #image2 = image2.resize((image1.size[0], image1.size[1]))
+    #image2.save("color-" + image)
+    pass
 
 
 FFMPEG_COMMAND = 'ffmpeg -loop 1 -framerate 30 -t 0.16 -i {}  -loop 1 -framerate 30 -t 0.16 -i {} -loop 1 -framerate 30 -t 0.16 -i {} -loop 1 -framerate 30 -t 0.16 -i {} -filter_complex "[0][1][2][3]concat=n=4:v=1:a=0[v1],[v1]loop=20:32767:0" {}'

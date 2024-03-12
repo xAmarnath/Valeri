@@ -9,7 +9,7 @@ from os import listdir, path
 
 import ffmpeg
 import telethon
-from PIL import Image
+# from PIL import Image
 from telethon import errors
 
 from ._config import OWNER_ID, bot, help_dict, log
@@ -243,9 +243,9 @@ def gen_random_string(length):
 
 def resize_to_thumbnail(image):
     """Resize an image to a thumbnail"""
-    im = Image.open(image)
-    im = im.resize((100, 100))
-    im.save(image)
+    # im = Image.open(image)
+    # im = im.resize((100, 100))
+    # im.save(image)
 
 
 def pack_file_to_db(file):

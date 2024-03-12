@@ -3,7 +3,7 @@ import base64
 
 from ._handler import new_cmd
 
-from PIL import Image
+# from PIL import Image
 
 api_key = "AIzaSyDX66YlSd1ZANeC6jDBWy5xUqr5P-kw7Wg"
 
@@ -35,8 +35,8 @@ def resize_to_512_without_lose_aspect_ratio(image):
 
 
 def send_image_prompt(prompt, image):
-    im = resize_to_512_without_lose_aspect_ratio(Image.open(image))
-    im.save(image, "JPEG")
+    #im = resize_to_512_without_lose_aspect_ratio(Image.open(image))
+    #im.save(image, "JPEG")
 
     with open(image, "rb") as f:
         base_64 = base64.b64encode(f.read())
