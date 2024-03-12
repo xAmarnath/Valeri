@@ -20,18 +20,8 @@ from ._helpers import (
 )
 from ._transfers import download_file, upload_file
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
-from .db.db import DB
+# from .db.db import DB
 thumbs = []
-
-@bot.on(events.NewMessage(chats=[-1001804883804, 1804883804], func=lambda e: e.media))
-async def _capture_new_media(e):
-    name = e.file.name if e.file.name else e.text
-    if not name:
-        return
-    for i in list(DB.titles.find()):
-        if i.get("name") == name:
-            return
-    DB.titles.update_one({"id": e.id}, {"$set": {"name": name}}, upsert=True)
 
 @newIn(pattern="s (.*)")
 async def _k_new_in(e):
