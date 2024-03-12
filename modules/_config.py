@@ -4,7 +4,6 @@ from logging import INFO, basicConfig, getLogger, handlers
 from os import getenv
 
 from dotenv import load_dotenv
-from pymongo import MongoClient, errors
 from telethon import TelegramClient
 
 basicConfig(
@@ -44,9 +43,5 @@ TMDB_KEY = getenv("TMDB_KEY")  # required for !imdb
 bot = TelegramClient(
     "bot", api_id=API_KEY, api_hash=API_HASH, device_model="iPhone XS", lang_code="en"
 )
-db = MongoClient(MONGO_DB, connect=True)
+##db = MongoClient(MONGO_DB, connect=True)
 
-try:
-    db.list_databases()
-except errors.ConnectionFailure:
-    log.info("MongoDB connection failed")

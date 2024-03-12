@@ -1,4 +1,4 @@
-from modules.db.db import DB
+# from modules.db.db import DB
 
 ADMINS = []
 
@@ -49,4 +49,4 @@ def __init_auth():
         ADMINS.extend(admins["admins"])
 
 
-__init_auth()
+# __init_auth()
