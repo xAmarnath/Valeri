@@ -1,0 +1,8 @@
+{
+    "error": {
+        "message": "Rate limit reached for gpt-3.5-turbo-16k-0613 in organization org-8f7wxbsJoFDnnok08QI5rPiw on requests per min (RPM): Limit 3, Used 3, Requested 1. Please try again in 20s. Visit https://platform.openai.com/account/rate-limits to learn more. You can increase your rate limit by adding a payment method to your account at https://platform.openai.com/account/billing.",
+        "type": "requests",
+        "param": null,
+        "code": "rate_limit_exceeded"
+    }
+}
