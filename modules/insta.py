@@ -44,8 +44,8 @@ async def _insta(message):
         await message.reply("`Usage: !insta <url>`")
         return
     # if check_if_spam(message.sender_id):
-        # await message.reply("`You are spamming.`")
-        # return
+    # await message.reply("`You are spamming.`")
+    # return
 
     msg = await message.reply("`Downloading...`")
     data = get_ig_download_url(url)
@@ -53,27 +53,38 @@ async def _insta(message):
         await msg.edit("`Failed to download.`")
         return
 
-    if len(data.get("videos", [])) == 0 and len(data.get("images", [])) == 0 and data.get("stories") == 0 and data.get("highlights") == 0:
+    if (
+        len(data.get("videos", [])) == 0
+        and len(data.get("images", [])) == 0
+        and data.get("stories") == 0
+        and data.get("highlights") == 0
+    ):
         await msg.edit("`Failed to download.`")
         return
 
     async def send_files(chat_id, files, caption):
         try:
-            await message.client.send_file(chat_id, files, caption=caption, reply_to=message.id)
+            await message.client.send_file(
+                chat_id, files, caption=caption, reply_to=message.id
+            )
         except:
             i = 0
             for file in files:
                 if i != len(files) - 1:
                     await message.client.send_file(chat_id, file, reply_to=message.id)
                 else:
-                    await message.client.send_file(chat_id, file, caption=caption, reply_to=message.id)
+                    await message.client.send_file(
+                        chat_id, file, caption=caption, reply_to=message.id
+                    )
 
     if data.get("stories"):
         caption = "`Story`" if data.get("caption") is None else f"{data['caption']}"
         await send_files(message.chat_id, data["stories"], caption=caption)
 
     if data.get("highlights"):
-        caption = "`Highlights`" if data.get("caption") is None else f"{data['caption']}"
+        caption = (
+            "`Highlights`" if data.get("caption") is None else f"{data['caption']}"
+        )
         await send_files(message.chat_id, data["highlights"], caption=caption)
 
     if data.get("videos"):

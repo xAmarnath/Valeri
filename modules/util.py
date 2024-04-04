@@ -1,8 +1,18 @@
 import os
+
 from ._helpers import human_readable_size as hs
 
-emoji_dict = {"📁": "folder", "📄": "file", "🎥": "video", "🎵": "audio",
-              "🖼": "image", "🎇": "gif", "🗜": "archive", "📝": "text", "🐍": "python"}
+emoji_dict = {
+    "📁": "folder",
+    "📄": "file",
+    "🎥": "video",
+    "🎵": "audio",
+    "🖼": "image",
+    "🎇": "gif",
+    "🗜": "archive",
+    "📝": "text",
+    "🐍": "python",
+}
 
 
 def get_emoji(file_name):
@@ -61,7 +71,8 @@ def read_dir_to_string(dir_path):
     for file_name in files:
         file_path = os.path.join(dir_path, file_name)
         msg += "{} <code>{}</code> <b>[{}]</b>".format(
-            get_emoji(file_path), get_name(file_path), get_type(file_path))
+            get_emoji(file_path), get_name(file_path), get_type(file_path)
+        )
         if get_type(file_path) == "folder":
             msg += " <b>[{}]</b>".format(len(os.listdir(file_path)))
             total_folder_count += 1

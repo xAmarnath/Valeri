@@ -1,13 +1,12 @@
 import logging
+import sqlite3
 import time
 from logging import INFO, basicConfig, getLogger, handlers
 from os import getenv
-import sqlite3
 
 from dotenv import load_dotenv
-from telethon import TelegramClient
-
 from pymongo import MongoClient
+from telethon import TelegramClient
 
 basicConfig(
     format="%(asctime)s %(levelname)s %(name)s %(message)s",
@@ -53,4 +52,3 @@ if MONGO_DB != "":
 else:
     log.info("Using SQLite database")
     db = sqlite3.connect("bot.db")
-

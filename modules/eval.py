@@ -149,7 +149,8 @@ async def _exec(e):
         formatting_entities = [
             types.MessageEntityCode(offset=0, length=len("BASH \n")),
             types.MessageEntityCode(
-                offset=len("BASH \n"), length=len("Output:\n\n"),
+                offset=len("BASH \n"),
+                length=len("Output:\n\n"),
             ),
             types.MessageEntityPre(
                 offset=len("BASH \nOutput:\n\n"), length=len(out), language="bash"

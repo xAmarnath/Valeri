@@ -1,11 +1,11 @@
 import subprocess
 from asyncio import sleep
-from telethon import Button
 
 import aria2p
 from requests import get
+from telethon import Button
 
-from ._handler import auth_only, new_cmd, master_only
+from ._handler import auth_only, master_only, new_cmd
 from ._helpers import human_readable_size
 
 
@@ -106,11 +106,11 @@ async def check_progress_for_dl(gid, message, previous):
 async def magnet_download(message):
     await message.reply("--> https://20.84.125.125:3000/")
 
+
 @new_cmd(pattern="del")
 @master_only
 async def del_download(message):
     await message.reply("NOT IMPL> `https://20.84.125.125:3002/`")
-
 
 
 @new_cmd(pattern="ariadl")

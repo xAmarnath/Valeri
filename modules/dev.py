@@ -5,7 +5,8 @@ from os import environ, execle, listdir, path, remove, system
 
 import speedtest
 import tinytag
-from telethon import types, events 
+from telethon import events, types
+
 from ._config import bot
 from ._handler import auth_only, master_only, new_cmd, newIn
 from ._helpers import (
@@ -19,31 +20,38 @@ from ._helpers import (
 )
 from ._transfers import download_file, upload_file
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
+
 thumbs = []
+
 
 @newIn(pattern="s (.*)")
 async def _k_new_in(e):
     try:
-        q = e.text.split(" ", 1)[1]
+        e.text.split(" ", 1)[1]
     except:
         return
-    matches = [] #[stringw for stringw in list(DB.titles.find()) if re.search(str(q), str(stringw.get("name")), re.I)]
+    matches = (
+        []
+    )  # [stringw for stringw in list(DB.titles.find()) if re.search(str(q), str(stringw.get("name")), re.I)]
     results = []
     for x in matches:
-        results.append(await e.builder.document(
-            title=x.get("name"),
-            file="photo_2023-08-06_15-40-10.webp",
-            text="**"+x.get("name", "") + "** \nPlease wait while Fetching File...",
-        ))
+        results.append(
+            await e.builder.document(
+                title=x.get("name"),
+                file="photo_2023-08-06_15-40-10.webp",
+                text="**"
+                + x.get("name", "")
+                + "** \nPlease wait while Fetching File...",
+            )
+        )
 
     await e.answer(results)
+
 
 def is_bl(code):
     if any([re.search(x, code.lower()) for x in ["net", "bat", "chmod"]]):
         return False
     return False
-
-
 
 
 @new_cmd(pattern="ls")
@@ -94,6 +102,7 @@ async def _ls(e):
     caption += "\n<b>{} folders, {} files</b>".format(folder_count, file_count)
     await e.reply(caption, parse_mode="html")
 
+
 @new_cmd(pattern="cd")
 @auth_only
 async def _cd(e):
@@ -109,7 +118,9 @@ async def _cd(e):
     curr = os.getcwd()
     await e.reply("`Changed directory to {}`".format(curr))
 
+
 from telethon import Button
+
 
 @new_cmd(pattern="rm")
 @auth_only
@@ -132,7 +143,7 @@ async def _rm(e):
     if len(contents) == 0:
         await e.reply("`No files found.`")
         return
-    
+
     buttons = []
     btns = []
     for file in contents:
@@ -145,6 +156,7 @@ async def _rm(e):
         buttons.append(btns)
     await e.reply("Select the files to delete.", buttons=buttons)
 
+
 @bot.on(events.CallbackQuery(pattern=r"rm_x"))
 async def _rm_cbq_xedit(e):
     try:
@@ -156,7 +168,7 @@ async def _rm_cbq_xedit(e):
     if len(contents) == 0:
         await e.edit("`No files found.`")
         return
-    
+
     buttons = []
     btns = []
     for file in contents:
@@ -169,18 +181,30 @@ async def _rm_cbq_xedit(e):
         buttons.append(btns)
     await e.edit("Select the files to delete.", buttons=buttons)
 
+
 @bot.on(events.CallbackQuery(pattern=r"rm (.*)"))
 async def _rm_cbq(e):
     file = e.data_match.group(1)
     try:
         path = os.path.join(os.getcwd(), get_full_path(file.decode()))
-        await e.edit("Are you sure you want to delete this file?\n\n`{}`".format(path), buttons=[[Button.inline("Yes", data=f"rmx {file.decode()}"), Button.inline("No", data="cancel")], [Button.inline("Back", data="rm_x")]])
+        await e.edit(
+            "Are you sure you want to delete this file?\n\n`{}`".format(path),
+            buttons=[
+                [
+                    Button.inline("Yes", data=f"rmx {file.decode()}"),
+                    Button.inline("No", data="cancel"),
+                ],
+                [Button.inline("Back", data="rm_x")],
+            ],
+        )
     except Exception as o:
         await e.answer(f"Error: {str(o)}")
+
 
 @bot.on(events.CallbackQuery(pattern=r"cancel"))
 async def _rm_cbq(e):
     await e.delete()
+
 
 @bot.on(events.CallbackQuery(pattern=r"rmx (.*)"))
 async def _rm_cbq(e):
@@ -189,14 +213,16 @@ async def _rm_cbq(e):
         path = (os.path.join(os.getcwd(), get_full_path(file.decode()))).strip()
         if os.path.isdir(path):
             import shutil
+
             shutil.rmtree(path)
         else:
-            os.remove(path)    
+            os.remove(path)
         await e.answer("Deleted Successfully!")
         await _rm_cbq_xedit(e)
     except Exception as o:
         msg = await e.get_message()
         await msg.edit(msg.text + f"\n\nError: `{str(o)}`", buttons=msg.buttons)
+
 
 def get_full_path(path):
     files = listdir(os.getcwd())
@@ -208,11 +234,15 @@ def get_full_path(path):
 
 def extract_args_from_text(text):
     import re
-    pattern = r'-(\w+)(?:\s+([^\s-]+))?'
-    _text_without_any_args = re.sub(pattern, '', text)
+
+    pattern = r"-(\w+)(?:\s+([^\s-]+))?"
+    _text_without_any_args = re.sub(pattern, "", text)
 
     args_list = re.findall(pattern, text)
-    return {key: value if value else True for key, value in args_list}, _text_without_any_args.strip()
+    return {
+        key: value if value else True for key, value in args_list
+    }, _text_without_any_args.strip()
+
 
 @new_cmd(pattern="upl")
 @auth_only
@@ -224,7 +254,9 @@ async def _upl(e):
     if not _l:
         return await e.reply("No input file/folder specified.")
     _files = []
-    _needed_ext = args.get('ext', None) or args.get('e', None) or args.get('extension', None)
+    _needed_ext = (
+        args.get("ext", None) or args.get("e", None) or args.get("extension", None)
+    )
     if os.path.isdir(_l):
         for f in os.listdir(_l):
             if _needed_ext and not f.endswith(_needed_ext):
@@ -232,64 +264,82 @@ async def _upl(e):
             _file_path = os.path.join(_l, f)
             if os.path.isfile(_file_path):
                 _file_name = f.split("/")[-1]
-                _file_name_without_ext = ''.join(_file_name.split(".")[:-1])
-                _files.append({'path': _file_path, 'name': _file_name, 'name_without_ext': _file_name_without_ext})
+                _file_name_without_ext = "".join(_file_name.split(".")[:-1])
+                _files.append(
+                    {
+                        "path": _file_path,
+                        "name": _file_name,
+                        "name_without_ext": _file_name_without_ext,
+                    }
+                )
 
     elif os.path.isfile(_l):
         _file_name = _l.split("/")[-1]
-        _file_name_without_ext = ''.join(_file_name.split(".")[:-1]) if args.get('name', '') == '' else args.get('name', '')
-        
-        _files.append({'path': _l, 'name': _file_name, 'name_without_ext': _file_name_without_ext})
+        _file_name_without_ext = (
+            "".join(_file_name.split(".")[:-1])
+            if args.get("name", "") == ""
+            else args.get("name", "")
+        )
+
+        _files.append(
+            {"path": _l, "name": _file_name, "name_without_ext": _file_name_without_ext}
+        )
 
     if not _files:
         return await e.reply("No files found.")
-    
-    _caption = args.get('caption', None) or args.get('c', '')
-    if args.get('nc', False) or args.get('no_caption', False):
+
+    _caption = args.get("caption", None) or args.get("c", "")
+    if args.get("nc", False) or args.get("no_caption", False):
         _caption = None
 
-    _chat = args.get('chat', None) or args.get('c', '')
-    if _chat == '':
+    _chat = args.get("chat", None) or args.get("c", "")
+    if _chat == "":
         _chat = e.chat_id
 
-    if not _caption and not any([args.get('nc', False), args.get('no_caption', False)]):
-        _caption =_file_name_without_ext if len(_files) == 1 else ''
+    if not _caption and not any([args.get("nc", False), args.get("no_caption", False)]):
+        _caption = _file_name_without_ext if len(_files) == 1 else ""
 
     message = await e.reply("Uploading {} file(s)...".format(len(_files)))
     _percent, _progress, _total = 0, 0, len(_files)
     for _file in _files:
         attributes, streamble_media, thumbnail = [], False, None
-        if os.path.isfile(_file['path']) and _file['path'].endswith((".mp4", ".mkv", ".webm", ".3gp", ".mpeg")):
-            duration, width, height = await get_video_metadata(_file['path'])
+        if os.path.isfile(_file["path"]) and _file["path"].endswith(
+            (".mp4", ".mkv", ".webm", ".3gp", ".mpeg")
+        ):
+            duration, width, height = await get_video_metadata(_file["path"])
             attributes.append(
                 types.DocumentAttributeVideo(
                     duration=duration,
                     w=width,
                     h=height,
-                    round_message=args.get('round', False),
+                    round_message=args.get("round", False),
                     supports_streaming=True,
                 ),
-                types.DocumentAttributeFilename(file_name=_file['name']),
+                types.DocumentAttributeFilename(file_name=_file["name"]),
             )
             streamble_media = True
-            if len(thumbs) == 0 and args.get('nothumb', False) == False:
-                thumbnail = await generate_thumbnail(_file['path'], _file['name']+'.jpg')
+            if len(thumbs) == 0 and args.get("nothumb", False) == False:
+                thumbnail = await generate_thumbnail(
+                    _file["path"], _file["name"] + ".jpg"
+                )
             elif len(thumbs) > 0:
                 thumbnail = thumbs[0]
 
-        elif os.path.isfile(_file['path']) and _file['path'].endswith((".mp3", ".wav", ".flv", ".ogg", ".opus", ".alac")):
+        elif os.path.isfile(_file["path"]) and _file["path"].endswith(
+            (".mp3", ".wav", ".flv", ".ogg", ".opus", ".alac")
+        ):
             metadata = tinytag.TinyTag.get(l)
             attributes = [
                 types.DocumentAttributeAudio(
                     duration=int(metadata.duration or "0"),
                     performer=metadata.artist or "-",
                     title=metadata.title or "-",
-                    voice=args.get('voice', False),
+                    voice=args.get("voice", False),
                 ),
-                types.DocumentAttributeFilename(file_name=_file['name']),
+                types.DocumentAttributeFilename(file_name=_file["name"]),
             ]
 
-        uploaded_file = await upload_file(e.client, _file['path'])
+        uploaded_file = await upload_file(e.client, _file["path"])
         if uploaded_file:
             await e.client.send_file(
                 _chat,
@@ -304,14 +354,16 @@ async def _upl(e):
             _progress += 1
             _percent = ((_progress) / _total) * 100
             if _percent % 10 == 0:
-                await message.edit("Uploaded {}% of ({}/{}) files.".format(_percent, _progress, _total))
+                await message.edit(
+                    "Uploaded {}% of ({}/{}) files.".format(_percent, _progress, _total)
+                )
 
         else:
-            await message.edit("Failed to upload {}.".format(_file['name']))
+            await message.edit("Failed to upload {}.".format(_file["name"]))
             return
-        
+
     await message.edit("Upload Done.")
-            
+
 
 @new_cmd(pattern="ul")
 @auth_only

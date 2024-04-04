@@ -1,10 +1,12 @@
-from ._handler import new_cmd
-from youtubesearchpython import VideosSearch
+import io
+import os
+
+import requests
 import yt_dlp
 from telethon.tl.types import DocumentAttributeAudio, DocumentAttributeFilename
-import io
-import requests
-import os
+from youtubesearchpython import VideosSearch
+
+from ._handler import new_cmd
 
 # Youtube based SONG DOWNLOAD
 
@@ -19,13 +21,15 @@ def search_song(query):
 
 def download_song(link):
     opts = {
-        'format': 'bestaudio/best',
-        'outtmpl': '%(id)s.%(ext)s',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '320',
-        }],
+        "format": "bestaudio/best",
+        "outtmpl": "%(id)s.%(ext)s",
+        "postprocessors": [
+            {
+                "key": "FFmpegExtractAudio",
+                "preferredcodec": "mp3",
+                "preferredquality": "320",
+            }
+        ],
         "quiet": True,
     }
 
@@ -60,7 +64,7 @@ async def song(e):
                         title=result["title"],
                         performer=result["channel"]["name"],
                     ),
-                    DocumentAttributeFilename(f"{result['title']}.mp3")
+                    DocumentAttributeFilename(f"{result['title']}.mp3"),
                 ],
             )
 
