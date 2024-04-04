@@ -2,7 +2,6 @@ import asyncio
 from os import remove, rename
 import os
 
-# from PIL import Image
 from requests import get, post
 from telethon.tl.functions import stickers
 
@@ -53,10 +52,12 @@ def edit_image(path, arg):
 
 
 def similarize_image(image):
-    #image1 = Image.open(image)
-    #image2 = Image.open("color-" + image)
-    #image2 = image2.resize((image1.size[0], image1.size[1]))
-    #image2.save("color-" + image)
+    from PIL import Image
+    
+    image1 = Image.open(image)
+    image2 = Image.open("color-" + image)
+    image2 = image2.resize((image1.size[0], image1.size[1]))
+    image2.save("color-" + image)
     pass
 
 
@@ -107,7 +108,7 @@ async def _animate(msg):
     r = await msg.get_reply_message()
     mg = await msg.reply("`Processing..`")
     if not any([r.photo, r.sticker]):
-        return await msg.reply("nilv3")
+        return await msg.reply("no media found")
     f = await r.download_media()
     try:
         a = msg.text.split(None, 1)[1]

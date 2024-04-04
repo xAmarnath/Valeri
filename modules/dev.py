@@ -4,7 +4,6 @@ import sys
 from os import environ, execle, listdir, path, remove, system
 
 import speedtest
-import telethon
 import tinytag
 from telethon import types, events 
 from ._config import bot
@@ -20,7 +19,6 @@ from ._helpers import (
 )
 from ._transfers import download_file, upload_file
 from .db.auth import add_auth, get_auth, is_auth, remove_auth
-# from .db.db import DB
 thumbs = []
 
 @newIn(pattern="s (.*)")
@@ -29,7 +27,7 @@ async def _k_new_in(e):
         q = e.text.split(" ", 1)[1]
     except:
         return
-    matches = [stringw for stringw in list(DB.titles.find()) if re.search(str(q), str(stringw.get("name")), re.I)]
+    matches = [] #[stringw for stringw in list(DB.titles.find()) if re.search(str(q), str(stringw.get("name")), re.I)]
     results = []
     for x in matches:
         results.append(await e.builder.document(

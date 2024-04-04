@@ -1,3 +1,4 @@
 *.pyc
 *.session
 logs.txt
+*.db

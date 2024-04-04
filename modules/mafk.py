@@ -1,6 +1,9 @@
-# from .db.db import DB
+from .db.db import DB, DB_MODE
 
-afk = None
+if DB_MODE == 'mongo':
+    afk = DB.afk
+else:
+    afk = DB
 
 from ._config import bot
 from telethon import events, types
@@ -13,26 +16,36 @@ from telethon import types
 
 def set_afk(user_id, name, reason, state, file: list = None):
     if state:
-        afk.update_one(
-            {"user_id": user_id},
-            {
-                "$set": {
-                    "user_id": user_id,
-                    "name": name,
-                    "reason": reason,
-                    "state": state,
-                    "time": time.time(),
-                    "file": file if file else [],
-                }
-            },
-            upsert=True,
-        )
+        if DB_MODE == 'sql':
+            afk.execute("INSERT INTO afk (user_id, name, reason, state, time, file) VALUES (?, ?, ?, ?, ?, ?)",
+                        (user_id, name, reason, state, time.time(), file if file else []))
+        else:
+            afk.update_one(
+                {"user_id": user_id},
+                {
+                    "$set": {
+                        "user_id": user_id,
+                        "name": name,
+                        "reason": reason,
+                        "state": state,
+                        "time": time.time(),
+                        "file": file if file else [],
+                    }
+                },
+                upsert=True,
+            )
         AFK_CACHE.append(user_id)
     else:
-        afk.delete_one({"user_id": user_id})
+        if DB_MODE == 'sql':
+            afk.execute("DELETE FROM afk WHERE user_id = ?", (user_id,))
+        else:
+            afk.delete_one({"user_id": user_id})
         if user_id in AFK_CACHE:
             AFK_CACHE.remove(user_id)
+
+
 AFK_CACHE = []
+
 
 def is_afk(user_id):
     if user_id in AFK_CACHE:
@@ -43,10 +56,19 @@ def is_afk(user_id):
 def get_afk(user_id):
     return afk.find_one({"user_id": user_id})
 
+
 def __load_cached_Afk():
     try:
-        for data in afk.find({}):
-            AFK_CACHE.append(data["user_id"])
+        if DB_MODE == 'sql':
+            # if table afk does not exist, create it
+            afk.execute(
+                "CREATE TABLE IF NOT EXISTS afk (user_id INTEGER PRIMARY KEY, name TEXT, reason TEXT, state BOOLEAN, time INTEGER, file TEXT)"
+            )
+            for data in afk.execute("SELECT user_id FROM afk"):
+                AFK_CACHE.append(data[0])
+        else:
+            for data in afk.find({}):
+                AFK_CACHE.append(data["user_id"])
     except Exception as e:
         print("Error loading afk cache", e)
 
@@ -103,13 +125,15 @@ async def _xafk(e):
         e.text
         and not len(e.text) in [0, 1]
         and (
-            (e.text[1:].split()[0]).lower() == "afk" or e.text.lower().startswith("brb")
+            (e.text[1:].split()[0]).lower(
+            ) == "afk" or e.text.lower().startswith("brb")
         )
     ):
         name = e.sender.first_name
         name = name + " " + e.sender.last_name if e.sender.last_name else name
         reason = (
-            e.text.split(maxsplit=1)[1] if len(e.text.split(maxsplit=1)) == 2 else ""
+            e.text.split(maxsplit=1)[1] if len(
+                e.text.split(maxsplit=1)) == 2 else ""
         )
         if e.is_reply:
             r = await e.get_reply_message()
@@ -138,20 +162,24 @@ async def _xafk(e):
         c = await get_entities(e)
         if c and is_afk(c):
             c = get_afk(c)
-            reason = "\n**Reason:** " + c.get("reason") if c.get("reason") else ""
+            reason = "\n**Reason:** " + \
+                c.get("reason") if c.get("reason") else ""
             if c.get("file", None):
                 if len(c["file"]) == 3:
                     if c["file"][2] == 1:
-                        file = types.InputPhoto(c["file"][0], c["file"][1], b"")
+                        file = types.InputPhoto(
+                            c["file"][0], c["file"][1], b"")
                     else:
-                        file = types.InputDocument(c["file"][0], c["file"][1], b"")
+                        file = types.InputDocument(
+                            c["file"][0], c["file"][1], b"")
                     if c.get("file")[2] == 2:
                         await e.reply(
                             file=file,
                         )
                         await e.reply(
                             "**{}** has been afk since **{}**.{}".format(
-                                c.get("name"), convert_dt(c.get("time")), reason
+                                c.get("name"), convert_dt(
+                                    c.get("time")), reason
                             ),
                         )
                         return
@@ -192,4 +220,4 @@ async def get_entities(e):
         except:
             return None
 
-# __load_cached_Afk()
+__load_cached_Afk()

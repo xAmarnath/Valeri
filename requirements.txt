@@ -1,4 +1,5 @@
 telethon
+pymongo
 dnspython
 python-dotenv
 speedtest-cli

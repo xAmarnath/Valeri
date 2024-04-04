@@ -2,7 +2,7 @@ import requests
 
 from ._handler import new_cmd
 
-@new_cmd(pattern="(telegraph|tg|telegra\.ph) ?(.*)")
+@new_cmd(pattern="(telegraph|tg) ?(.*)")
 async def telegraph(e):
     await e.reply("To Be Implemeneted.")
 

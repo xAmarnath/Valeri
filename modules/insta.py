@@ -1,4 +1,3 @@
-import io
 import time
 
 from requests import JSONDecodeError, get

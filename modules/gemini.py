@@ -1,17 +1,15 @@
 from requests import post
-import base64
+import base64, os
 
 from ._handler import new_cmd
 
-# from PIL import Image
-
-api_key = "AIzaSyDX66YlSd1ZANeC6jDBWy5xUqr5P-kw7Wg"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 
 def send_prompt(prompt):
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key="
-        + api_key
+        + GEMINI_API_KEY
     )
     response = post(url, json={"contents": [{"parts": [{"text": prompt}]}]})
 
@@ -35,8 +33,9 @@ def resize_to_512_without_lose_aspect_ratio(image):
 
 
 def send_image_prompt(prompt, image):
-    #im = resize_to_512_without_lose_aspect_ratio(Image.open(image))
-    #im.save(image, "JPEG")
+    from PIL import Image
+    im = resize_to_512_without_lose_aspect_ratio(Image.open(image))
+    im.save(image, "JPEG")
 
     with open(image, "rb") as f:
         base_64 = base64.b64encode(f.read())
@@ -47,7 +46,7 @@ def send_image_prompt(prompt, image):
 
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key="
-        + api_key
+        + GEMINI_API_KEY
     )
 
     x = {
@@ -84,34 +83,36 @@ def send_image_prompt(prompt, image):
 
     return final_text
 
-@new_cmd(pattern="gem (.*)")
-async def _(e):
-    if e.fwd_from:
-        return
-    
-    if e.reply_to_msg_id:
-        r = await e.get_reply_message()
-        if r.media:
-            if r.document:
-                if r.media.document.mime_type == "image/jpeg":
-                    await e.reply(send_image_prompt(e.pattern_match.group(1), await r.download_media()).strip())
-                    return
-            if r.photo:
-                await e.reply(send_image_prompt(e.pattern_match.group(1), await r.download_media()).strip())
-                return
-        else:
-            try:
-                et = e.text.split(" ", 1)[1]
-            except:
-                et = ""
-            await e.reply(send_prompt(et + " " + r.text).strip())
+if GEMINI_API_KEY:
+   
+    @new_cmd(pattern="gem (.*)")
+    async def _(e):
+        if e.fwd_from:
             return
         
-    try:
-        et = e.text.split(" ", 1)[1]
-    except:
-        await e.reply("Give me a prompt")
+        if e.reply_to_msg_id:
+            r = await e.get_reply_message()
+            if r.media:
+                if r.document:
+                    if r.media.document.mime_type == "image/jpeg":
+                        await e.reply(send_image_prompt(e.pattern_match.group(1), await r.download_media()).strip())
+                        return
+                if r.photo:
+                    await e.reply(send_image_prompt(e.pattern_match.group(1), await r.download_media()).strip())
+                    return
+            else:
+                try:
+                    et = e.text.split(" ", 1)[1]
+                except:
+                    et = ""
+                await e.reply(send_prompt(et + " " + r.text).strip())
+                return
+            
+        try:
+            et = e.text.split(" ", 1)[1]
+        except:
+            await e.reply("Give me a prompt")
+            return
+        
+        await e.reply(send_prompt(et).strip())
         return
-    
-    await e.reply(send_prompt(et).strip())
-    return
