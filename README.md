@@ -36,14 +36,18 @@ Valeri is a multi purpose telegram bot written in python using telethon. Its ini
 
 ## Local Deploy
 
- > **Note:** Make sure you have installed python3.9+
+```bash
+git clone https://github.com/amarnathcjd/valeri.git
+cd valeri
 
- - Clone the repository
-    - Install the requirements using `pip install -r requirements.txt`
-    - Create a `.env` file and add vars mentioned in [Config Vars](#config-vars)
+# Install Requirements
+pip3 install -r requirements.txt
 
-    - Install ffmpeg, pyppeteer dependencies
-    - Run the bot using `python3 main.py`
+# create a .env file and fill the required variables
+
+# Run the bot
+python3 -m valeri
+```
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
