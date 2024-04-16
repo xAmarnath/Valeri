@@ -21,17 +21,12 @@ async def _terabox(message):
     try:
         link, time_taken = await fetch_terrabox(url)
     except Exception as e:
-        return await message.reply(str(e))
+        return await msg.edit(str(e))
     
     msg = await msg.edit(f"Link: {link}\nTime taken: {time_taken} seconds")
 
 
 warnings.filterwarnings("ignore")
-
-local_override_chunk_name = "page-a90198bf7622b0294.js"
-
-get_url = "https://teradownloader.com/download?link=https%3A%2F%2Fwww.terabox.app%2Fsharing%2Flink%3Fsurl%3DwQ3SJAY-DAaPfHEUduj-oA"
-
 
 async def fetch_terrabox(url):
     final_url = "https://teradownloader.com/download?link=" + quote(url)
