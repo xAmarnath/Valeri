@@ -23,11 +23,12 @@ async def _terabox(message):
         link, time_taken = await fetch_terrabox(url)
     except Exception as e:
         return await msg.edit(str(e))
-    
+
     msg = await msg.edit(f"Link: {link}\nTime taken: {time_taken} seconds")
 
 
 warnings.filterwarnings("ignore")
+
 
 async def fetch_terrabox(url):
     final_url = "https://teradownloader.com/download?link=" + quote(url)
