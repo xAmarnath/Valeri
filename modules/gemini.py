@@ -7,7 +7,6 @@ from ._handler import new_cmd
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-
 def send_prompt(prompt):
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key="

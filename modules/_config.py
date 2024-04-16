@@ -40,6 +40,7 @@ API_HASH = getenv("API_HASH")
 MONGO_DB = getenv("MONGO_DB", "")
 OWNER_ID = int(getenv("OWNER_ID", "0"))
 TMDB_KEY = getenv("TMDB_KEY")  # required for !imdb
+OPENAI_API_KEY = getenv("OPENAI_API_KEY")
 
 # clients
 bot = TelegramClient(

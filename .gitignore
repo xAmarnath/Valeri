@@ -2,3 +2,5 @@
 *.session
 logs.txt
 *.db
+.env
+*.session-journal
