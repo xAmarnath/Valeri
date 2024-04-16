@@ -19,6 +19,7 @@ Valeri is a multi purpose telegram bot written in python using telethon. Its ini
 - [x] Pinterest Search
 - [x] Media AFK
 - [x] Support for MongoDB or SQLite
+- [ ] More Features Coming Soon
 
 ## Deploy
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/AmarnathCJD/Valeri)
