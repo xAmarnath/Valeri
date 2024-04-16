@@ -1,6 +1,7 @@
 import requests
-from ._handler import new_cmd
+
 from ._config import OPENAI_API_KEY
+from ._handler import new_cmd
 
 if OPENAI_API_KEY:
 
@@ -44,10 +45,12 @@ if OPENAI_API_KEY:
             "Authorization": "Bearer {}".format(OPENAI_API_KEY),
         }
 
-        GPT_CONV.append({
-            "role": "user",
-            "content": prompt,
-        })
+        GPT_CONV.append(
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        )
 
         total_len = [len(x["content"]) for x in GPT_CONV]
 
@@ -70,10 +73,12 @@ if OPENAI_API_KEY:
         resp = response.json()
 
         try:
-            GPT_CONV.append({
-                "role": "bot",
-                "content": resp["choices"][0]["message"]["content"],
-            })
+            GPT_CONV.append(
+                {
+                    "role": "bot",
+                    "content": resp["choices"][0]["message"]["content"],
+                }
+            )
 
             return resp["choices"][0]["message"]["content"]
         except:
@@ -98,7 +103,7 @@ if OPENAI_API_KEY:
             json=json_data,
             timeout=40,
         )
-        
+
         print(response.json())
 
         return response.json()["output"]["url"]
