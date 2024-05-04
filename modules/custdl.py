@@ -1,7 +1,6 @@
 from asyncio.subprocess import create_subprocess_shell, PIPE
 from aiofiles.ospath import exists
 from aiofiles.os import mkdir
-import aiofiles
 from aiohttp import ClientSession as Client
 from ._handler import new_cmd, newCall, auth_only
 from telethon import Button
@@ -78,6 +77,7 @@ series_meta_cache = {}
 
 
 @new_cmd(pattern="series")
+@auth_only
 async def search_series_x(e):
     try:
         q = e.text.split(" ", 1)[1]
