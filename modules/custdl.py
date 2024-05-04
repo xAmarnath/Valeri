@@ -181,14 +181,16 @@ async def download_x(e):
     await e.edit(f"Downloading {out_filename}...", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
     ms = await e.respond("Downloading...")
     t = time.time()
-    proc = await create_subprocess_shell(
-        "yt-dlp --downloader aria2c '{url}' -o '{out_folder}/{out_filename}'",
+    cmd = f"yt-dlp --downloader aria2c '{url}' -o '{out_folder}/{out_filename}'"
+    print("Command:", cmd)
+
+    process = await create_subprocess_shell(
+        cmd=cmd,
         stdout=PIPE,
-        stderr=PIPE
+        stderr=PIPE,
     )
     
-    await proc.communicate()
-    await proc.wait()
+    await process.wait()
     await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
     
     
