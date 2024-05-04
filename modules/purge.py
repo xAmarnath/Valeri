@@ -21,7 +21,7 @@ async def can_purge(chat, user):
         return False
 
 
-@new_cmd
+@new_cmd(pattern='purge$')
 async def purge(event):
     if not event.is_group:
         return
