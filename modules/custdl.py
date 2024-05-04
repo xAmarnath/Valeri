@@ -159,7 +159,7 @@ async def episode_x(e):
 
         await e.edit(f"**M3U8:** \n`{src['file']}`", buttons=[[Button.inline("Download", data=f"dl_{src['id']}_{category}_{season_index}_{episode_index}_{series_id}")]])
         m3u8_cache[src["id"]] = src["file"]
-
+import os, time
 
 @newCall(pattern="dl_(.*)")
 async def download_x(e):
@@ -178,8 +178,25 @@ async def download_x(e):
 
     out_folder = "downloads"
     out_filename = f"{series['title']}_{category}_{season_index}_{episode_index}.mp4"
+    await e.edit(f"Downloading {out_filename}...", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
+    ms = await e.respond("Downloading...")
+    t = time.time()
+    proc = await create_subprocess_shell(
+        "yt-dlp --downloader aria2c '{url}' -o '{out_folder}/{out_filename}'",
+        stdout=PIPE,
+        stderr=PIPE
+    )
     
-    await e.edit(f"**CMD:** \n```bash\nyt-dlp --downloader aria2c '{url}' -o '{out_folder}/{out_filename}'```")
+    await proc.communicate()
+    await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
+    
+    
+    
+    
+    
+    
+    
+   
 
 dl_all_queue = []
 
