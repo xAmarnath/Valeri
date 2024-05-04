@@ -158,7 +158,7 @@ async def episode_x(e):
         if src is None:
             return await e.edit("Failed to get source.")
 
-        await e.edit(f"**M3U8:** \n`{src['file']}`", buttons=[[Button.inline("Download", data=f"dl_{src["id"]}_{category}_{season_index}_{episode_index}_{series_id}")]])
+        await e.edit(f"**M3U8:** \n`{src['file']}`", buttons=[[Button.inline("Download", data=f"dl_{src['id']}_{category}_{season_index}_{episode_index}_{series_id}")]])
         m3u8_cache[src["id"]] = src["file"]
 
 
