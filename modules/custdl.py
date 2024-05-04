@@ -207,7 +207,7 @@ async def download_x(e):
     except KeyError:
         return await e.edit("Series not found.")
 
-    out_folder = "downloads_temp"
+    out_folder = "downloads"
     if not await exists(out_folder):
         await mkdir(out_folder)
     out_filename = f"{series['title']}_{category}_{season_index}_{episode_index}.mkv"
@@ -232,7 +232,7 @@ async def download_x(e):
     (await create_subprocess_shell(" ".join(ffmpeg_command))).wait()
     
     # os.remove(f"{out_folder}/{out_filename}")
-    await create_subprocess_shell(f"mv '{out_folder}/{out_filename.replace('.mkv', '_subs.mkv')}' downloads/").wait()
+    # await create_subprocess_shell(f"mv '{out_folder}/{out_filename.replace('.mkv', '_subs.mkv')}' downloads/").wait()
     
     await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")],
                                                                                              [Button.url("Index Link", f"{SERVIO_TEMP}")]])
