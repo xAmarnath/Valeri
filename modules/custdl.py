@@ -91,8 +91,7 @@ async def search_series_x(e):
 
         buttons = []
         for title in titles:
-            buttons.append([Button.inline(title["title"], data=f"series_{
-                           get_id_from_href(title['href'])}")])
+            buttons.append([Button.inline(title["title"], data=f"series_{get_id_from_href(title['href'])}")])
             series_meta_cache[get_id_from_href(title["href"])] = title
 
             if len(buttons) == 15:
