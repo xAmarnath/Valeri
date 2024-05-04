@@ -125,7 +125,7 @@ async def series_x(e):
 
         buttons = []
         for season in seasons:
-            buttons.append([Button.inline(season["title"], data=f"season_{series_id}_{season['season_id']}_{series['category']}_{len(buttons)}")])
+            buttons.append([Button.inline(season["title"], data=f"season_{series_id}_{season['season_id']}_{series['category']}_{len(buttons)+1}")])
 
         buttons.append([Button.inline("Back", data="back")])
 
@@ -142,7 +142,7 @@ async def season_x(e):
 
         buttons = []
         for episode in episodes:
-            buttons.append([Button.inline(episode["title"], data=f"episode_{series_id}_{season_id}_{episode['episode_id']}_{category}_{season_index}_{len(buttons)}")])
+            buttons.append([Button.inline(episode["title"], data=f"episode_{series_id}_{season_id}_{episode['episode_id']}_{category}_{season_index}_{len(buttons)+1}")])
 
         buttons.append([Button.inline("Download All", data=f"download_all")])
         buttons.append([Button.inline("Back", data=f"series_{series_id}")])
@@ -207,7 +207,9 @@ async def download_x(e):
     except KeyError:
         return await e.edit("Series not found.")
 
-    out_folder = "downloads"
+    out_folder = "downloads_temp"
+    if not await exists(out_folder):
+        await mkdir(out_folder)
     out_filename = f"{series['title']}_{category}_{season_index}_{episode_index}.mkv"
     await e.edit(f"Downloading {out_filename}...", buttons=[Button.inline("Back", data=f"series_{series_id}")])
     ms = await e.respond("Downloading...")
@@ -230,10 +232,14 @@ async def download_x(e):
     (await create_subprocess_shell(" ".join(ffmpeg_command))).wait()
     
     # os.remove(f"{out_folder}/{out_filename}")
+    await create_subprocess_shell(f"mv '{out_folder}/{out_filename.replace('.mkv', '_subs.mkv')}' downloads/").wait()
     
     await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")],
                                                                                              [Button.url("Index Link", f"{SERVIO_TEMP}")]])
     await remove(f"{out_folder}/{out_filename}")
+    
+    # move the file to downloads folder
+    
     
     
     
