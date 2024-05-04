@@ -163,7 +163,7 @@ async def episode_x(e):
 
 @newCall(pattern="dl_(.*)")
 async def download_x(e):
-    media_id, category, season_index, episode_index, series_id = e.data.decode().split("_", 5)
+    _, media_id, category, season_index, episode_index, series_id = e.data.decode().split("_", 5)
 
     url = m3u8_cache.get(media_id)
     if not url:
