@@ -222,6 +222,7 @@ async def download_x(e):
     
     ffmpeg_command = generate_ffmpeg_command(f"{out_folder}/{out_filename}", subs_urls)
     print("FFMPEG Command:", ffmpeg_command)
+    await ms.edit("Merging subs...")
     (await create_subprocess_shell(" ".join(ffmpeg_command))).wait()
     
     await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
