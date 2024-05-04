@@ -170,7 +170,7 @@ def generate_ffmpeg_command(mp4_file_path, subs):
     for sub in subs:
         ffmpeg_command.extend(['-i', sub["file"]])
 
-    output_file_path = mp4_file_path
+    output_file_path = '"{}"'.format(mp4_file_path)
 
     ffmpeg_command.extend(['-map', '0:v', '-map', '0:a'])
 
