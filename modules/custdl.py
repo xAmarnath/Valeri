@@ -115,7 +115,7 @@ async def series_x(e):
             if src is None:
                 return await e.edit("Failed to get source.")
 
-            await e.edit(f"**M3U8:** \n`{src['file']}`", buttons=[[Button.inline("Download", data=f"dl_{src["id"]}")]], file=(SERIES_BACKEND_URL + series["poster"]).replace("184x275", "500x750"))
+            await e.edit(f"**M3U8:** \n`{src['file']}`", buttons=[[Button.inline("Download", data=f"dl_{src['id']}")]], file=(SERIES_BACKEND_URL + series["poster"]).replace("184x275", "500x750"))
             m3u8_cache[src["id"]] = src["file"]
             return
 
@@ -123,7 +123,7 @@ async def series_x(e):
 
         buttons = []
         for season in seasons:
-            buttons.append([Button.inline(season["title"], data=f"season_{series_id}_{season['season_id']}_{series["category"]}_{len(buttons)}")])
+            buttons.append([Button.inline(season["title"], data=f"season_{series_id}_{season['season_id']}_{series['category']}_{len(buttons)}")])
 
         buttons.append([Button.inline("Back", data="back")])
 
