@@ -175,7 +175,8 @@ def generate_ffmpeg_command(mp4_file_path, subs):
     ffmpeg_command.extend(['-map', '0:v', '-map', '0:a'])
 
     for i in range(len(subs)):
-        ffmpeg_command.extend(['-map', f'{i + 1}:s:0']) 
+        ffmpeg_command.extend(['-map', f'{i + 1}:s:0', '-scodec', 'mov_text'])
+        # ffmpeg_command.extend(['-map', f'{i + 1}:s:0']) 
     ffmpeg_command.extend(['-c', 'copy'])
     ffmpeg_command.append(output_file_path)
     
