@@ -225,7 +225,7 @@ async def download_x(e):
     await ms.edit("Merging subs...")
     (await create_subprocess_shell(" ".join(ffmpeg_command))).wait()
     
-    os.remove(f"{out_folder}/{out_filename}")
+    # os.remove(f"{out_folder}/{out_filename}")
     
     await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
     
