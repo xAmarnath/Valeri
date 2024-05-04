@@ -188,6 +188,7 @@ async def download_x(e):
     )
     
     await proc.communicate()
+    await proc.wait()
     await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
     
     
