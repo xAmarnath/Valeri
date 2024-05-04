@@ -161,17 +161,41 @@ async def episode_x(e):
         await e.edit(f"**Source Avaliable {tick_emoji}**\n\n**SUBS: {', '.join([sub['label'] for sub in src['subs']])}**",
                      buttons=[[Button.inline("Download", data=f"dl_{src['id']}_{category}_{season_index}_{episode_index}_{series_id}")],
                                 [Button.inline("Back", data=f"season_{series_id}_{season_id}_{category}_{season_index}")]])
-        m3u8_cache[src["id"]] = src["file"]
+        m3u8_cache[src["id"]] = src
 import os, time
+
+def generate_ffmpeg_command(mp4_file_path, subs):
+    ffmpeg_command = ['ffmpeg', '-i', mp4_file_path]
+
+    for sub in subs:
+        ffmpeg_command.extend(['-i', sub["file"]])
+
+    output_file_path = mp4_file_path
+
+    ffmpeg_command.extend(['-map', '0:v', '-map', '0:a'])
+
+    for i in range(len(subs)):
+        ffmpeg_command.extend(['-map', f'{i + 1}:s:0']) 
+    ffmpeg_command.extend(['-c', 'copy'])
+    ffmpeg_command.append(output_file_path)
+    
+    # add -y to overwrite the file
+    ffmpeg_command.insert(1, "-y")
+
+    return ffmpeg_command
 
 @newCall(pattern="dl_(.*)")
 async def download_x(e):
     _, media_id, category, season_index, episode_index, series_id = e.data.decode().split("_", 5)
 
-    url = m3u8_cache.get(media_id)
-    if not url:
+    url_ = m3u8_cache.get(media_id)
+    if not url_:
         return await e.edit("Invalid media ID.")
-
+    
+    url = url_["file"]
+    
+    subs_urls = url_["subs"]
+    
     await e.edit("Downloading...")
     
     try:
@@ -194,6 +218,12 @@ async def download_x(e):
     )
     
     await process.wait()
+    # merge all subs to the file
+    
+    ffmpeg_command = generate_ffmpeg_command(f"{out_folder}/{out_filename}", subs_urls)
+    print("FFMPEG Command:", ffmpeg_command)
+    (await create_subprocess_shell(" ".join(ffmpeg_command))).wait()
+    
     await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
     
     
