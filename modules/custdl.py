@@ -156,8 +156,11 @@ async def episode_x(e):
         src = await get_embed(episode_id, category, client)
         if src is None:
             return await e.edit("Failed to get source.")
+        tick_emoji = "✅"
 
-        await e.edit(f"**M3U8:** \n`{src['file']}`", buttons=[[Button.inline("Download", data=f"dl_{src['id']}_{category}_{season_index}_{episode_index}_{series_id}")]])
+        await e.edit(f"**Source Avaliable {tick_emoji}**\n\n**SUBS: {', '.join([sub['label'] for sub in src['subs']])}**",
+                     buttons=[[Button.inline("Download", data=f"dl_{src['id']}_{category}_{season_index}_{episode_index}_{series_id}")],
+                                [Button.inline("Back", data=f"season_{series_id}_{season_id}_{category}_{season_index}")]])
         m3u8_cache[src["id"]] = src["file"]
 import os, time
 
