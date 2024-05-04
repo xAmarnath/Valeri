@@ -125,8 +125,7 @@ async def series_x(e):
 
         buttons = []
         for season in seasons:
-            buttons.append([Button.inline(season["title"], data=f"season_{
-                           series_id}_{season['season_id']}_{series["category"]}_{len(buttons)}")])
+            buttons.append([Button.inline(season["title"], data=f"season_{series_id}_{season['season_id']}_{series["category"]}_{len(buttons)}")])
 
         buttons.append([Button.inline("Back", data="back")])
 
@@ -143,8 +142,7 @@ async def season_x(e):
 
         buttons = []
         for episode in episodes:
-            buttons.append([Button.inline(episode["title"], data=f"episode_{
-                           series_id}_{season_id}_{episode['episode_id']}_{category}_{season_index}_{len(buttons)}")])
+            buttons.append([Button.inline(episode["title"], data=f"episode_{series_id}_{season_id}_{episode['episode_id']}_{category}_{season_index}_{len(buttons)}")])
 
         buttons.append([Button.inline("Download All", data=f"download_all")])
         buttons.append([Button.inline("Back", data=f"series_{series_id}")])
