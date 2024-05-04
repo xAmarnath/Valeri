@@ -75,7 +75,6 @@ series_meta_cache = {}
 
 
 @new_cmd(pattern="series")
-@auth_only
 async def search_series_x(e):
     try:
         q = e.text.split(" ", 1)[1]
