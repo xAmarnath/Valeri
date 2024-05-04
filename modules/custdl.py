@@ -170,13 +170,13 @@ def generate_ffmpeg_command(mp4_file_path, subs):
     for sub in subs:
         ffmpeg_command.extend(['-i', sub["file"]])
 
-    output_file_path = '"{}"'.format(mp4_file_path.replace(".mp4", "_subs.mp4"))
+    output_file_path = '"{}"'.format(mp4_file_path.replace(".mkv", "_subs.mkv"))
 
     ffmpeg_command.extend(['-map', '0:v', '-map', '0:a'])
 
     for i in range(len(subs)):
-        ffmpeg_command.extend(['-map', f'{i + 1}:s:0', '-scodec', 'mov_text'])
-        # ffmpeg_command.extend(['-map', f'{i + 1}:s:0']) 
+        # ffmpeg_command.extend(['-map', f'{i + 1}:s:0', '-scodec', 'mov_text'])
+        ffmpeg_command.extend(['-map', f'{i + 1}:s:0']) 
     ffmpeg_command.extend(['-c', 'copy'])
     ffmpeg_command.append(output_file_path)
     
@@ -205,7 +205,7 @@ async def download_x(e):
         return await e.edit("Series not found.")
 
     out_folder = "downloads"
-    out_filename = f"{series['title']}_{category}_{season_index}_{episode_index}.mp4"
+    out_filename = f"{series['title']}_{category}_{season_index}_{episode_index}.mkv"
     await e.edit(f"Downloading {out_filename}...", buttons=[Button.inline("Back", data=f"series_{series_id}")])
     ms = await e.respond("Downloading...")
     t = time.time()
