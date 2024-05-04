@@ -222,8 +222,7 @@ async def progress_stdout_yielded_download(url, out_folder, out_filename):
     if not await exists(out_folder):
         await mkdir(out_folder)
 
-    cmd = f"yt-dlp --downloader aria2c '{
-        url}' -o '{out_folder}/{out_filename}'"
+    cmd = f"yt-dlp --downloader aria2c '{url}' -o '{out_folder}/{out_filename}'"
     print("Command:", cmd)
 
     process = await create_subprocess_shell(
