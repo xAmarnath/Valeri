@@ -17,10 +17,8 @@ async def file_server():
     async def handle(request):
         path = request.match_info.get('path', '')
         if os.path.isfile(path):
-            print(f"File requested: {os.path.join('./downloads', path)}")
             return web.FileResponse(os.path.join(os.getcwd(), "downloads", path))
         else:
-            print(f"File not found: {os.path.join(os.getcwd(), "downloads", path)}")
             return web.FileResponse(os.path.join(os.getcwd(), "downloads", path))
         
     app = web.Application()
