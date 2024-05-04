@@ -165,7 +165,7 @@ async def episode_x(e):
 import os, time
 
 def generate_ffmpeg_command(mp4_file_path, subs):
-    ffmpeg_command = ['ffmpeg', '-i', mp4_file_path]
+    ffmpeg_command = ['ffmpeg', '-i', '"{}"'.format(mp4_file_path)]
 
     for sub in subs:
         ffmpeg_command.extend(['-i', sub["file"]])
