@@ -107,14 +107,3 @@ if OPENAI_API_KEY:
         print(response.json())
 
         return response.json()["output"]["url"]
-
-
-#   curl https://api.openai.com/v1/images/generations \
-# -H "Content-Type: application/json" \
-# -H "Authorization: Bearer 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" \
-# -d '{
-#  "model": "dall-e-3",
-# "prompt": "a donkey riding a bicycle",
-# "n": 1,
-# "size": "1024x1024"
-# }'
