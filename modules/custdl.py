@@ -1,14 +1,17 @@
 from asyncio.subprocess import create_subprocess_shell, PIPE
 from aiofiles.ospath import exists
 from aiofiles.os import mkdir
+import aiofiles
 from aiohttp import ClientSession as Client
 from ._handler import new_cmd, newCall, auth_only
 from telethon import Button
 from ._config import OWNER_ID
+from aiofiles.os import remove
 
 
 COMMAND_FOR_DL = "yt-dlp --downloader aria2c '{url}'"
 SERIES_BACKEND_URL = "https://6301-2-59-134-198.ngrok-free.app"
+SERVIO_TEMP = "https://243eecbf48fe111a73868d2a4d6ea7fa.serveo.net"
 
 async def file_server():
     from aiohttp import web
@@ -228,7 +231,9 @@ async def download_x(e):
     
     # os.remove(f"{out_folder}/{out_filename}")
     
-    await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
+    await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")],
+                                                                                             [Button.url("Index Link", f"{SERVIO_TEMP}")]])
+    await remove(f"{out_folder}/{out_filename}")
     
     
     
