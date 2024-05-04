@@ -205,7 +205,7 @@ async def download_x(e):
 
     out_folder = "downloads"
     out_filename = f"{series['title']}_{category}_{season_index}_{episode_index}.mp4"
-    await e.edit(f"Downloading {out_filename}...", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
+    await e.edit(f"Downloading {out_filename}...", buttons=[Button.inline("Back", data=f"series_{series_id}")])
     ms = await e.respond("Downloading...")
     t = time.time()
     cmd = f"yt-dlp --downloader aria2c '{url}' -o '{out_folder}/{out_filename}'"
