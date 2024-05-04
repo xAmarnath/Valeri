@@ -170,7 +170,7 @@ def generate_ffmpeg_command(mp4_file_path, subs):
     for sub in subs:
         ffmpeg_command.extend(['-i', sub["file"]])
 
-    output_file_path = '"{}"'.format(mp4_file_path)
+    output_file_path = '"{}"'.format(mp4_file_path.replace(".mp4", "_subs.mp4"))
 
     ffmpeg_command.extend(['-map', '0:v', '-map', '0:a'])
 
@@ -224,6 +224,8 @@ async def download_x(e):
     print("FFMPEG Command:", ffmpeg_command)
     await ms.edit("Merging subs...")
     (await create_subprocess_shell(" ".join(ffmpeg_command))).wait()
+    
+    os.remove(f"{out_folder}/{out_filename}")
     
     await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
     
