@@ -285,7 +285,7 @@ async def download_x(e):
     
     await ms.edit(f"Downloaded {out_filename} in {time.time() - t:.2f} seconds.", buttons=[[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")],
                                                                                              [Button.url("Index Link", f"{SERVIO_TEMP}")]])
-    # await remove(f"{out_folder}/{out_filename}")
+    await remove(f"{out_folder}/{out_filename}")
     
     # move the file to downloads folder
     
