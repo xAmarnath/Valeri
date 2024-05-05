@@ -202,6 +202,9 @@ async def episode_x(e):
         CAPTION += f"**Country:** {metadata.get('country', 'N/A')}\n"
         CAPTION += f"**Trailer:** **[YouTube Link]({metadata.get('trailer', 'N/A')})**\n"
         CAPTION += "\n\n"
+        _season_index_f = "0" + season_index if len(season_index) == 1 else season_index
+        _episode_index_f = "0" + episode_index if len(episode_index) == 1 else episode_index
+        CAPTION += "**E{}S{}**\n\n".format(_episode_index_f, _season_index_f)
 
         await e.edit(CAPTION+f"**Source Avaliable {tick_emoji}**\n\n**SUBS: {', '.join([sub['label'] for sub in src['subs']])}**",
                      buttons=[[Button.inline("Download", data=f"dl_{src['id']}_{category}_{season_index}_{episode_index}_{series_id}")],
@@ -240,7 +243,7 @@ async def download_x(e):
     
     subs_urls = url_with_meta["subs"]
     
-    await e.edit("Downloading...", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
+    # await e.edit("Downloading...", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
     
     try:
         series = series_meta_cache[series_id]
@@ -252,7 +255,9 @@ async def download_x(e):
         await mkdir(out_folder)
     out_filename = f"{series['title']}_{category}_{season_index}_{episode_index}.mkv" if "movie" not in category.lower() else f"{series['title']}.mkv"
     
-    await e.edit(f"Downloading {out_filename}...", buttons=[Button.inline("Back", data=f"series_{series_id}")])
+    _season_index_f = "0" + season_index if len(season_index) == 1 else season_index
+    _episode_index_f = "0" + episode_index if len(episode_index) == 1 else episode_index
+    await e.edit(f"**E{_episode_index_f}S{_season_index_f}**\nDownloading, please wait...", buttons=[Button.inline("Back", data=f"series_{series_id}")])
     ms = await e.respond("Downloading...")
     t = time.time()
     cmd = f"yt-dlp --downloader aria2c '{url}' -o '{out_folder}/{out_filename}'"
