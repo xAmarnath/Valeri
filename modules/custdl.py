@@ -228,7 +228,7 @@ def generate_ffmpeg_command(mp4_file_path, subs):
 
     for i in range(len(subs)):
         ffmpeg_command.extend(['-map', f'{i + 1}:s:0'])
-        ffmpeg_command.extend(['-metadata:s:s:%d' % i, 'language=' + subs[i]["label"]])
+        ffmpeg_command.extend(['-metadata:s:s:%d' % i, 'language="' + subs[i]["label"]+'"'])
 
     ffmpeg_command.extend(['-c', 'copy', '"{}"'.format(output_file_path)])
 
