@@ -266,13 +266,14 @@ def get_file_type(file):
 
 def generate_thumbnail(in_filename, out_filename):
     """gen thumb for video"""
-    probe = ffmpeg.probe(in_filename)
-    time = 2
+    
     try:
-        width = probe["streams"][0]["width"]
-    except:
-        width = 720
-    try:
+        probe = ffmpeg.probe(in_filename)
+        time = 2
+        try:
+            width = probe["streams"][0]["width"]
+        except:
+            width = 720
         (
             ffmpeg.input(in_filename, ss=time)
             .filter("scale", width, -1)
@@ -294,5 +295,5 @@ def get_video_metadata(file):
             data.get("streams", [])[0].get("width", 1),
             data.get("streams", [])[0].get("height", 0),
         )
-    except (KeyError, IndexError):
+    except (KeyError, IndexError, ffmpeg.Error, Exception):
         return (1, 1280, 720)
