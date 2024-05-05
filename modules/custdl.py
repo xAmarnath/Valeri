@@ -116,7 +116,7 @@ async def series_x(e):
         except KeyError:
             return await e.edit("Series not found.")
         
-        metadata = await get_series_info(series_id, client)
+        metadata = await get_series_info("/{}/x-{}".format(series.get("category").lower(), series_id), client)
         if not metadata:
             return await e.edit("Failed to get metadata.")
         
