@@ -123,15 +123,15 @@ async def series_x(e):
         CAPTION = ''
         CAPTION += f"**Title:** {series['title']}\n"
         CAPTION += f"**Category:** {series['category']}\n"
-        CAPTION += f"**Description:** __{metadata.get('description', 'No description available.')}__\n"
+        CAPTION += f"\n**Description:** __{metadata.get('description', 'No description available.')}__\n"
         CAPTION += f"**Quality:** {metadata.get('quality', 'N/A')}\n"
-        CAPTION += f"**IMDB:** {metadata.get('imdb_rating', 'N/A')}\n"
+        CAPTION += f"**IMDB:** `{metadata.get('imdb_rating', 'IMDB: N/A').split("IMDB:")[1].strip()}`\n"
         CAPTION += f"**Genres:** {metadata.get('genres', 'N/A')}\n"
         CAPTION += f"**Release Date:** {metadata.get('release', 'N/A')}\n"
         CAPTION += f"**Runtime:** {metadata.get('runtime', 'N/A')}\n"
         CAPTION += f"**Casts:** {metadata.get('casts', 'N/A')}\n"
         CAPTION += f"**Country:** {metadata.get('country', 'N/A')}\n"
-        CAPTION += f"**Trailer:** [YouTube]({metadata.get('trailer', 'N/A')})\n"
+        CAPTION += f"**Trailer:** **[YouTube Link]({metadata.get('trailer', 'N/A')})**\n"
         CAPTION += "\n\n"
 
         if series.get("category") == "Movie":
@@ -185,8 +185,25 @@ async def episode_x(e):
         if src is None:
             return await e.edit("Failed to get source.")
         tick_emoji = "✅"
+        metadata = await get_series_info("/{}/x-{}".format(category.lower(), series_id), client)
+        if not metadata:
+            return await e.edit("Failed to get metadata.")
+        
+        CAPTION = ''
+        CAPTION += f"**Title:** {metadata['title']}\n"
+        CAPTION += f"**Category:** {category}\n"
+        CAPTION += f"\n**Description:** __{metadata.get('description', 'No description available.')}__\n"
+        CAPTION += f"**Quality:** {metadata.get('quality', 'N/A')}\n"
+        CAPTION += f"**IMDB:** `{metadata.get('imdb_rating', 'IMDB: N/A').split("IMDB:")[1].strip()}`\n"
+        CAPTION += f"**Genres:** {metadata.get('genres', 'N/A')}\n"
+        CAPTION += f"**Release Date:** {metadata.get('release', 'N/A')}\n"
+        CAPTION += f"**Runtime:** {metadata.get('runtime', 'N/A')}\n"
+        CAPTION += f"**Casts:** {metadata.get('casts', 'N/A')}\n"
+        CAPTION += f"**Country:** {metadata.get('country', 'N/A')}\n"
+        CAPTION += f"**Trailer:** **[YouTube Link]({metadata.get('trailer', 'N/A')})**\n"
+        CAPTION += "\n\n"
 
-        await e.edit(f"**Source Avaliable {tick_emoji}**\n\n**SUBS: {', '.join([sub['label'] for sub in src['subs']])}**",
+        await e.edit(CAPTION+f"**Source Avaliable {tick_emoji}**\n\n**SUBS: {', '.join([sub['label'] for sub in src['subs']])}**",
                      buttons=[[Button.inline("Download", data=f"dl_{src['id']}_{category}_{season_index}_{episode_index}_{series_id}")],
                                 [Button.inline("Back", data=f"season_{series_id}_{season_id}_{category}_{season_index}")]])
         m3u8_cache[src["id"]] = src
@@ -223,7 +240,7 @@ async def download_x(e):
     
     subs_urls = url_with_meta["subs"]
     
-    await e.edit("Downloading...")
+    await e.edit("Downloading...", buttons=[Button.inline("Back", data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}")])
     
     try:
         series = series_meta_cache[series_id]
