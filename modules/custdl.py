@@ -206,7 +206,7 @@ async def episode_x(e):
         _episode_index_f = "0" + episode_index if len(episode_index) == 1 else episode_index
         CAPTION += "**E{}S{}**\n\n".format(_episode_index_f, _season_index_f)
         CAPTION += f"**Source Avaliable {tick_emoji}**\n\n**SUBS: {', '.join([sub['label'] for sub in src['subs']])}**"
-        if len(CAPTION > 1023):
+        if len(CAPTION) > 1023:
             CAPTION = f"**Source Avaliable {tick_emoji}**\n\n**SUBS: {', '.join([sub['label'] for sub in src['subs']])}**"
 
         await e.edit(CAPTION,
