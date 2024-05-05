@@ -1,7 +1,7 @@
 from asyncio.subprocess import create_subprocess_shell, PIPE
 from aiofiles.ospath import exists
 from aiofiles.os import mkdir
-from aiohttp import ClientSession as Client
+from aiohttp import ClientSession as Client, ClientTimeout as Timeout
 from ._handler import new_cmd, newCall, auth_only
 from telethon import Button
 from ._config import OWNER_ID
@@ -39,6 +39,10 @@ async def search_series(query: str, client: Client):
 
 def get_id_from_href(href: str):
     return href.split("-")[-1]
+
+async def get_series_info(series_id: str, client: Client):
+    async with client.get(f"{SERIES_BACKEND_URL}/api/info?id={series_id}") as resp:
+        return await resp.json()
 
 
 async def get_seasons(series_id: str, client: Client):
@@ -84,7 +88,7 @@ async def search_series_x(e):
     except IndexError:
         return await e.reply("Give me a query.")
 
-    async with Client() as client:
+    async with Client(timeout=Timeout(10)) as client:
         titles = await search_series(q, client)
         if not titles:
             return await e.reply("No results found.")
@@ -106,19 +110,40 @@ m3u8_cache = {}
 async def series_x(e):
     series_id = e.data.decode().split("_", 1)[1]
 
-    async with Client() as client:
+    async with Client(timeout=Timeout(10)) as client:
         try:
             series = series_meta_cache[series_id]
         except KeyError:
             return await e.edit("Series not found.")
+        
+        metadata = await get_series_info(series_id, client)
+        if not metadata:
+            return await e.edit("Failed to get metadata.")
+        
+        CAPTION = ''
+        CAPTION += f"**Title:** {series['title']}\n"
+        CAPTION += f"**Category:** {series['category']}\n"
+        CAPTION += f"**Description:** __{metadata.get('description', 'No description available.')}__\n"
+        CAPTION += f"**Quality:** {metadata.get('quality', 'N/A')}\n"
+        CAPTION += f"**IMDB:** {metadata.get('imdb_rating', 'N/A')}\n"
+        CAPTION += f"**Genres:** {metadata.get('genres', 'N/A')}\n"
+        CAPTION += f"**Release Date:** {metadata.get('release', 'N/A')}\n"
+        CAPTION += f"**Runtime:** {metadata.get('runtime', 'N/A')}\n"
+        CAPTION += f"**Casts:** {metadata.get('casts', 'N/A')}\n"
+        CAPTION += f"**Country:** {metadata.get('country', 'N/A')}\n"
+        CAPTION += f"**Trailer:** [YouTube]({metadata.get('trailer', 'N/A')})\n"
+        CAPTION += "\n\n"
 
         if series.get("category") == "Movie":
-            src = await get_embed(series_id, series["category"], client)
+            src = await get_embed(series_id, "movie", client)
             if src is None:
-                return await e.edit("Failed to get source.")
+               return await e.edit("Failed to get source.")
+            tick_emoji = "✅"
 
-            await e.edit(f"**M3U8:** \n`{src['file']}`", buttons=[[Button.inline("Download", data=f"dl_{src['id']}")]], file=(SERIES_BACKEND_URL + series["poster"]).replace("184x275", "500x750"))
-            m3u8_cache[src["id"]] = src["file"]
+            await e.edit(CAPTION+f"**Source Avaliable {tick_emoji}**\n\n**SUBS: {', '.join([sub['label'] for sub in src['subs']])}**",
+                     buttons=[[Button.inline("Download", data=f"dl_{src['id']}_movie_{series_id}_0_0")],
+                                [Button.inline("Back", data=f"series_{series_id}")]])
+            m3u8_cache[src["id"]] = src
             return
 
         seasons = await get_seasons(series_id, client)
@@ -129,7 +154,7 @@ async def series_x(e):
 
         buttons.append([Button.inline("Back", data="back")])
 
-        await e.edit(f"Choose a season for {series['title']}:", buttons=buttons, file=(SERIES_BACKEND_URL + series["poster"]).replace("184x275", "500x750"))
+        await e.edit(CAPTION+f"Choose a season for {series['title']}:", buttons=buttons, file=(SERIES_BACKEND_URL + series["poster"]).replace("184x275", "500x750"))
 
 
 @newCall(pattern="season_(.*)")
@@ -137,7 +162,7 @@ async def season_x(e):
     series_id, season_id, category, season_index = e.data.decode().split("_", 4)[
         1:]
 
-    async with Client() as client:
+    async with Client(timeout=Timeout(10)) as client:
         episodes = await get_episodes(series_id, season_id, client)
 
         buttons = []
@@ -148,14 +173,14 @@ async def season_x(e):
         buttons.append([Button.inline("Back", data=f"series_{series_id}")])
 
         await e.edit(f"Choose an episode for {series_meta_cache[series_id]['title']}:", buttons=buttons)
-
+        
 
 @newCall(pattern="episode_(.*)")
 async def episode_x(e):
     series_id, season_id, episode_id, category, season_index, episode_index = e.data.decode().split("_",
                                                                                                     6)[1:]
 
-    async with Client() as client:
+    async with Client(timeout=Timeout(10)) as client:
         src = await get_embed(episode_id, category, client)
         if src is None:
             return await e.edit("Failed to get source.")
@@ -165,26 +190,24 @@ async def episode_x(e):
                      buttons=[[Button.inline("Download", data=f"dl_{src['id']}_{category}_{season_index}_{episode_index}_{series_id}")],
                                 [Button.inline("Back", data=f"season_{series_id}_{season_id}_{category}_{season_index}")]])
         m3u8_cache[src["id"]] = src
-import os, time
+        
+import time
 
 def generate_ffmpeg_command(mp4_file_path, subs):
-    ffmpeg_command = ['ffmpeg', '-i', '"{}"'.format(mp4_file_path)]
+    ffmpeg_command = ['ffmpeg', '-y', '-i', mp4_file_path]
 
     for sub in subs:
         ffmpeg_command.extend(['-i', sub["file"]])
 
-    output_file_path = '"{}"'.format(mp4_file_path.replace(".mkv", "_subs.mkv"))
+    output_file_path = mp4_file_path.replace(".mp4", "_subs.mkv")
 
     ffmpeg_command.extend(['-map', '0:v', '-map', '0:a'])
 
     for i in range(len(subs)):
-        # ffmpeg_command.extend(['-map', f'{i + 1}:s:0', '-scodec', 'mov_text'])
-        ffmpeg_command.extend(['-map', f'{i + 1}:s:0']) 
-    ffmpeg_command.extend(['-c', 'copy'])
-    ffmpeg_command.append(output_file_path)
-    
-    # add -y to overwrite the file
-    ffmpeg_command.insert(1, "-y")
+        ffmpeg_command.extend(['-map', f'{i + 1}:s:0'])
+        ffmpeg_command.extend(['-metadata:s:s:%d' % i, 'language=' + subs[i]["label"]])
+
+    ffmpeg_command.extend(['-c', 'copy', output_file_path])
 
     return ffmpeg_command
 
@@ -192,13 +215,13 @@ def generate_ffmpeg_command(mp4_file_path, subs):
 async def download_x(e):
     _, media_id, category, season_index, episode_index, series_id = e.data.decode().split("_", 5)
 
-    url_ = m3u8_cache.get(media_id)
-    if not url_:
+    url_with_meta = m3u8_cache.get(media_id)
+    if not url_with_meta:
         return await e.edit("Invalid media ID.")
     
-    url = url_["file"]
+    url = url_with_meta["file"]
     
-    subs_urls = url_["subs"]
+    subs_urls = url_with_meta["subs"]
     
     await e.edit("Downloading...")
     
@@ -210,12 +233,12 @@ async def download_x(e):
     out_folder = "downloads"
     if not await exists(out_folder):
         await mkdir(out_folder)
-    out_filename = f"{series['title']}_{category}_{season_index}_{episode_index}.mkv"
+    out_filename = f"{series['title']}_{category}_{season_index}_{episode_index}.mkv" if "movie" not in category.lower() else f"{series['title']}.mkv"
+    
     await e.edit(f"Downloading {out_filename}...", buttons=[Button.inline("Back", data=f"series_{series_id}")])
     ms = await e.respond("Downloading...")
     t = time.time()
     cmd = f"yt-dlp --downloader aria2c '{url}' -o '{out_folder}/{out_filename}'"
-    print("Command:", cmd)
 
     process = await create_subprocess_shell(
         cmd=cmd,
@@ -227,7 +250,6 @@ async def download_x(e):
     # merge all subs to the file
     
     ffmpeg_command = generate_ffmpeg_command(f"{out_folder}/{out_filename}", subs_urls)
-    print("FFMPEG Command:", ffmpeg_command)
     await ms.edit("Merging subs...")
     (await create_subprocess_shell(" ".join(ffmpeg_command))).wait()
     

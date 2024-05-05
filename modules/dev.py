@@ -1,13 +1,15 @@
+from telethon import Button
 import os
 import re
 import sys
+import time
 from os import environ, execle, listdir, path, remove, system
 
 import speedtest
 import tinytag
 from telethon import events, types
 
-from ._config import bot
+from ._config import bot, StartTime
 from ._handler import auth_only, master_only, new_cmd, newIn
 from ._helpers import (
     generate_thumbnail,
@@ -24,6 +26,18 @@ from .db.auth import add_auth, get_auth, is_auth, remove_auth
 thumbs = []
 
 
+@new_cmd(pattern="ping")
+async def _ping_cmd(e):
+    uptime = time.time() - StartTime
+    
+    ping_start = time.time()
+    msg = await e.reply("Pong!")
+    
+    end_ping = time.time() - ping_start
+    await msg.edit(f"**Pong!** `{end_ping * 1000:.3f}ms`\n**Uptime:** `{uptime:.2f}`")
+    
+
+
 @newIn(pattern="s (.*)")
 async def _k_new_in(e):
     try:
@@ -32,7 +46,8 @@ async def _k_new_in(e):
         return
     matches = (
         []
-    )  # [stringw for stringw in list(DB.titles.find()) if re.search(str(q), str(stringw.get("name")), re.I)]
+        # [stringw for stringw in list(DB.titles.find()) if re.search(str(q), str(stringw.get("name")), re.I)]
+    )
     results = []
     for x in matches:
         results.append(
@@ -59,7 +74,8 @@ def is_bl(code):
 async def _ls(e):
     try:
         directory = e.text.split(" ", 1)[1]
-        directory = directory + "/" if not directory.endswith("/") else directory
+        directory = directory + \
+            "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
     contents = listdir(directory)
@@ -108,7 +124,8 @@ async def _ls(e):
 async def _cd(e):
     try:
         directory = e.text.split(" ", 1)[1]
-        directory = directory + "/" if not directory.endswith("/") else directory
+        directory = directory + \
+            "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
     if not path.isdir(directory):
@@ -117,9 +134,6 @@ async def _cd(e):
     os.chdir(directory)
     curr = os.getcwd()
     await e.reply("`Changed directory to {}`".format(curr))
-
-
-from telethon import Button
 
 
 @new_cmd(pattern="rm")
@@ -136,7 +150,8 @@ async def _rm(e):
     # list files as buttons
     try:
         directory = e.text.split(" ", 1)[1]
-        directory = directory + "/" if not directory.endswith("/") else directory
+        directory = directory + \
+            "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
     contents = listdir(directory)
@@ -161,7 +176,8 @@ async def _rm(e):
 async def _rm_cbq_xedit(e):
     try:
         directory = e.data.decode().split(" ", 1)[1]
-        directory = directory + "/" if not directory.endswith("/") else directory
+        directory = directory + \
+            "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
     contents = listdir(directory)
@@ -255,7 +271,8 @@ async def _upl(e):
         return await e.reply("No input file/folder specified.")
     _files = []
     _needed_ext = (
-        args.get("ext", None) or args.get("e", None) or args.get("extension", None)
+        args.get("ext", None) or args.get(
+            "e", None) or args.get("extension", None)
     )
     if os.path.isdir(_l):
         for f in os.listdir(_l):
@@ -282,7 +299,8 @@ async def _upl(e):
         )
 
         _files.append(
-            {"path": _l, "name": _file_name, "name_without_ext": _file_name_without_ext}
+            {"path": _l, "name": _file_name,
+                "name_without_ext": _file_name_without_ext}
         )
 
     if not _files:
@@ -355,7 +373,8 @@ async def _upl(e):
             _percent = ((_progress) / _total) * 100
             if _percent % 10 == 0:
                 await message.edit(
-                    "Uploaded {}% of ({}/{}) files.".format(_percent, _progress, _total)
+                    "Uploaded {}% of ({}/{}) files.".format(_percent,
+                                                            _progress, _total)
                 )
 
         else:
@@ -524,7 +543,8 @@ async def _auth(e):
     user, _ = await get_user(e)
     if is_auth(user.id):
         await e.reply(
-            "<b>{}</b> is already authorized.".format(get_mention(user, "html")),
+            "<b>{}</b> is already authorized.".format(
+                get_mention(user, "html")),
             parse_mode="html",
         )
         return

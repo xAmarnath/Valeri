@@ -14,6 +14,8 @@ def add_auth(user_id):
     """
     Add a user to the list of authorized users.
     """
+    # create table if not exists - 
+    DB.execute("CREATE TABLE IF NOT EXISTS auth (user_id INTEGER PRIMARY KEY)")
     if user_id not in ADMINS:
         ADMINS.append(user_id)
         if DB_MODE == "sql":
@@ -30,6 +32,7 @@ def remove_auth(user_id):
     """
     Remove a user from the list of authorized users.
     """
+    DB.execute("CREATE TABLE IF NOT EXISTS auth (user_id INTEGER PRIMARY KEY)")
     if user_id in ADMINS:
         ADMINS.remove(user_id)
 
