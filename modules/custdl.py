@@ -205,8 +205,11 @@ async def episode_x(e):
         _season_index_f = "0" + season_index if len(season_index) == 1 else season_index
         _episode_index_f = "0" + episode_index if len(episode_index) == 1 else episode_index
         CAPTION += "**E{}S{}**\n\n".format(_episode_index_f, _season_index_f)
+        CAPTION += f"**Source Avaliable {tick_emoji}**\n\n**SUBS: {', '.join([sub['label'] for sub in src['subs']])}**"
+        if len(CAPTION > 1023):
+            CAPTION = f"**Source Avaliable {tick_emoji}**\n\n**SUBS: {', '.join([sub['label'] for sub in src['subs']])}**"
 
-        await e.edit(CAPTION+f"**Source Avaliable {tick_emoji}**\n\n**SUBS: {', '.join([sub['label'] for sub in src['subs']])}**",
+        await e.edit(CAPTION,
                      buttons=[[Button.inline("Download", data=f"dl_{src['id']}_{category}_{season_index}_{episode_index}_{series_id}")],
                                 [Button.inline("Back", data=f"season_{series_id}_{season_id}_{category}_{season_index}")]])
         m3u8_cache[src["id"]] = src
