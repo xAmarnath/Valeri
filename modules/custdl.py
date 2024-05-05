@@ -274,6 +274,7 @@ async def download_x(e):
     ffmpeg_command = generate_ffmpeg_command(f"{out_folder}/{out_filename}", subs_urls)
     await ms.edit("Merging subs...")
     print("FFMPEG CMD: "+" ".join(ffmpeg_command))
+    await ms.respond("FFMPEG CMD: `"+" ".join(ffmpeg_command) + "`")
     (await create_subprocess_shell(" ".join(ffmpeg_command))).wait()
     
     # os.remove(f"{out_folder}/{out_filename}")
