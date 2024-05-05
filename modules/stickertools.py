@@ -7,6 +7,10 @@ from telethon.tl.functions import stickers
 
 from ._config import bot
 from ._handler import new_cmd
+from telethon.tl.functions.messages import GetCustomEmojiDocumentsRequest
+from telethon.tl.functions.messages import GetStickerSetRequest
+from telethon.tl.functions.stickers import CreateStickerSetRequest, AddStickerToSetRequest
+from telethon import types as t
 
 
 async def run_cmd(cmd):
@@ -78,7 +82,8 @@ async def _animate(msg):
         return await mg.edit(str(err))
     similarize_image(f)
     await run_cmd(
-        FFMPEG_COMMAND.format(f, color_f, f, color_f, "{}-anim.mp4".format(msg.id))
+        FFMPEG_COMMAND.format(f, color_f, f, color_f,
+                              "{}-anim.mp4".format(msg.id))
     )
     await msg.respond(file="{}-anim.mp4".format(msg.id))
     await mg.delete()
@@ -153,3 +158,51 @@ async def get_shortname(title: str):
 @new_cmd(pattern="kang")
 async def _kang(message):
     await message.reply("Kang is not implemented yet.")
+
+
+@new_cmd(pattern="kangemoji")
+async def q_s(e):
+    try:
+        emoji_pack = e.text.split(None, 1)[1]
+    except IndexError:
+        return await e.reply("Give me the emoji pack name")
+    if "t.me" in emoji_pack:
+        emoji_pack = emoji_pack.split("/")[-1]
+    shortname = emoji_pack + "e_to_m_by_missvaleri_bot"
+    s = await bot(GetStickerSetRequest(t.InputStickerSetShortName(emoji_pack), 0))
+    _i = 0
+    msg = await e.reply("Kanging emojis...")
+    for i in s.packs:
+        doc = await bot(GetCustomEmojiDocumentsRequest(i.documents))
+        _i += 1
+        _j = 0
+        for j in doc:
+            doc_inp = t.InputDocument(
+                id=j.id, access_hash=j.access_hash, file_reference=j.file_reference)
+            if _i == 1 and _j == 0:
+                s = await bot(CreateStickerSetRequest(
+                    user_id=e.sender,
+                    title=e.sender.first_name+" CustomWebm",
+                    short_name=shortname,
+                    stickers=[
+                        t.InputStickerSetItem(
+                            document=doc_inp,
+                            emoji="🤍",
+                        )
+                    ],
+                ))
+                _j += 1
+                continue
+
+            s = await bot(AddStickerToSetRequest(
+                stickerset=t.InputStickerSetShortName(
+                    shortname),
+                sticker=t.InputStickerSetItem(
+                    document=doc_inp,
+                    emoji="🤍",
+                )
+            ))
+            
+    await msg.edit(f"Stickers added to [{shortname}](https://t.me/addstickers/{shortname})")
+
+            
