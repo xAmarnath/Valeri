@@ -10,7 +10,7 @@ from aiofiles.os import remove
 
 COMMAND_FOR_DL = "yt-dlp --downloader aria2c '{url}'"
 SERIES_BACKEND_URL = "https://6301-2-59-134-198.ngrok-free.app"
-SERVIO_TEMP = "https://243eecbf48fe111a73868d2a4d6ea7fa.serveo.net"
+SERVIO_TEMP = "https://8dc2d949f885aaa3a1a29df5cb09b89c.serveo.net"
 
 async def file_server():
     from aiohttp import web
