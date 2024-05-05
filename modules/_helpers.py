@@ -287,8 +287,8 @@ def generate_thumbnail(in_filename, out_filename):
 
 
 def get_video_metadata(file):
-    data = ffmpeg.probe(file)
     try:
+        data = ffmpeg.probe(file)
         return (
             int(data.get("format", {}).get("duration", "0").split(".")[0]),
             data.get("streams", [])[0].get("width", 1),

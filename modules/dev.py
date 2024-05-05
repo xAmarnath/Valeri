@@ -29,13 +29,12 @@ thumbs = []
 @new_cmd(pattern="ping")
 async def _ping_cmd(e):
     uptime = time.time() - StartTime
-    
+
     ping_start = time.time()
     msg = await e.reply("Pong!")
-    
+
     end_ping = time.time() - ping_start
     await msg.edit(f"**Pong!** `{end_ping * 1000:.3f}ms`\n**Uptime:** `{uptime:.2f}`")
-    
 
 
 @newIn(pattern="s (.*)")
@@ -446,11 +445,14 @@ async def upload_decorator(e, files, chat, caption: str, directory: str):
         caption = filename
         filename = filename.split("/")[-1] if filename == l else filename
         if l.endswith(("mp4", "mkv", "3gp", "webm")):
-            thumb = (
-                generate_thumbnail(l, l + "_thumb.jpg")
-                if len(thumbs) == 0
-                else thumbs[0]
-            )
+            try:
+                thumb = (
+                    generate_thumbnail(l, l + "_thumb.jpg")
+                    if len(thumbs) == 0
+                    else thumbs[0]
+                )
+            except:
+                thumb = None if len(thumbs) == 0 else thumbs[0]
             d, w, h = get_video_metadata(l)
             attributes = [
                 types.DocumentAttributeVideo(
