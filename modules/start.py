@@ -26,6 +26,17 @@ async def _start(msg):
     )
 
 
+help_menu = [
+    [Button.inline("About", data="about")],
+    [Button.inline("Commands", data="commands")],
+    [Button.url("Support", "https://t.me/rosexchat")],
+    [Button.url("Source", "https://github.com/xamarnath/valeri")],
+]
+
+
 @new_cmd(pattern="help")
 async def _help(msg):
-    await msg.reply("""Help is on the way!""")
+    await msg.reply("""Here is the help menu""", buttons=help_menu)
+
+
+
